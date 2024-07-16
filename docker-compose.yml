@@ -1,0 +1,8 @@
+version: "3.8"
+services:
+  frontend:
+    build: .
+    image: histolingo-admin-be
+    container_name: histolingo-admin-be
+    ports:
+      - "8001:8000"
