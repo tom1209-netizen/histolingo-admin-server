@@ -3,7 +3,6 @@ import cors from 'cors'
 import { config } from 'dotenv'
 
 const app = express();
-const port = 8000;
 
 config();
 
@@ -23,6 +22,6 @@ app.use((err, req, res, next) => {
 });
 
 
-app.listen(port, (err) => {
-    console.log(`Your app is listening on ${port}`)
+app.listen(process.env.PORT, (err) => {
+    console.log(`Your app is listening on ${process.env.PORT}`)
 })
