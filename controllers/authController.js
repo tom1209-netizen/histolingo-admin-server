@@ -1,8 +1,9 @@
-import fetch from 'node-fetch';
 import crypto from 'crypto';
 import PasswordResetToken from '../models/PasswordResetToken.js';
+import Admin from '../models/Admin.js';
 import { config } from 'dotenv';
 import { sendResetEmail } from '../utils/emailService.js';
+import { TOKEN_EXPIRY_TIME } from '../constants/authConstants.js';
 
 config();
 
@@ -10,17 +11,16 @@ export const forgotPassword = async (req, res) => {
     const { email } = req.body;
 
     try {
-        const userResponse = await fetch(`team-1-server/api/users?email=${email}`);
-        if (!userResponse.ok) {
-            return res.status(400).send('User not found');
+        const admin = await Admin.findOne({ email });
+        if (!admin) {
+            return res.status(400).send('Admin not found');
         }
-        const user = await userResponse.json();
 
         const token = crypto.randomBytes(32).toString('hex');
-        const expiry = Date.now() + 3600000; 
-        await PasswordResetToken.create({ userId: user._id, token, expiry });
+        const expiry = Date.now() + TOKEN_EXPIRY_TIME; 
+        await PasswordResetToken.create({ userId: admin._id, token, expiry });
 
-        const resetLink = `http://localhost:${process.env.PORT}/auth/reset-password?token=${token}&id=${user._id}`;
+        const resetLink = `http://${process.env.DOMAIN}/auth/reset-password?token=${token}&id=${admin._id}`;
         await sendResetEmail(email, resetLink);
         res.send('Password reset link sent to your email.');
     } catch (error) {
@@ -31,7 +31,6 @@ export const forgotPassword = async (req, res) => {
 
 export const resetPassword = async (req, res) => {
     const { token, userId, newPassword } = req.body;
-    console.log(token, userId, newPassword);
 
     try {
         const resetToken = await PasswordResetToken.findOne({ userId, token });
@@ -39,20 +38,13 @@ export const resetPassword = async (req, res) => {
             return res.status(400).send('Invalid or expired token');
         }
 
-        const userResponse = await fetch(`team-1-server/${userId}`);
-        if (!userResponse.ok) {
-            return res.status(400).send('User not found');
+        const admin = await Admin.findById(userId);
+        if (!admin) {
+            return res.status(400).send('Admin not found');
         }
-        const user = await userResponse.json();
 
-        user.password = user.hashPassword(newPassword);
-        await fetch(`team-1-server/${userId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ password: user.password }),
-        });
+        admin.password = Admin.hashPassword(newPassword); 
+        await admin.save();
 
         await PasswordResetToken.deleteOne({ userId, token });
         res.send('Password has been reset successfully.');
