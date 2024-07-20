@@ -1,35 +1,32 @@
 import mongoose, { Schema } from "mongoose";
-import { adminStatus } from "../constants/admin.constant.js";
+import { roleStatus } from "../constants/role.constant";
 
 const roleSchema = new Schema({
     name: {
         type: String,
-        required: true
+        required: true,
+        maxLength: 250,
     },
     status: {
         type: Number,
-        enum: [adminStatus.active, adminStatus.inactive],
+        enum: [roleStatus.inactive, roleStatus.active],
+        default: roleStatus.active,
         required: true,
-        default: 1
     },
     permissions: {
         type: [String],
-        required: true
+        required: true,
     },
     createdAt: {
         type: Date,
-        default: Date.now
+        default: Date.now,
     },
     updatedAt: {
         type: Date,
-        default: Date.now
-    }
+        default: Date.now,
+    },
 });
 
-// Update when document save
-roleSchema.pre("save", function (next) {
-    this.updatedAt = Date.now();
-    next();
-});
+const role = model("Role", roleSchema);
 
-export const roleModel = mongoose.model("role", roleSchema);
+export default role;

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { adminStatus } from "../constants/admin.constant";
 const { Schema, model } = mongoose;
 
 const adminSchema = new Schema({
@@ -35,8 +36,9 @@ const adminSchema = new Schema({
     ],
     status: {
         type: Number,
-        enum: [0, 1],
+        enum: [adminStatus.inactive, adminStatus.active],
         required: true,
+        default: adminStatus.active
     },
     supervisorId: {
         type: Schema.Types.ObjectId,
