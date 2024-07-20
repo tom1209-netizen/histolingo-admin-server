@@ -1,0 +1,1 @@
+export const TOKEN_EXPIRY_TIME = 3600000; // 1 hour
