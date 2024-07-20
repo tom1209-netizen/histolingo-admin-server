@@ -1,44 +1,52 @@
-import mongoose, { Schema } from "mongoose";
-import { adminStatus } from "../constants/admin.constant.js";
+import mongoose from "mongoose";
+import { adminStatus } from "../constants/admin.constant";
+const { Schema, model } = mongoose;
 
-const adminSchema = new mongoose.Schema({
-    email: {
-        type: String,
-        require: true,
-        unique: true
-    },
+const adminSchema = new Schema({
     firstName: {
         type: String,
-        require: true
+        required: true,
+        maxlength: 100,
     },
     lastName: {
         type: String,
-        require: true
+        required: true,
+        maxlength: 100,
     },
-    // adminName: { type: String, require: true, unique: true },
+    adminName: {
+        type: String,
+        required: true,
+        maxlength: 100,
+    },
+    email: {
+        type: String,
+        required: true,
+    },
     password: {
         type: String,
-        require: true
+        required: true,
+        maxlength: 250,
     },
-    roles: [{
-        type: Schema.Types.ObjectId,
-        ref: "role"
-    }],
+    roles: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "Role",
+            required: true,
+        },
+    ],
     status: {
         type: Number,
-        enum: [adminStatus.active, adminStatus.inactive],
-        require: true,
+        enum: [adminStatus.inactive, adminStatus.active],
+        required: true,
         default: adminStatus.active
-    },
-    salt: {
-        type: String,
-        require: true
     },
     supervisorId: {
         type: Schema.Types.ObjectId,
-        ref: "admin",
-        require: true
-    }
+        ref: "Admin",
+        required: true,
+    },
 });
 
-export const adminModel = mongoose.model("admin", adminSchema);
+const Admin = model("Admin", adminSchema);
+
+export default Admin;
