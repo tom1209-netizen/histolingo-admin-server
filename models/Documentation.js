@@ -5,7 +5,7 @@ const documentationSchema = new Schema({
     source: {
         type: String,
         required: true,
-        maxLengthL: 250,
+        maxLength: 250,
     },
     name: {
         type: String,
@@ -15,7 +15,7 @@ const documentationSchema = new Schema({
     content: {
         type: String,
         required: true,
-        maxLength: 1000,
+        maxLength: 100000,
     },
     status: {
         type: Number,

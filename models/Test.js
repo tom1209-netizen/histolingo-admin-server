@@ -12,11 +12,6 @@ const testSchema = new Schema({
         ref: "Admin",
         require: true,
     },
-    documentationIds: {
-        type: [Schema.Types.ObjectId],
-        ref: "Documentation",
-        require: true,
-    },
     questionNumber: {
         type: Number,
         min: 1,

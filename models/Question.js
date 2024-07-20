@@ -13,10 +13,6 @@ const questionSchema = new Schema(
             ref: "Topic",
             require: true,
         },
-        dateOfBirth: {
-            type: Date,
-            require: true,
-        },
         questionType: {
             type: Number,
             enum: [0, 1, 2, 3],
@@ -27,6 +23,14 @@ const questionSchema = new Schema(
             maxlength: 65000,
             required: true,
         },
+        createdAt: {
+            type: Date,
+            require: true,
+        },
+        updatedAt: {
+            type: Date,
+            require: true,
+        }
     },
     baseOptions
 );
