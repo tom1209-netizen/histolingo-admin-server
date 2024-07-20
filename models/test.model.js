@@ -31,8 +31,12 @@ const testSchema = new Schema({
     },
     status: {
         type: Number,
+<<<<<<< HEAD
         enum: [testStatus.inactive, testStatus.active],
         default: testStatus.active,
+=======
+        enum: [0, 1],
+>>>>>>> cca1f6bebe14681c917c2dfad8d86a1d054685b0
         require: true,
     },
     createdAt: {
