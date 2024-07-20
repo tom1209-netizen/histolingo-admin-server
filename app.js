@@ -7,6 +7,9 @@ import adminRoute from "./routes/admin.route.js";
 
 const app = express();
 
+// Connect to MongoDB
+// mongoose.connect('mongodb://localhost:27017/local', { useNewUrlParser: true, useUnifiedTopology: true });
+
 config();
 
 app.use(express.json());
@@ -18,6 +21,7 @@ app.get("/", (req, res) => {
 
 app.use("/role", roleRoute);
 app.use("/admin", adminRoute);
+app.use('/auth', authRoutes)
 
 app.use((err, req, res, next) => {
     if (err.message) {
