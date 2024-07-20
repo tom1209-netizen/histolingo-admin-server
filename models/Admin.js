@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 const { Schema, model } = mongoose;
 
 const adminSchema = new Schema({
-  firstName: {
+    firstName: {
         type: String,
         required: true,
         maxlength: 100,
