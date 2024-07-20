@@ -39,9 +39,9 @@ export const createAdminController = async (req, res, next) => {
 
 export const loginAdminController = async (req, res, next) => {
     try {
-        const { adminName, password } = req.body;
-        const admin = await adminModel.findOne({ adminName });
-        const token = tokenService.signToken({ adminName: admin.adminName, password: admin.password });
+        const { email, password, admin } = req.body;
+        const accessToken = tokenService.signAccessToken({ email: admin.email, _id: admin._id });
+        const refreshToken = tokenService.signRefreshToken({ _id: admin._id });
 
         return res.status(200).json({
             success: true,
@@ -49,10 +49,13 @@ export const loginAdminController = async (req, res, next) => {
             status: 200,
             data: {
                 admin: {
-                    adminName: admin.adminName
+                    firstName: admin.firstName,
+                    lastName: admin.lastName,
+                    email: admin.email,
+                    _id: admin._id
                 },
-                token,
-                // refreshToken,
+                accessToken,
+                refreshToken,
             },
         });
     } catch (error) {

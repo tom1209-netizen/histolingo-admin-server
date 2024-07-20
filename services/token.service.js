@@ -1,14 +1,37 @@
 import { config } from "dotenv";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 import { adminModel } from "../models/admin.model.js";
 
 config();
 
 class tokenHandler {
-    signToken(payload) {
+    signAccessToken(payload) {
         try {
             const token = jwt.sign(payload, process.env.JWT_PRIVATE_KEY, {
-                expiresIn: "30m",
+                expiresIn: "15m",
+                algorithm: "HS256",
+                header: {
+                    typ: "jwt"
+                }
+            });
+            return (token)
+        }
+        catch (e) {
+            throw (
+                {
+                    message: e.message || e,
+                    status: 500,
+                    data: null
+                }
+            )
+        }
+    };
+
+    signRefreshToken(payload) {
+        try {
+            const token = jwt.sign(payload, process.env.JWT_PRIVATE_KEY, {
+                expiresIn: "3h",
                 algorithm: "HS256",
                 header: {
                     typ: "jwt"
@@ -44,20 +67,25 @@ class tokenHandler {
     };
 
     async infoToken(token) {
-        const admin = await adminModel.findOne({ adminName: jwt.decode(token).adminName })
+        const admin = await adminModel.findOne({ email: jwt.decode(token).email })
         if (!admin) {
-          throw (
-            {
-              message: "Admin does not exist",
-              status: 404,
-              data: null
-            }
-          )
+            throw (
+                {
+                    message: "Admin does not exist",
+                    status: 404,
+                    data: null
+                }
+            )
         }
         else {
-          return admin
+            return admin
         }
-      }
+    }
+
+    async generateRefreshToken () {
+        const refreshToken = crypto.randomBytes(64).toString("hex");
+        return refreshToken;
+    }
 };
 
 const tokenService = new tokenHandler();

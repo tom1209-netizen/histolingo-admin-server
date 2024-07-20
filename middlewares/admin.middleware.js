@@ -68,12 +68,12 @@ export const createAdminValidator = async (req, res, next) => {
 }
 
 export const loginAdminValidator = async (req, res, next) => {
-    const { adminName, password } = req.body;
+    const { email, password } = req.body;
 
     const loginSchema = Joi.object({
-        adminName: Joi.string()
-            .min(8)
-            .max(100)
+        email: Joi.string()
+            .email()
+            .max(250)
             .required(),
         password: Joi.string()
             .min(8)
@@ -83,16 +83,19 @@ export const loginAdminValidator = async (req, res, next) => {
 
     try {
         await loginSchema.validateAsync({
-            adminName,
-            password
+            email,
+            password,
+        }, {
+            abortEarly: false
         })
 
-        const existedAdmin = await adminModel.findOne({ adminName });
+        const existedAdmin = await adminModel.findOne({ email });
+        req.body.admin = existedAdmin;
         const decryptedPassword = encodeService.decrypt(password, existedAdmin.salt);
         if (!existedAdmin || decryptedPassword != existedAdmin.password) {
             throw (
                 {
-                    message: "AdminName or password is invalid",
+                    message: "Email or password is invalid",
                     statusCode: 403
                 }
             )
