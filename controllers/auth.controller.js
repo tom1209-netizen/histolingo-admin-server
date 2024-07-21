@@ -1,9 +1,9 @@
 import crypto from 'crypto';
-import PasswordResetToken from '../models/PasswordResetToken.js';
-import Admin from '../models/Admin.js';
+import PasswordResetToken from '../models/PasswordResetToken.model.js';
+import Admin from '../models/admin.model.js';
 import { config } from 'dotenv';
 import { sendResetEmail } from '../utils/email.service.js';
-import { TOKEN_EXPIRY_TIME } from '../constants/authConstants.js';
+import { TOKEN_EXPIRY_TIME } from '../constants/auth.constants.js';
 
 config();
 
