@@ -1,13 +1,13 @@
-import { adminModel } from "../models/admin.model.js";
 import adminService from "../services/admin.service.js";
 import tokenService from "../services/token.service.js";
 
 export const createAdminController = async (req, res, next) => {
     try {
         if (!req.headers.authorization) {
-            throw (
-                { message: 'Unauthorized!', status: 403, data: null }
-            );
+            const error = new Error("Unauthorized!");
+            error.status = 403;
+            error.data = null;
+            throw error;
         }
         const token = req.headers.authorization.split(' ')[1];
         tokenService.verifyToken(token);
@@ -33,13 +33,18 @@ export const createAdminController = async (req, res, next) => {
             },
         });
     } catch (error) {
-        next(error);
+        return res.status(error.status || 500).json({
+            success: false,
+            message: error.message || "Internal Server Error",
+            status: error.status || 500,
+            data: error.data || null
+        });
     }
 };
 
 export const loginAdminController = async (req, res, next) => {
     try {
-        const { email, password, admin } = req.body;
+        const { admin } = req.body;
         const accessToken = tokenService.signAccessToken({ email: admin.email, _id: admin._id });
         const refreshToken = tokenService.signRefreshToken({ _id: admin._id });
 
@@ -59,6 +64,11 @@ export const loginAdminController = async (req, res, next) => {
             },
         });
     } catch (error) {
-        next(error);
+        return res.status(error.status || 500).json({
+            success: false,
+            message: error.message || "Internal Server Error",
+            status: error.status || 500,
+            data: error.data || null
+        });
     }
 }

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import { topicStatus } from "../constants/topic.constant";
-import { languageField } from "../utils/language.utils";
+import { topicStatus } from "../constants/topic.constant.js";
+import { languageField } from "../utils/language.utils.js";
 const { Schema, model } = mongoose;
 
 const topicSchema = new Schema({

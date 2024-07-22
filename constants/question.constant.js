@@ -2,7 +2,7 @@ export const questionType = {
     multipleChoice: 0,
     trueFalse: 1,
     matching: 2,
-    FillInTheBlank: 3,
+    fillInTheBlank: 3,
 }
 
 export const answer = {

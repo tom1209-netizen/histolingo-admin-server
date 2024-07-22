@@ -1,11 +1,11 @@
-import { config } from "dotenv";
+import {config} from "dotenv";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
-import { adminModel } from "../models/admin.model.js";
+import Admin from "../models/admin.model.js";
 
 config();
 
-class tokenHandler {
+class TokenHandler {
     signAccessToken(payload) {
         try {
             const token = jwt.sign(payload, process.env.JWT_PRIVATE_KEY, {
@@ -18,13 +18,10 @@ class tokenHandler {
             return (token)
         }
         catch (e) {
-            throw (
-                {
-                    message: e.message || e,
-                    status: 500,
-                    data: null
-                }
-            )
+            const error = new Error(e.message);
+            error.status = 500;
+            error.data = null;
+            throw error;
         }
     };
 
@@ -40,13 +37,10 @@ class tokenHandler {
             return (token)
         }
         catch (e) {
-            throw (
-                {
-                    message: e.message || e,
-                    status: 500,
-                    data: null
-                }
-            )
+            const error = new Error(e.message);
+            error.status = 500;
+            error.data = null;
+            throw error;
         }
     };
 
@@ -56,37 +50,43 @@ class tokenHandler {
             return true
         }
         catch (e) {
-            throw (
-                {
-                    message: "Invalid token",
-                    status: 403,
-                    data: null
-                }
-            )
+            const error = new Error("Invalid token");
+            error.status = 403;
+            error.data = null;
+            throw error;
         }
     };
 
     async infoToken(token) {
-        const admin = await adminModel.findOne({ email: jwt.decode(token).email })
-        if (!admin) {
-            throw (
-                {
-                    message: "Admin does not exist",
-                    status: 404,
-                    data: null
-                }
-            )
-        }
-        else {
-            return admin
+        try {
+            const decodedToken = jwt.decode(token);
+            if (!decodedToken?.email) {
+                const error = new Error("Invalid token");
+                error.status = 403;
+                error.data = null;
+                throw error;
+            }
+
+            const admin = await Admin.findOne({ email: decodedToken.email });
+            if (!admin) {
+                const error = new Error("Admin does not exist");
+                error.status = 404;
+                error.data = null;
+                throw error;
+            }
+            return admin;
+        } catch (e) {
+            const error = new Error(e.message);
+            error.status = 500;
+            error.data = null;
+            throw error;
         }
     }
 
     async generateRefreshToken () {
-        const refreshToken = crypto.randomBytes(64).toString("hex");
-        return refreshToken;
+        return crypto.randomBytes(64).toString("hex");
     }
 };
 
-const tokenService = new tokenHandler();
+const tokenService = new TokenHandler();
 export default tokenService;

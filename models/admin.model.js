@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import { adminStatus } from "../constants/admin.constant";
-const { Schema, model } = mongoose;
+import { adminStatus } from "../constants/admin.constant.js";
+const { Schema, model} = mongoose;
 
 const adminSchema = new Schema({
     firstName: {

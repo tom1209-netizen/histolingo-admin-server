@@ -1,8 +1,8 @@
-import { roleModel } from "../models/role.model.js";
+import Role from "../models/role.model.js";
 
 class RoleService {
     async createRole(name, permissions) {
-        const newRole = await roleModel.create({ name, permissions });
+        const newRole = await Role.create({ name, permissions });
         return newRole;
     }
 }

@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { questionType, answer } from "../constants/question.constant";
+import { questionType, answer } from "../constants/question.constant.js";
 import { languageField, languageArrayField } from "../utils/language.utils";
 const { Schema, model } = mongoose;
 

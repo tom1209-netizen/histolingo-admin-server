@@ -1,5 +1,5 @@
-import mongoose, { Schema } from "mongoose";
-import { roleStatus } from "../constants/role.constant";
+import { Schema, model } from "mongoose";
+import { roleStatus } from "../constants/role.constant.js";
 
 const roleSchema = new Schema({
     name: {
@@ -27,6 +27,6 @@ const roleSchema = new Schema({
     },
 });
 
-const role = model("Role", roleSchema);
+const Role = model("Role", roleSchema);
 
-export default role;
+export default Role;

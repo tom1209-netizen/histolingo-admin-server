@@ -1,20 +1,17 @@
 import bcrypt from 'bcrypt'
 
-class encode {
+class Encode {
     encrypt(password) {
         try {
             const salt = bcrypt.genSaltSync(10);
             const hashPassword = bcrypt.hashSync(password, salt);
             return [hashPassword, salt];
         }
-        catch (error) {
-            throw (
-                {
-                    message: error.message,
-                    status: 500,
-                    data: null
-                }
-            )
+        catch (e) {
+            const error = new Error(e.message);
+            error.status = 500;
+            error.data = null;
+            throw error;
         }
     }
 
@@ -23,16 +20,13 @@ class encode {
             return bcrypt.hashSync(password, salt)
         }
         catch (e) {
-            throw (
-                {
-                    message: e.message,
-                    status: 500,
-                    data: null
-                }
-            )
+            const error = new Error(e.message);
+            error.status = 500;
+            error.data = null;
+            throw error;
         }
     }
-};
+}
 
-const encodeService = new encode();
+const encodeService = new Encode();
 export default encodeService;

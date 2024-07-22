@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { testStatus } from "../constants/test.constant";
+import { testStatus } from "../constants/test.constant.js";
 const { Schema, model } = mongoose;
 
 const testSchema = new Schema({

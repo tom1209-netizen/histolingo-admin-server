@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import { forgotPassword, resetPassword } from '../controllers/authController.js';
+import { forgotPassword, resetPassword } from '../controllers/auth.controller.js';
+import { validateEmail } from "../middlewares/validateEmail.middleware.js";
 
 const router = Router();
 

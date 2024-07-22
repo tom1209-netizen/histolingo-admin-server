@@ -2,7 +2,7 @@ import crypto from 'crypto';
 import PasswordResetToken from '../models/PasswordResetToken.model.js';
 import Admin from '../models/admin.model.js';
 import { config } from 'dotenv';
-import { sendResetEmail } from '../utils/email.service.js';
+import { sendResetEmail } from '../utils/email.utils.js';
 import { TOKEN_EXPIRY_TIME } from '../constants/auth.constants.js';
 
 config();
@@ -24,7 +24,6 @@ export const forgotPassword = async (req, res) => {
         await sendResetEmail(email, resetLink);
         res.send('Password reset link sent to your email.');
     } catch (error) {
-        console.error(error);
         res.status(500).send('An error occurred while processing your request.');
     }
 };
@@ -49,7 +48,6 @@ export const resetPassword = async (req, res) => {
         await PasswordResetToken.deleteOne({ userId, token });
         res.send('Password has been reset successfully.');
     } catch (error) {
-        console.error(error);
         res.status(500).send('An error occurred while processing your request.');
     }
 };

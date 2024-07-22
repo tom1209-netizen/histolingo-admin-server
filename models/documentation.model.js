@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { documentationStatus } from "../constants/documentation.constant";
+import { documentationStatus } from "../constants/documentation.constant.js";
 import { languageField } from "../utils/language.utils";
 const { Schema, model } = mongoose;
 

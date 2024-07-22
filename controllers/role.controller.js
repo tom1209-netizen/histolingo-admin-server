@@ -1,4 +1,3 @@
-import { roleModel } from "../models/role.model.js";
 import roleService from "../services/role.service.js";
 
 export const createRoleController = async (req, res, next) => {
@@ -18,6 +17,11 @@ export const createRoleController = async (req, res, next) => {
             },
         });
     } catch (error) {
-        next(error);
+        return res.status(error.status || 500).json({
+            success: false,
+            message: error.message || "Internal Server Error",
+            status: error.status || 500,
+            data: error.data || null
+        });
     }
 }

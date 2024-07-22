@@ -1,6 +1,6 @@
 import Joi from "joi";
-import { adminModel } from "../models/admin.model.js";
-import { roleModel } from "../models/role.model.js";
+import Admin from "../models/admin.model.js";
+import Role from "../models/role.model.js";
 import encodeService from "../utils/encode.service.js";
 
 export const createAdminValidator = async (req, res, next) => {
@@ -36,23 +36,19 @@ export const createAdminValidator = async (req, res, next) => {
             roles
         });
 
-        const existedAdmin = await adminModel.findOne({ adminName });
+        const existedAdmin = await Admin.findOne({ adminName });
         if (existedAdmin) {
-            throw (
-                {
-                    message: "AdminName already exists",
-                    statusCode: 403
-                }
-            )
+            const error = new Error("AdminName already exists");
+            error.statusCode = 403;
+            throw error;
         }
 
         // Find role by name
-        const roleDocs = await roleModel.find({ name: { $in: roles } });
+        const roleDocs = await Role.find({ name: { $in: roles } });
         if (roleDocs.length !== roles.length) {
-            throw {
-                message: "Some roles do not exist",
-                statusCode: 400
-            };
+            const error = new Error("Some roles do not exist");
+            error.statusCode = 400;
+            throw error;
         }
 
         // Convert to `_id`
@@ -89,16 +85,13 @@ export const loginAdminValidator = async (req, res, next) => {
             abortEarly: false
         })
 
-        const existedAdmin = await adminModel.findOne({ email });
+        const existedAdmin = await Admin.findOne({ email });
         req.body.admin = existedAdmin;
         const decryptedPassword = encodeService.decrypt(password, existedAdmin.salt);
-        if (!existedAdmin || decryptedPassword != existedAdmin.password) {
-            throw (
-                {
-                    message: "Email or password is invalid",
-                    statusCode: 403
-                }
-            )
+        if (!existedAdmin || decryptedPassword !== existedAdmin.password) {
+            const error = new Error("Email or password is invalid");
+            error.statusCode = 403;
+            throw error;
         }
 
         next();

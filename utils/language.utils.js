@@ -16,7 +16,7 @@ export const languageField = (maxLength) => ({
     },
 });
 
-const languageArrayField = {
+export const languageArrayField = {
     en: {
         type: [String],
         required: true,

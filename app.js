@@ -4,6 +4,7 @@ import { config } from "dotenv"
 import databaseService from "./services/database.service.js";
 import roleRoute from "./routes/role.route.js";
 import adminRoute from "./routes/admin.route.js";
+import authRoutes from "./routes/auth.route.js";
 
 const app = express();
 

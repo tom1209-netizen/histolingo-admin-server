@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { roleModel } from "../models/role.model.js";
+import Role from "../models/role.model.js";
 import tokenService from "../services/token.service.js";
 
 export const createRoleValidator = async (req, res, next) => {
@@ -17,9 +17,10 @@ export const createRoleValidator = async (req, res, next) => {
 
     try {
         if (!req.headers.authorization) {
-            throw (
-                { message: 'Unauthorized!', status: 403, data: null }
-            );
+            const error = new Error("Unauthorized");
+            error.status = 403;
+            error.data = null;
+            throw error;
         }
         const token = req.headers.authorization.split(' ')[1];
         tokenService.verifyToken(token);
@@ -29,14 +30,12 @@ export const createRoleValidator = async (req, res, next) => {
             permissions
         });
         
-        const existedRole = await roleModel.findOne({ name });
+        const existedRole = await Role.findOne({ name });
         if (existedRole) {
-            throw (
-                {
-                    message: "Role already exists",
-                    statusCode: 403
-                }
-            )
+            const error = new Error("Role already exists");
+            error.status = 403;
+            error.data = null;
+            throw error;
         }
 
         next();

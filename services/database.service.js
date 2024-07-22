@@ -11,14 +11,11 @@ class DatabaseService {
         try {
             await mongoose.connect(this.uri);
             console.log(`MongoDB connect successfully`);
-        } catch (error) {
-            throw (
-                {
-                    message: error.message || error,
-                    statusCode: 500,
-                    data: null
-                }
-            );
+        } catch (e) {
+            const error = new Error("MongoDB connect failed");
+            error.status = 500;
+            error.data = null;
+            throw error;
         }
     }
 }

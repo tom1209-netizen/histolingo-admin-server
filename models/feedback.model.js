@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
-import { feedbackStatus } from "../constants/feedback.constant";
-import { languageField } from "../utils/language.utils";
+import { feedbackStatus } from "../constants/feedback.constant.js";
 const { Schema, model } = mongoose;
 
 const feedbackSchema = new Schema({
