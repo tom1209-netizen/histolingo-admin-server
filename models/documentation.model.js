@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { documentationStatus } from "../constants/documentation.constant.js";
-import { languageField } from "../utils/language.utils";
+import { languageField } from "../utils/language.utils.js";
 const { Schema, model } = mongoose;
 
 const documentationSchema = new Schema({

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { questionType, answer } from "../constants/question.constant.js";
-import { languageField, languageArrayField } from "../utils/language.utils";
+import { languageField, languageArrayField } from "../utils/language.utils.js";
 const { Schema, model } = mongoose;
 
 const baseOptions = {

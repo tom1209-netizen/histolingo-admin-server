@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { languageField } from "../utils/language.utils";
+import { languageField } from "../utils/language.utils.js";
 const { Schema, model } = mongoose;
 
 const countrySchema = new Schema({
