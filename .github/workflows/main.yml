@@ -5,6 +5,10 @@ on:
     branches:
       - '**'
 
+  push:
+    branches:
+      - '**'
+
 jobs:
   test:
     runs-on: ubuntu-latest
