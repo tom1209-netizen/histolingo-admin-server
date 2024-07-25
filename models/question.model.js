@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
 import { questionType, answer } from "../constants/question.constant.js";
-import { languageField, languageArrayField } from "../utils/language.utils.js";
 const { Schema, model } = mongoose;
 
 const baseOptions = {
     discriminatorKey: "questionType",
     collection: "questions",
+    timestamps: true,
 };
 
 const questionSchema = new Schema(
@@ -13,26 +13,25 @@ const questionSchema = new Schema(
         topicId: {
             type: Schema.Types.ObjectId,
             ref: "Topic",
-            require: true,
+            required: true,
         },
         countryId: {
             type: Schema.Types.ObjectId,
             ref: "Country",
-            require: true,
+            required: true,
         },
         questionType: {
             type: Number,
             enum: [questionType.trueFalse, questionType.multipleChoice, questionType.matching, questionType.fillInTheBlank],
-            require: true,
+            required: true,
         },
-        ask: languageField(650000),
-        createdAt: {
-            type: Date,
-            require: true,
+        ask: {
+            type: String,
+            required: true,
         },
-        updatedAt: {
-            type: Date,
-            require: true,
+        localeData: {
+            type: Schema.Types.Mixed,
+            required: true,
         }
     },
     baseOptions
@@ -42,7 +41,7 @@ const BaseQuestion = model("BaseQuestion", questionSchema);
 
 // True/False Question
 const trueFalseSchema = new Schema({
-    correct: {
+    answer: {
         type: Boolean,
         required: true,
     },
@@ -50,8 +49,8 @@ const trueFalseSchema = new Schema({
 
 // Multiple Choice Question
 const multipleChoiceSchema = new Schema({
-    corrects: languageArrayField,
-    correct: {
+    options: [String],
+    answer: {
         type: Number,
         enum: [answer.a, answer.b, answer.c, answer.d],
         required: true,
@@ -60,9 +59,15 @@ const multipleChoiceSchema = new Schema({
 
 // Matching Question
 const matchingSchema = new Schema({
-    leftColumn: languageArrayField,
-    rightColumn: languageArrayField,
-    corrects: {
+    leftColumn: {
+        type: [String],
+        required: true,
+    },
+    rightColumn: {
+        type: [String],
+        required: true,
+    },
+    answer: {
         type: [[Number]],
         required: true,
     },
@@ -70,7 +75,7 @@ const matchingSchema = new Schema({
 
 // Fill-in-the-Blank Question
 const fillInTheBlankSchema = new Schema({
-    corrects: languageArrayField,
+    answer: [String],
 });
 
 const TrueFalseQuestion = BaseQuestion.discriminator(questionType.trueFalse, trueFalseSchema);
