@@ -6,8 +6,13 @@ class RoleService {
         return newRole;
     }
 
-    async getRoles() {
-        const roles = await Role.find();
+    async getRoles (filters, page, page_size)  {
+        const skip = (page - 1) * page_size;
+
+        const roles = await Role.find(filters)
+                                                                            .skip(skip)
+                                                                            .limit(page_size);
+
         return roles;
     }
 

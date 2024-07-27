@@ -4,7 +4,7 @@ import { createAdminController, loginAdminController } from "../controllers/admi
 
 const adminRoute = Router();
 
-adminRoute.post("/createAdmin", createAdminValidator, createAdminController);
+adminRoute.post("/admin", createAdminValidator, createAdminController);
 adminRoute.post("/login", loginAdminValidator, loginAdminController);
 
 export default adminRoute;

@@ -1,31 +1,23 @@
 import mongoose from "mongoose";
+import { languageField } from "../utils/language.utils.js";
 const { Schema, model } = mongoose;
 
 const countrySchema = new Schema(
     {
-        name: {
-            type: String,
-            required: true,
-            maxLength: 150,
-        },
-        description: {
-            type: String,
-            required: true,
-            maxLength: 1000,
-        },
+        name: languageField(250),
+        description: languageField(1000),
         image: {
             type: String,
-            required: true,
+            require: true,
             maxLength: 1000,
         },
         status: {
             type: Number,
             enum: [0, 1],
-            required: true,
+            require: true,
         },
         localeData: {
             type: Schema.Types.Mixed,
-            required: true
         }
     },
     { timestamps: true }

@@ -1,6 +1,6 @@
 import roleService from "../services/role.service.js";
 
-export const createRoleController = async (req, res) => {
+export const createRole = async (req, res) => {
     try {
         const { name, permissions } = req.body;
         const newRole = await roleService.createRole(name, permissions);
@@ -26,9 +26,24 @@ export const createRoleController = async (req, res) => {
     }
 }
 
-export const getRolesController = async (req, res) => {
+export const getRoles = async (req, res) => {
+    const { page = 1, page_size = 10, name, status } = req.query;
+
+    const maxPageSize = 100;
+    const limitedPageSize = Math.min(page_size, maxPageSize);
+
+    const filters = {};
+
+    if (name) {
+        filters.name = { $regex: new RegExp(name, 'i') };
+    }
+
+    if (status) {
+        filters.status = status;
+    }
+
     try {
-        const roles = await roleService.getRoles();
+        const roles = await roleService.getRoles(filters, page, limitedPageSize);
 
         return res.status(200).json({
             success: true,
@@ -37,7 +52,7 @@ export const getRolesController = async (req, res) => {
             data: {
                 roles
             }
-        })
+        });
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,
@@ -48,7 +63,7 @@ export const getRolesController = async (req, res) => {
     }
 }
 
-export const getRoleController = async (req, res) => {
+export const getRole = async (req, res) => {
     try {
         const { id } = req.params;
         const role = await roleService.getRole(id);
@@ -71,7 +86,7 @@ export const getRoleController = async (req, res) => {
     }
 }
 
-export const updateRolesController = async (req, res) => {
+export const updateRole = async (req, res) => {
     try {
         const { id } = req.params;
         const { name, permissions } = req.body;
