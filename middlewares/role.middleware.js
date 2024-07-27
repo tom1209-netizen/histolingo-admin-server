@@ -98,6 +98,7 @@ export const getRoleValidator = async (req, res, next) => {
                 data: null
             });
         }
+        req.body.role = roleExists;
 
         next();
     } catch (error) {
@@ -132,6 +133,7 @@ export const getRolePermissionsValidator = async (req, res, next) => {
                 data: null
             });
         }
+        req.body.role = roleExists;
 
         next();
     } catch (error) {
