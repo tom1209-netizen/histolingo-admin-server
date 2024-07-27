@@ -7,12 +7,14 @@ import {
     createRoleValidator,
     updateRoleValidator,
     getRoleValidator,
+    getRolePermissionsValidator,
 } from "../middlewares/role.middleware.js";
 import {
     createRole,
     getRoles,
     getRole,
-    updateRole
+    updateRole,
+    getRolePermission
 } from "../controllers/role.controller.js";
 import {
     rolePrivileges
@@ -50,6 +52,13 @@ roleRoute.put(
     updateRoleValidator,
     updateRole
 );
+
+roleRoute.get(
+    "/permissions/:id",
+    authentication,
+    getRolePermissionsValidator,
+    getRolePermission,
+)
 
 
 export default roleRoute;
