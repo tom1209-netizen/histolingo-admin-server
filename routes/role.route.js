@@ -1,21 +1,55 @@
 import { Router } from "express";
 import {
+    authentication,
+    authorization
+} from "../middlewares/auth.middleware.js";
+import {
     createRoleValidator,
     updateRoleValidator,
-    getRoleValidator
+    getRoleValidator,
 } from "../middlewares/role.middleware.js";
 import {
-    createRoleController,
-    getRolesController,
-    getRoleController,
-    updateRolesController
+    createRole,
+    getRoles,
+    getRole,
+    updateRole
 } from "../controllers/role.controller.js";
+import {
+    rolePrivileges
+} from "../constants/role.constant.js";
 
 const roleRoute = Router();
 
-roleRoute.post("/createRole", createRoleValidator, createRoleController);
-roleRoute.get("/getRoles", getRolesController);
-roleRoute.get("/getRole/:id", getRoleValidator, getRoleController);
-roleRoute.put("/updateRole/:id", updateRoleValidator, updateRolesController);
+roleRoute.post(
+    "/",
+    authentication,
+    authorization(rolePrivileges.role.create),
+    createRoleValidator,
+    createRole
+);
+
+roleRoute.get(
+    "/",
+    authentication,
+    authorization(rolePrivileges.role.read),
+    getRoles
+);
+
+roleRoute.get(
+    "/:id",
+    authentication,
+    authorization(rolePrivileges.role.read),
+    getRoleValidator,
+    getRole
+);
+
+roleRoute.put(
+    "/:id",
+    authentication,
+    authorization(rolePrivileges.role.update),
+    updateRoleValidator,
+    updateRole
+);
+
 
 export default roleRoute;

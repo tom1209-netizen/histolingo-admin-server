@@ -1,6 +1,5 @@
 import Joi from "joi";
 import Role from "../models/role.model.js";
-import tokenService from "../services/token.service.js";
 
 export const createRoleValidator = async (req, res, next) => {
     const { name, permissions } = req.body;
@@ -16,40 +15,24 @@ export const createRoleValidator = async (req, res, next) => {
     });
 
     try {
-        console.log('Validating authorization header');
-        if (!req.headers.authorization) {
-            console.log('Authorization header missing');
-            const error = new Error("Unauthorized");
-            error.status = 403;
-            error.data = null;
-            throw error;
-        }
-        const token = req.headers.authorization.split(' ')[1];
-        console.log('Token extracted:', token);
-
-        // Mock token verification for testing
-        await tokenService.verifyToken(token);
-        console.log('Token verified');
-
-        console.log('Validating request body');
         await createSchema.validateAsync({ name, permissions });
-        console.log('Request body validated');
 
-        console.log('Checking if role already exists');
         const existedRole = await Role.findOne({ name });
         if (existedRole) {
-            console.log('Role already exists');
             const error = new Error("Role already exists");
             error.status = 403;
             error.data = null;
             throw error;
         }
 
-        console.log('Validation successful, proceeding to next middleware');
         next();
     } catch (error) {
-        console.error('Error in createRoleValidator:', error.message);
-        next(error);
+        return res.status(error.status || 500).json({
+            success: false,
+            message: error.message || "Internal Server Error",
+            status: error.status || 500,
+            data: error.data || null
+        });
     }
 }
 
@@ -70,27 +53,26 @@ export const updateRoleValidator = async (req, res, next) => {
     });
 
     try {
-        if (!req.headers.authorization) {
-            const error = new Error("Unauthorized");
-            error.status = 403;
-            error.data = null;
-            throw error;
+        await updateSchema.validateAsync({ id, name, permissions });
+
+        const roleExists = await Role.findById(id);
+        if (!roleExists) {
+            return res.status(404).json({
+                success: false,
+                message: 'Role not found',
+                status: 404,
+                data: null
+            });
         }
-        const token = req.headers.authorization.split(' ')[1];
-        tokenService.verifyToken(token);
 
-        console.log('Validating request body');
-        await updateSchema.validateAsync({
-            id,
-            name,
-            permissions
-        });
-
-        console.log("Passed middleware")
         next();
     } catch (error) {
-        console.error('Error in createRoleValidator:', error.message);
-        next(error);
+        return res.status(error.status || 500).json({
+            success: false,
+            message: error.message || 'Internal Server Error',
+            status: error.status || 500,
+            data: error.data || null
+        });
     }
 }
 
@@ -105,21 +87,25 @@ export const getRoleValidator = async (req, res, next) => {
     });
 
     try {
-        if (!req.headers.authorization) {
-            const error = new Error("Unauthorized");
-            error.status = 403;
-            error.data = null;
-            throw error;
-        }
-        const token = req.headers.authorization.split(' ')[1];
-        tokenService.verifyToken(token);
+        await getSchema.validateAsync({ id });
 
-        await getSchema.validateAsync({
-            id
-        });
+        const roleExists = await Role.findById(id);
+        if (!roleExists) {
+            return res.status(404).json({
+                success: false,
+                message: 'Role not found',
+                status: 404,
+                data: null
+            });
+        }
 
         next();
     } catch (error) {
-        next(error);
+        return res.status(error.status || 500).json({
+            success: false,
+            message: error.message || 'Internal Server Error',
+            status: error.status || 500,
+            data: error.data || null
+        });
     }
 }

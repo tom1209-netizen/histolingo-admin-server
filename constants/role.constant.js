@@ -5,44 +5,44 @@ export const roleStatus = {
 
 export const rolePrivileges = {
     topic: {
-        view: 1,
-        add: 2,
-        edit: 3,
+        read: 1,
+        create: 2,
+        update: 3,
         delete: 4
     },
     country: {
-        view: 5,
-        add: 6,
-        edit: 7,
+        read: 5,
+        create: 6,
+        update: 7,
         delete: 8
     },
     role: {
-        view: 9,
-        add: 10,
-        edit: 11,
+        read: 9,
+        create: 10,
+        update: 11,
         delete: 12
     },
     documentation: {
-        view: 13,
-        add: 14,
-        edit: 15,
+        read: 13,
+        create: 14,
+        update: 15,
         delete: 16
     },
     test: {
-        view: 17,
-        add: 18,
-        edit: 19,
+        read: 17,
+        create: 18,
+        update: 19,
         delete: 20
     },
     question: {
-        view: 21,
-        add: 22,
-        edit: 23,
+        read: 21,
+        create: 22,
+        update: 23,
         delete: 24
     },
     feedback: {
-        view: 25,
-        edit: 26
+        read: 25,
+        update: 26
     }
 };
 
