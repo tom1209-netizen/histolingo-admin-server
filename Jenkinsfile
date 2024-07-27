@@ -22,7 +22,7 @@ pipeline {
         stage('Deploy new version') {
            steps {
                 echo "Docker compose up for ${IMAGE_NAME}"
-                sh "docker compose up"
+                sh "docker compose up -d"
             }
         }
     }

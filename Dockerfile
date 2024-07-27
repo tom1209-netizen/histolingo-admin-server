@@ -4,10 +4,10 @@ FROM node:alpine AS builder
 # Setting up the work directory
 WORKDIR /app
 
-EXPOSE 3000
+# EXPOSE 3000
 EXPOSE 8000
-EXPOSE 80
-EXPOSE 443
+# EXPOSE 80
+# EXPOSE 443
 
 # Copying all the files in our project
 COPY . .
