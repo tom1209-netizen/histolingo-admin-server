@@ -65,8 +65,7 @@ export const getRoles = async (req, res) => {
 
 export const getRole = async (req, res) => {
     try {
-        const { id } = req.params;
-        const role = await roleService.getRole(id);
+        const { role } = req.body
 
         return res.status(200).json({
             success: true,
@@ -88,9 +87,7 @@ export const getRole = async (req, res) => {
 
 export const getRolePermission = async (req, res) => {
     try {
-        const { id } = req.params;
-
-        const role = await roleService.getRole(id);
+        const { role } = req.body;
         const rolePermissions = role.permissions;
 
         return res.status(200).json({
