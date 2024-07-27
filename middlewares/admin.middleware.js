@@ -27,7 +27,6 @@ export const createAdminValidator = async (req, res, next) => {
                 .required(),
         });
 
-
         await createSchema.validateAsync({
             firstName,
             lastName,
@@ -43,7 +42,6 @@ export const createAdminValidator = async (req, res, next) => {
             throw error;
         }
 
-        // Find role by name
         const roleDocs = await Role.find({ name: { $in: roles } });
         if (roleDocs.length !== roles.length) {
             const error = new Error("Some roles do not exist");
@@ -51,10 +49,8 @@ export const createAdminValidator = async (req, res, next) => {
             throw error;
         }
 
-        // Convert to `_id`
         const roleIds = roleDocs.map(role => role._id);
 
-        // Convert `req.body.roles` to `_id`
         req.body.roles = roleIds;
 
         next();
@@ -75,7 +71,7 @@ export const loginAdminValidator = async (req, res, next) => {
             .min(8)
             .max(100)
             .required()
-    })
+    });
 
     try {
         await loginSchema.validateAsync({
@@ -83,12 +79,12 @@ export const loginAdminValidator = async (req, res, next) => {
             password,
         }, {
             abortEarly: false
-        })
+        });
 
         const existedAdmin = await Admin.findOne({ email });
         req.body.admin = existedAdmin;
-        const decryptedPassword = encodeService.decrypt(password, existedAdmin.salt);
-        if (!existedAdmin || decryptedPassword !== existedAdmin.password) {
+        const passwordMatches = existedAdmin ? encodeService.decrypt(password, existedAdmin.password) : false;
+        if (!existedAdmin || !passwordMatches) {
             const error = new Error("Email or password is invalid");
             error.statusCode = 403;
             throw error;

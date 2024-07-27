@@ -4,7 +4,7 @@ import { config } from "dotenv"
 import databaseService from "./services/database.service.js";
 import roleRoute from "./routes/role.route.js";
 import adminRoute from "./routes/admin.route.js";
-import authRoutes from "./routes/auth.route.js";
+import passwordRoutes from "./routes/passwordController.route.js";
 
 const app = express();
 
@@ -20,9 +20,9 @@ app.get("/", (req, res) => {
     res.send("Hello! Welcome to my Express server.");
 });
 
-app.use("/role", roleRoute);
+app.use("/roles", roleRoute);
 app.use("/admin", adminRoute);
-app.use('/auth', authRoutes)
+app.use('/password', passwordRoutes)
 
 app.use((err, req, res, next) => {
     if (err.message) {
