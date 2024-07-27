@@ -86,6 +86,33 @@ export const getRole = async (req, res) => {
     }
 }
 
+export const getRolePermission = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const role = await roleService.getRole(id);
+        const rolePermissions = role.permissions;
+
+        return res.status(200).json({
+            success: true,
+            message: "Get role permission successfully",
+            status: 200,
+            data: {
+                rolePermissions
+            }
+        })
+
+
+    } catch(error) {
+        return res.status(error.status || 500).json({
+            success: false,
+            message: error.message || "Internal Server Error",
+            status: error.status || 500,
+            data: error.data || null
+        });
+    }
+}
+
 export const updateRole = async (req, res) => {
     try {
         const { id } = req.params;
