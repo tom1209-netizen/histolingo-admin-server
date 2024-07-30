@@ -4,15 +4,15 @@ import roleRoute from "../../routes/role.route.js";
 import roleService from "../../services/role.service.js";
 import { rolePrivileges } from "../../constants/role.constant.js";
 import tokenService from "../../services/token.service.js";
-import Role from "../../models/role.model.js";
 import { describe, beforeEach, it, expect, jest } from "@jest/globals";
+import * as repl from "node:repl";
 
 jest.mock('../../services/role.service.js');
 jest.mock('../../services/token.service.js');
 jest.mock('../../models/role.model.js');
 jest.mock('../../middlewares/auth.middleware.js', () => ({
-    authentication: jest.fn((req, res, next) => next()),
-    authorization: jest.fn(() => (req, res, next) => next())
+    authentication: (req, res, next) => next(),
+    authorization: () => (req, res, next) => next()
 }));
 
 const app = express();
@@ -24,7 +24,6 @@ describe('Role Controllers', () => {
         jest.clearAllMocks();
 
         tokenService.verifyToken.mockImplementation(() => {});
-        Role.findById.mockResolvedValue(null);
     });
 
     it('should create a new role', async () => {
@@ -133,10 +132,16 @@ describe('Role Controllers', () => {
 
     it('should update a role', async () => {
         const id = '60d0fe4f5311236168a109ca';
+        const role = {
+            name: 'Admin',
+            permissions: [rolePrivileges.role.read, rolePrivileges.role.create]
+        };
         const updatedRole = {
             name: 'Admin',
             permissions: [rolePrivileges.role.read, rolePrivileges.role.create, rolePrivileges.role.delete]
         };
+
+        roleService.getRole.mockResolvedValue(role);
         roleService.updateRole.mockResolvedValue(updatedRole);
 
         const response = await request(app)
@@ -150,7 +155,13 @@ describe('Role Controllers', () => {
     });
 
     it('should handle update role error', async () => {
-        roleService.updateRole.mockRejectedValue(new Error('Error updating role'));
+        const role = {
+            name: 'Admin',
+            permissions: [rolePrivileges.role.read, rolePrivileges.role.create]
+        };
+
+        roleService.getRole.mockResolvedValue(role);
+        roleService.updateRole.mockRejectedValue(new Error("Error updating role"))
 
         const id = '60d0fe4f5311236168a109ca';
         const updatedRole = {
