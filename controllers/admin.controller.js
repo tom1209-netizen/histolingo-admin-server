@@ -145,7 +145,7 @@ export const getListAdmin = async (req, res, next) => {
     // }
 
     try {
-        const { search = '', page = 1, limit = 10 } = req.query;
+        const { search = '', page = 1, limit = 10, status } = req.query;
 
         // Tạo điều kiện tìm kiếm
         const searchCondition = search
@@ -154,10 +154,13 @@ export const getListAdmin = async (req, res, next) => {
                     { firstName: { $regex: search, $options: 'i' } },
                     { lastName: { $regex: search, $options: 'i' } },
                     { adminName: { $regex: search, $options: 'i' } },
-                    { email: { $regex: search, $options: 'i' } }
+                    { email: { $regex: search, $options: 'i' } },
                 ]
             }
             : {};
+        if (status !== null && status !== undefined && status !== "") {
+            searchCondition.status = status;
+        }
 
         // Lấy danh sách Admin theo điều kiện tìm kiếm và phân trang
         const admins = await Admin.find(searchCondition)
@@ -173,6 +176,7 @@ export const getListAdmin = async (req, res, next) => {
             data: {
                 admins,
                 totalPages: Math.ceil(totalAdmins / limit),
+                totalCount: totalAdmins,
                 currentPage: Number(page)
             },
         });
@@ -184,7 +188,7 @@ export const getListAdmin = async (req, res, next) => {
 export const getByIdController = async (req, res, next) => {
     try {
         const id = req.params.id;
-        const admin = await Admin.findOne({ _id: id, status: 1 });
+        const admin = await Admin.findOne({ _id: id }, { password: 0, salt: 0 });
 
         if (!admin) {
             return res.status(404).json({

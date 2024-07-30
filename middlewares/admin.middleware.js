@@ -116,7 +116,10 @@ export const getListAdminValidator = async (req, res, next) => {
     const schema = Joi.object({
         search: Joi.string().allow(''),
         page: Joi.number().integer().min(1).default(1),
-        limit: Joi.number().integer().min(1).default(10)
+        limit: Joi.number().integer().min(1).default(10),
+        status: Joi.number()
+        .allow(null, "")
+        .valid(adminStatus.active, adminStatus.inactive),
     });
 
     try {
