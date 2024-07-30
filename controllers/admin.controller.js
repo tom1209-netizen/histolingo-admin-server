@@ -24,14 +24,13 @@ export const createAdminController = async (req, res, next) => {
             status: 201,
             data: {
                 admin: {
+                    id: newAdmin._id,
                     firstName: newAdmin.firstName,
                     lastName: newAdmin.lastName,
                     adminName: newAdmin.adminName,
                     email: newAdmin.email,
                     roles: newAdmin.roles,
                 },
-                // token,
-                // refreshToken,
             },
         });
     } catch (error) {
@@ -73,7 +72,7 @@ export const loginAdminController = async (req, res, next) => {
             data: error.data || null
         });
     }
-}
+};
 
 export const getCurrentAdminController = (req, res, next) => {
     const { admin } = req.body;
@@ -119,9 +118,75 @@ export const updateAdminController = async (req, res, next) => {
 };
 
 export const getListAdmin = async (req, res, next) => {
+    // try {
+    //     const allAdmins = await Admin.find({ status: 1 });
+    //     if (allAdmins.length === 0) {
+    //         return res.status(404).json({
+    //             success: true,
+    //             message: "No admin available",
+    //             status: 404,
+    //             data: null
+    //         });
+    //     } else {
+    //         return res.status(200).json({
+    //             success: true,
+    //             message: "Get list admin successfully",
+    //             status: 200,
+    //             data: allAdmins
+    //         });
+    //     }
+    // } catch (error) {
+    //     return res.status(error.status || 500).json({
+    //         success: false,
+    //         message: error.message || "Internal Server Error",
+    //         status: error.status || 500,
+    //         data: error.data || null
+    //     });
+    // }
+
     try {
-        const allAdmins = await Admin.find({ status: 1 });
-        if (allAdmins.length === 0) {
+        const { search = '', page = 1, limit = 10 } = req.query;
+
+        // Tạo điều kiện tìm kiếm
+        const searchCondition = search
+            ? {
+                $or: [
+                    { firstName: { $regex: search, $options: 'i' } },
+                    { lastName: { $regex: search, $options: 'i' } },
+                    { adminName: { $regex: search, $options: 'i' } },
+                    { email: { $regex: search, $options: 'i' } }
+                ]
+            }
+            : {};
+
+        // Lấy danh sách Admin theo điều kiện tìm kiếm và phân trang
+        const admins = await Admin.find(searchCondition)
+            .skip((page - 1) * limit)
+            .limit(Number(limit));
+
+        // Lấy tổng số lượng Admin để tính toán phân trang
+        const totalAdmins = await Admin.countDocuments(searchCondition);
+
+        return res.status(200).json({
+            success: true,
+            message: "List admin retrieved successfully",
+            data: {
+                admins,
+                totalPages: Math.ceil(totalAdmins / limit),
+                currentPage: Number(page)
+            },
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getByIdController = async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const admin = await Admin.findOne({ _id: id, status: 1 });
+
+        if (!admin) {
             return res.status(404).json({
                 success: true,
                 message: "No admin available",
@@ -131,9 +196,9 @@ export const getListAdmin = async (req, res, next) => {
         } else {
             return res.status(200).json({
                 success: true,
-                message: "Get list admin successfully",
+                message: "Get admin successfully",
                 status: 200,
-                data: allAdmins
+                data: admin
             });
         }
     } catch (error) {
@@ -144,4 +209,4 @@ export const getListAdmin = async (req, res, next) => {
             data: error.data || null
         });
     }
-}
+};

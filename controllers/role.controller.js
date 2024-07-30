@@ -11,6 +11,7 @@ export const createRoleController = async (req, res, next) => {
             status: 201,
             data: {
                 role: {
+                    id: newRole._id,
                     name: newRole.name,
                     permissions: newRole.permissions,
                 }

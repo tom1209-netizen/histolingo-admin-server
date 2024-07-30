@@ -1,13 +1,14 @@
 import { Router } from "express";
-import { getAdminValidator, createAdminValidator, loginAdminValidator, updateAdminValidator } from "../middlewares/admin.middleware.js";
-import { createAdminController, getCurrentAdminController, getListAdmin, loginAdminController, updateAdminController } from "../controllers/admin.controller.js";
+import { getAdminValidator, createAdminValidator, loginAdminValidator, updateAdminValidator, getListAdminValidator } from "../middlewares/admin.middleware.js";
+import { createAdminController, getByIdController, getCurrentAdminController, getListAdmin, loginAdminController, updateAdminController } from "../controllers/admin.controller.js";
 
 const adminRoute = Router();
 
-adminRoute.post("/createAdmin", createAdminValidator, createAdminController);
+adminRoute.post("/create", createAdminValidator, createAdminController);
 adminRoute.post("/login", loginAdminValidator, loginAdminController);
-adminRoute.get("/getAdmin", getAdminValidator, getCurrentAdminController);
-adminRoute.put("/updateAdmin", updateAdminValidator, updateAdminController);
-adminRoute.get("/getListAdmin", getListAdmin);
+adminRoute.get("/getCurrent", getAdminValidator, getCurrentAdminController);
+adminRoute.put("/update", updateAdminValidator, updateAdminController);
+adminRoute.get("/getList", getListAdminValidator, getListAdmin);
+adminRoute.get("/getById/:id", getAdminValidator, getByIdController);
 
 export default adminRoute;

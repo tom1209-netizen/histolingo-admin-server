@@ -30,7 +30,7 @@ export const createAdminValidator = async (req, res, next) => {
                 .max(250)
                 .required(),
             roles: Joi.array()
-                .items(Joi.string())
+                .items(Joi.string().hex().length(24))
                 .required(),
         });
 
@@ -51,19 +51,13 @@ export const createAdminValidator = async (req, res, next) => {
             throw error;
         }
 
-        // Find role by name
-        const roleDocs = await Role.find({ name: { $in: roles } });
+        // Find role by id
+        const roleDocs = await Role.find({ _id: { $in: roles } });
         if (roleDocs.length !== roles.length) {
             const error = new Error("Some roles do not exist");
             error.statusCode = 400;
             throw error;
         }
-
-        // Convert to `_id`
-        const roleIds = roleDocs.map(role => role._id);
-
-        // Convert `req.body.roles` to `_id`
-        req.body.roles = roleIds;
 
         next();
     } catch (error) {
@@ -118,6 +112,22 @@ export const getAdminValidator = async (req, res, next) => {
     }
 };
 
+export const getListAdminValidator = async (req, res, next) => {
+    const schema = Joi.object({
+        search: Joi.string().allow(''),
+        page: Joi.number().integer().min(1).default(1),
+        limit: Joi.number().integer().min(1).default(10)
+    });
+
+    try {
+        const value = await schema.validateAsync(req.query);
+        req.query = value;
+        next();
+    } catch (error) {
+        next(error);
+    }
+};
+
 export const updateAdminValidator = async (req, res, next) => {
     try {
         const updateSchema = Joi.object({
@@ -140,7 +150,7 @@ export const updateAdminValidator = async (req, res, next) => {
                 .max(250)
                 .required(),
             roles: Joi.array()
-                .items(Joi.string())
+                .items(Joi.string().hex().length(24))
                 .required(),
             status: Joi.number()
                 .valid(adminStatus.active, adminStatus.inactive),
@@ -159,22 +169,16 @@ export const updateAdminValidator = async (req, res, next) => {
         const token = authenticationToken(req);
         req.body.admin = await tokenService.infoToken(token);
 
-        // Find role by name
-        const roleDocs = await Role.find({ name: { $in: roles } });
+        // Find role by id
+        const roleDocs = await Role.find({ _id: { $in: roles } });
         if (roleDocs.length !== roles.length) {
             const error = new Error("Some roles do not exist");
             error.statusCode = 400;
             throw error;
         }
-
-        // Convert to `_id`
-        const roleIds = roleDocs.map(role => role._id);
-
-        // Convert `req.body.roles` to `_id`
-        req.body.roles = roleIds;
-
+        
         next();
     } catch (error) {
         next(error);
     }
-}
+};
