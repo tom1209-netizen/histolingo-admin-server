@@ -1,5 +1,6 @@
 import Joi from "joi";
 import Role from "../models/role.model.js";
+import roleService from "../services/role.service.js";
 
 export const createRoleValidator = async (req, res, next) => {
     const { name, permissions } = req.body;
@@ -10,7 +11,7 @@ export const createRoleValidator = async (req, res, next) => {
             .max(250)
             .required(),
         permissions: Joi.array()
-            .items(Joi.string())
+            .items(Joi.number())
             .required(),
     });
 
@@ -49,13 +50,13 @@ export const updateRoleValidator = async (req, res, next) => {
             .min(1)
             .max(250),
         permissions: Joi.array()
-            .items(Joi.string()),
+            .items(Joi.number()),
     });
 
     try {
         await updateSchema.validateAsync({ id, name, permissions });
 
-        const roleExists = await Role.findById(id);
+        const roleExists = await roleService.getRole(id);
         if (!roleExists) {
             return res.status(404).json({
                 success: false,
@@ -89,7 +90,7 @@ export const getRoleValidator = async (req, res, next) => {
     try {
         await getSchema.validateAsync({ id });
 
-        const roleExists = await Role.findById(id);
+        const roleExists = await roleService.getRole(id);
         if (!roleExists) {
             return res.status(404).json({
                 success: false,
@@ -124,7 +125,7 @@ export const getRolePermissionsValidator = async (req, res, next) => {
     try {
         await getSchema.validateAsync({ id });
 
-        const roleExists = await Role.findById(id);
+        const roleExists = await roleService.getRole(id);
         if (!roleExists) {
             return res.status(404).json({
                 success: false,
