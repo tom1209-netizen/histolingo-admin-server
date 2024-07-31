@@ -12,8 +12,8 @@ export const authentication = async (req, res, next) => {
         }
 
         const token = req.headers.authorization.split(' ')[1];
-
         tokenService.verifyToken(token);
+        req.admin = await tokenService.infoToken(token);
 
         next();
     } catch (error) {
@@ -24,43 +24,44 @@ export const authentication = async (req, res, next) => {
             details: error.message
         });
     }
-}
+};
 
 export const authorization = (requiredPermission) => async (req, res, next) => {
-        try {
-            if (!req.admin) {
-                return res.status(403).json({
-                    message: "No admin data provided",
-                    status: 403,
-                    error: "Forbidden"
-                });
-            }
-
-            const role = await Role.findById(req.admin.roleId);
-
-            if (!role) {
-                return res.status(403).json({
-                    message: "Role not found",
-                    status: 403,
-                    error: "Forbidden"
-                });
-            }
-
-            if (!role.permissions.includes(requiredPermission)) {
-                return res.status(403).json({
-                    message: "Permission denied",
-                    status: 403,
-                    error: "Forbidden"
-                });
-            }
-
-            next();
-        } catch (error) {
+    try {
+        if (!req.admin) {
             return res.status(403).json({
-                message: "An error occurred during authorization",
+                message: "No admin data provided",
                 status: 403,
-                error: "Forbidden",
-                details: error.message
+                error: "Forbidden"
             });
         }
-}
+
+        const roles = await Role.find({ _id: { $in: req.admin.roles } });
+
+        if (!roles || roles.length === 0) {
+            return res.status(403).json({
+                message: "Roles not found",
+                status: 403,
+                error: "Forbidden"
+            });
+        }
+
+        const hasPermission = roles.some(role => role.permissions.includes(requiredPermission));
+        if (!hasPermission) {
+            return res.status(403).json({
+                message: "Permission denied",
+                status: 403,
+                error: "Forbidden"
+            });
+        }
+
+        next();
+    } catch (error) {
+        return res.status(403).json({
+            message: "An error occurred during authorization",
+            status: 403,
+            error: "Forbidden",
+            details: error.message
+        });
+    }
+};
