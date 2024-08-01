@@ -1,11 +1,12 @@
 import tokenService from "../services/token.service.js";
 import Role from "../models/role.model.js";
+import { t } from "../utils/localization.util.js";
 
 export const authentication = async (req, res, next) => {
     try {
         if (!req.headers.authorization) {
             return res.status(403).json({
-                message: "No token provided",
+                message: t(req.contentLanguage, "auth.noToken"),
                 status: 403,
                 error: "Unauthorized"
             });
@@ -18,7 +19,7 @@ export const authentication = async (req, res, next) => {
         next();
     } catch (error) {
         return res.status(403).json({
-            message: "Invalid token",
+            message: t(req.contentLanguage, "auth.tokenInvalid"),
             status: 403,
             error: "Unauthorized",
             details: error.message
@@ -30,7 +31,7 @@ export const authorization = (requiredPermission) => async (req, res, next) => {
     try {
         if (!req.admin) {
             return res.status(403).json({
-                message: "No admin data provided",
+                message: t(req.contentLanguage, "admin.notFound"),
                 status: 403,
                 error: "Forbidden"
             });
@@ -40,7 +41,7 @@ export const authorization = (requiredPermission) => async (req, res, next) => {
 
         if (!roles || roles.length === 0) {
             return res.status(403).json({
-                message: "Roles not found",
+                message: t(req.contentLanguage, "role.notFound"),
                 status: 403,
                 error: "Forbidden"
             });
@@ -49,7 +50,7 @@ export const authorization = (requiredPermission) => async (req, res, next) => {
         const hasPermission = roles.some(role => role.permissions.includes(requiredPermission));
         if (!hasPermission) {
             return res.status(403).json({
-                message: "Permission denied",
+                message: t(req.contentLanguage, "auth.permissionDenied"),
                 status: 403,
                 error: "Forbidden"
             });

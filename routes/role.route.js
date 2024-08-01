@@ -7,14 +7,13 @@ import {
     createRoleValidator,
     updateRoleValidator,
     getRoleValidator,
-    getRolePermissionsValidator,
 } from "../middlewares/role.middleware.js";
 import {
-    createRole,
-    getRoles,
-    getRole,
-    updateRole,
-    getRolePermission
+    createRoleController,
+    getRolesController,
+    getRoleController,
+    updateRoleController,
+    getAllPermissionController
 } from "../controllers/role.controller.js";
 import {
     rolePrivileges
@@ -27,22 +26,29 @@ roleRoute.post(
     authentication,
     authorization(rolePrivileges.role.create),
     createRoleValidator,
-    createRole
+    createRoleController
 );
 
 roleRoute.get(
     "/",
     authentication,
     authorization(rolePrivileges.role.read),
-    getRoles
+    getRolesController
 );
+
+roleRoute.get(
+    "/permissions",
+    authentication,
+    authorization(rolePrivileges.role.read),
+    getAllPermissionController,
+)
 
 roleRoute.get(
     "/:id",
     authentication,
     authorization(rolePrivileges.role.read),
     getRoleValidator,
-    getRole
+    getRoleController
 );
 
 roleRoute.put(
@@ -50,15 +56,7 @@ roleRoute.put(
     authentication,
     authorization(rolePrivileges.role.update),
     updateRoleValidator,
-    updateRole
+    updateRoleController
 );
-
-roleRoute.get(
-    "/permissions/:id",
-    authentication,
-    getRolePermissionsValidator,
-    getRolePermission,
-)
-
 
 export default roleRoute;

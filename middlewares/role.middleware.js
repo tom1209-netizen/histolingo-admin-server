@@ -1,6 +1,7 @@
 import Joi from "joi";
 import Role from "../models/role.model.js";
 import roleService from "../services/role.service.js";
+import { t } from "../utils/localization.util.js";
 
 export const createRoleValidator = async (req, res, next) => {
     const { name, permissions } = req.body;
@@ -11,8 +12,13 @@ export const createRoleValidator = async (req, res, next) => {
             .max(250)
             .required(),
         permissions: Joi.array()
-            .items(Joi.number())
-            .required(),
+            .items(
+                Joi
+                    .number()
+                    .min(1)
+                    .max(26)
+            )
+            .required()
     });
 
     try {
@@ -20,10 +26,12 @@ export const createRoleValidator = async (req, res, next) => {
 
         const existedRole = await Role.findOne({ name });
         if (existedRole) {
-            const error = new Error("Role already exists");
-            error.status = 403;
-            error.data = null;
-            throw error;
+            return res.status(404).json({
+                success: false,
+                message: t(req.contentLanguage, "role.roleExists"),
+                status: 404,
+                data: null
+            });
         }
 
         next();
@@ -60,7 +68,7 @@ export const updateRoleValidator = async (req, res, next) => {
         if (!roleExists) {
             return res.status(404).json({
                 success: false,
-                message: 'Role not found',
+                message: t(req.contentLanguage, "role.roleNotFound"),
                 status: 404,
                 data: null
             });
@@ -79,7 +87,6 @@ export const updateRoleValidator = async (req, res, next) => {
 
 export const getRoleValidator = async (req, res, next) => {
     const { id } = req.params;
-
     const getSchema = Joi.object({
         id: Joi.string()
             .hex()
@@ -89,52 +96,6 @@ export const getRoleValidator = async (req, res, next) => {
 
     try {
         await getSchema.validateAsync({ id });
-
-        const roleExists = await roleService.getRole(id);
-        if (!roleExists) {
-            return res.status(404).json({
-                success: false,
-                message: 'Role not found',
-                status: 404,
-                data: null
-            });
-        }
-        req.body.role = roleExists;
-
-        next();
-    } catch (error) {
-        return res.status(error.status || 500).json({
-            success: false,
-            message: error.message || 'Internal Server Error',
-            status: error.status || 500,
-            data: error.data || null
-        });
-    }
-}
-
-export const getRolePermissionsValidator = async (req, res, next) => {
-    const { id } = req.params;
-
-    const getSchema = Joi.object({
-        id: Joi.string()
-            .hex()
-            .length(24)
-            .required(),
-    });
-
-    try {
-        await getSchema.validateAsync({ id });
-
-        const roleExists = await roleService.getRole(id);
-        if (!roleExists) {
-            return res.status(404).json({
-                success: false,
-                message: 'Role not found',
-                status: 404,
-                data: null
-            });
-        }
-        req.body.role = roleExists;
 
         next();
     } catch (error) {

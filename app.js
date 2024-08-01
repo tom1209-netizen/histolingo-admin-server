@@ -1,20 +1,27 @@
-import express from "express"
-import cors from "cors"
-import { config } from "dotenv"
+import express from "express";
+import cors from "cors";
+import { config } from "dotenv";
 import databaseService from "./services/database.service.js";
 import roleRoute from "./routes/role.route.js";
 import adminRoute from "./routes/admin.route.js";
 import passwordRoutes from "./routes/passwordController.route.js";
+import { initLocaleData } from "./localization.js";
+import { loadContentLanguage } from "./middlewares/localization.middleware.js";
 
 const app = express();
-
-// Connect to MongoDB
-// mongoose.connect('mongodb://localhost:27017/local', { useNewUrlParser: true, useUnifiedTopology: true });
 
 config();
 
 app.use(express.json());
 app.use(cors());
+
+initLocaleData().then(() => {
+    console.log("Locale data initialized successfully");
+}).catch(err => {
+    console.error("Error initializing locale data:", err);
+});
+
+app.use(loadContentLanguage);
 
 app.get("/", (req, res) => {
     res.send("Hello! Welcome to my Express server.");
@@ -22,8 +29,9 @@ app.get("/", (req, res) => {
 
 app.use("/roles", roleRoute);
 app.use("/admin", adminRoute);
-app.use('/password', passwordRoutes)
+app.use("/password", passwordRoutes);
 
+// Error handling middleware
 app.use((err, req, res, next) => {
     if (err.message) {
         return res.json({ error: err.message });
@@ -32,8 +40,7 @@ app.use((err, req, res, next) => {
     }
 });
 
-
 app.listen(process.env.PORT, async (err) => {
     await databaseService.connect();
     console.log(`Your app is listening on ${process.env.PORT}`);
-})
+});
