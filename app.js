@@ -4,6 +4,7 @@ import { config } from "dotenv";
 import databaseService from "./services/database.service.js";
 import roleRoute from "./routes/role.route.js";
 import adminRoute from "./routes/admin.route.js";
+import topicRoute from "./routes/topic.route.js";
 import passwordRoutes from "./routes/passwordController.route.js";
 import { initLocaleData } from "./localization.js";
 import { loadContentLanguage } from "./middlewares/localization.middleware.js";
@@ -29,6 +30,7 @@ app.get("/", (req, res) => {
 
 app.use("/roles", roleRoute);
 app.use("/admin", adminRoute);
+app.use('/topics', topicRoute);
 app.use("/password", passwordRoutes);
 
 // Error handling middleware
