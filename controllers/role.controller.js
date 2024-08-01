@@ -1,13 +1,16 @@
 import roleService from "../services/role.service.js";
+import { isValidStatus } from "../utils/validation.utils.js";
+import { rolePrivileges } from "../constants/role.constant.js";
+import { t } from "../utils/localization.util.js"
 
-export const createRole = async (req, res) => {
+export const createRoleController = async (req, res) => {
     try {
         const { name, permissions } = req.body;
         const newRole = await roleService.createRole(name, permissions);
-
+        console.log(req.contentLanguage)
         return res.status(201).json({
             success: true,
-            message: "Create role successfully",
+            message: t(req.contentLanguage, "role.createRoleSuccess"),
             status: 201,
             data: {
                 role: {
@@ -26,7 +29,7 @@ export const createRole = async (req, res) => {
     }
 }
 
-export const getRoles = async (req, res) => {
+export const getRolesController = async (req, res) => {
     const { page = 1, page_size = 10, name, status } = req.query;
 
     const maxPageSize = 100;
@@ -38,7 +41,7 @@ export const getRoles = async (req, res) => {
         filters.name = { $regex: new RegExp(name, 'i') };
     }
 
-    if (status) {
+    if (isValidStatus(status)) {
         filters.status = status;
     }
 
@@ -47,10 +50,13 @@ export const getRoles = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: "Get roles successfully",
+            message: t(req.contentLanguage, "role.getRolesSuccess"),
             status: 200,
             data: {
-                roles
+                roles,
+                totalRoles: roles.length,
+                totalPage: Math.ceil(roles.length / limitedPageSize),
+                currentPage: page
             }
         });
     } catch (error) {
@@ -63,13 +69,24 @@ export const getRoles = async (req, res) => {
     }
 }
 
-export const getRole = async (req, res) => {
+export const getRoleController = async (req, res) => {
     try {
-        const { role } = req.body
+        const { id } = req.params;
+
+        const role = await roleService.getRole(id);
+
+        if (!role) {
+            return res.status(404).json({
+                success: false,
+                message: t(req.contentLanguage, "role.notFound"),
+                status: 404,
+                data: null
+            });
+        }
 
         return res.status(200).json({
             success: true,
-            message: "Get role successfully",
+            message: t(req.contentLanguage, "role.getRoleSuccess"),
             status: 200,
             data: {
                 role
@@ -85,17 +102,15 @@ export const getRole = async (req, res) => {
     }
 }
 
-export const getRolePermission = async (req, res) => {
-    try {
-        const { role } = req.body;
-        const rolePermissions = role.permissions;
+export const getAllPermissionController = async (req, res) => {
 
+    try {
         return res.status(200).json({
             success: true,
-            message: "Get role permission successfully",
+            message: t(req.contentLanguage, "role.getAllPermissionSuccess"),
             status: 200,
             data: {
-                rolePermissions
+                rolePrivileges
             }
         })
 
@@ -110,7 +125,7 @@ export const getRolePermission = async (req, res) => {
     }
 }
 
-export const updateRole = async (req, res) => {
+export const updateRoleController = async (req, res) => {
     try {
         const { id } = req.params;
         const { name, permissions } = req.body;
