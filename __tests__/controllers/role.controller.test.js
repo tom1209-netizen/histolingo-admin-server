@@ -4,8 +4,10 @@ import roleRoute from "../../routes/role.route.js";
 import roleService from "../../services/role.service.js";
 import { rolePrivileges } from "../../constants/role.constant.js";
 import tokenService from "../../services/token.service.js";
-import { describe, beforeEach, it, expect, jest } from "@jest/globals";
-import * as repl from "node:repl";
+import { describe, beforeEach, beforeAll, afterAll, it, expect, jest } from "@jest/globals";
+import { loadContentLanguage } from "../../middlewares/localization.middleware.js";
+import { initLocaleData } from "../../localization.js";
+import databaseService from "../../services/database.service.js";
 
 jest.mock('../../services/role.service.js');
 jest.mock('../../services/token.service.js');
@@ -16,13 +18,22 @@ jest.mock('../../middlewares/auth.middleware.js', () => ({
 }));
 
 const app = express();
-app.use(express.json());
-app.use('/roles', roleRoute);
+
+beforeAll(async () => {
+    await databaseService.connect();
+    await initLocaleData();
+    app.use(loadContentLanguage);
+    app.use(express.json());
+    app.use('/roles', roleRoute);
+});
+
+afterAll(async () => {
+    await databaseService.disconnect();
+});
 
 describe('Role Controllers', () => {
     beforeEach(() => {
         jest.clearAllMocks();
-
         tokenService.verifyToken.mockImplementation(() => {});
     });
 
@@ -34,6 +45,7 @@ describe('Role Controllers', () => {
             .post('/roles')
             .set('Content-Type', 'application/json')
             .set('Authorization', 'Bearer dummyToken')
+            .set('Content-Language', 'en-US')  
             .send(roleData);
 
         expect(response.status).toBe(201);
@@ -48,6 +60,7 @@ describe('Role Controllers', () => {
             .post('/roles')
             .set('Content-Type', 'application/json')
             .set('Authorization', 'Bearer dummyToken')
+            .set('Content-Language', 'en-US')  
             .send({ name: 'Admin', permissions: [rolePrivileges.role.create] });
 
         expect(response.status).toBe(500);
@@ -57,15 +70,16 @@ describe('Role Controllers', () => {
 
     it('should get all roles with pagination, filtering by name and status', async () => {
         const roles = [
-            { name: 'Admin', permissions: [rolePrivileges.role.read, rolePrivileges.role.create], status: 'active' },
-            { name: 'User', permissions: [rolePrivileges.role.read], status: 'inactive' }
+            { name: 'Admin', permissions: [rolePrivileges.role.read, rolePrivileges.role.create], status: 0 },
+            { name: 'User', permissions: [rolePrivileges.role.read], status: 0 }
         ];
         const filteredRoles = [roles[0]]; // Assuming a filtered response
         roleService.getRoles.mockResolvedValue(filteredRoles);
 
         const response = await request(app)
             .get('/roles?page=1&page_size=10&name=Admin&status=active')
-            .set('Authorization', 'Bearer dummyToken');
+            .set('Authorization', 'Bearer dummyToken')
+            .set('Content-Language', 'en-US');  
 
         expect(response.status).toBe(200);
         expect(response.body.success).toBe(true);
@@ -77,7 +91,8 @@ describe('Role Controllers', () => {
 
         const response = await request(app)
             .get('/roles')
-            .set('Authorization', 'Bearer dummyToken');
+            .set('Authorization', 'Bearer dummyToken')
+            .set('Content-Language', 'en-US');  
 
         expect(response.status).toBe(500);
         expect(response.body.success).toBe(false);
@@ -95,7 +110,8 @@ describe('Role Controllers', () => {
 
         const response = await request(app)
             .get(`/roles/${id}`)
-            .set('Authorization', 'Bearer dummyToken');
+            .set('Authorization', 'Bearer dummyToken')
+            .set('Content-Language', 'en-US');  
 
         expect(response.status).toBe(200);
         expect(response.body.success).toBe(true);
@@ -109,7 +125,8 @@ describe('Role Controllers', () => {
 
         const response = await request(app)
             .get(`/roles/${id}`)
-            .set('Authorization', 'Bearer dummyToken');
+            .set('Authorization', 'Bearer dummyToken')
+            .set('Content-Language', 'en-US');  
 
         expect(response.status).toBe(500);
         expect(response.body.success).toBe(false);
@@ -123,7 +140,8 @@ describe('Role Controllers', () => {
 
         const response = await request(app)
             .get(`/roles/${id}`)
-            .set('Authorization', 'Bearer dummyToken');
+            .set('Authorization', 'Bearer dummyToken')
+            .set('Content-Language', 'en-US');  
 
         expect(response.status).toBe(404);
         expect(response.body.success).toBe(false);
@@ -147,6 +165,7 @@ describe('Role Controllers', () => {
         const response = await request(app)
             .put(`/roles/${id}`)
             .set('Authorization', 'Bearer dummyToken')
+            .set('Content-Language', 'en-US')  
             .send(updatedRole);
 
         expect(response.status).toBe(200);
@@ -172,6 +191,7 @@ describe('Role Controllers', () => {
         const response = await request(app)
             .put(`/roles/${id}`)
             .set('Authorization', 'Bearer dummyToken')
+            .set('Content-Language', 'en-US')  
             .send(updatedRole);
 
         expect(response.status).toBe(500);
@@ -191,6 +211,7 @@ describe('Role Controllers', () => {
         const response = await request(app)
             .put(`/roles/${id}`)
             .set('Authorization', 'Bearer dummyToken')
+            .set('Content-Language', 'en-US')  
             .send(updatedRole);
 
         expect(response.status).toBe(404);

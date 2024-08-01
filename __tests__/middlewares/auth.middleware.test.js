@@ -1,10 +1,30 @@
+import { jest, describe, beforeEach, it, expect } from '@jest/globals';
 import { authentication, authorization } from '../../middlewares/auth.middleware.js';
 import tokenService from '../../services/token.service.js';
 import Role from '../../models/role.model.js';
-import { jest, describe, beforeEach, it, expect } from '@jest/globals';
+import { loadContentLanguage } from '../../middlewares/localization.middleware.js';
+import { initLocaleData, localeData } from "../../localization.js";
 
 jest.mock('../../services/token.service.js');
 jest.mock('../../models/role.model.js');
+jest.mock("../../localization.js", () => ({
+    initLocaleData: jest.fn().mockResolvedValue(),
+    localeData: {
+        "en-US": {
+            "role": {
+                "notFound": "Roles not found",
+            },
+            "auth": {
+                "noToken": "No token provided",
+                "tokenInvalid": "Invalid token",
+                "permissionDenied": "Permission denied"
+            },
+            "admin": {
+                "notFound": "No admin data provided"
+            }
+        }
+    }
+}));
 
 describe('Authentication Middleware', () => {
     let req, res, next;
@@ -21,6 +41,8 @@ describe('Authentication Middleware', () => {
     });
 
     it('should return 403 if no token is provided', async () => {
+        req.contentLanguage = 'en-US'; 
+        
         await authentication(req, res, next);
 
         expect(res.status).toHaveBeenCalledWith(403);
@@ -34,6 +56,8 @@ describe('Authentication Middleware', () => {
 
     it('should return 403 if the token is invalid', async () => {
         req.headers.authorization = 'Bearer invalidtoken';
+        req.contentLanguage = 'en-US'; 
+        
         tokenService.verifyToken.mockImplementation(() => {
             throw new Error('Invalid token');
         });
@@ -52,6 +76,8 @@ describe('Authentication Middleware', () => {
 
     it('should call next if the token is valid', async () => {
         req.headers.authorization = 'Bearer validtoken';
+        req.contentLanguage = 'en-US'; 
+        
         tokenService.verifyToken.mockReturnValue({ userId: 'someUserId' });
 
         await authentication(req, res, next);
@@ -80,6 +106,8 @@ describe('Authorization Middleware', () => {
 
     it('should return 403 if no admin data is provided', async () => {
         req.admin = null;
+        req.contentLanguage = 'en-US'; 
+        
 
         const middleware = authorization(1);
         await middleware(req, res, next);
@@ -94,14 +122,16 @@ describe('Authorization Middleware', () => {
     });
 
     it('should return 403 if the role is not found', async () => {
-        Role.findById.mockResolvedValue(null);
+        req.contentLanguage = 'en-US'; 
+        
+        Role.find.mockResolvedValue(null);
 
         const middleware = authorization(1);
         await middleware(req, res, next);
 
         expect(res.status).toHaveBeenCalledWith(403);
         expect(res.json).toHaveBeenCalledWith({
-            message: "Role not found",
+            message: "Roles not found",
             status: 403,
             error: "Forbidden"
         });
@@ -109,9 +139,11 @@ describe('Authorization Middleware', () => {
     });
 
     it('should return 403 if the permission is denied', async () => {
-        Role.findById.mockResolvedValue({
+        req.contentLanguage = 'en-US'; 
+        
+        Role.find.mockResolvedValue([{
             permissions: [2, 3]
-        });
+        }]);
 
         const middleware = authorization(1);
         await middleware(req, res, next);
@@ -126,9 +158,11 @@ describe('Authorization Middleware', () => {
     });
 
     it('should call next if the permission is granted', async () => {
-        Role.findById.mockResolvedValue({
+        req.contentLanguage = 'en-US'; 
+        
+        Role.find.mockResolvedValue([{
             permissions: [1, 2, 3]
-        });
+        }]);
 
         const middleware = authorization(1);
         await middleware(req, res, next);
@@ -139,7 +173,9 @@ describe('Authorization Middleware', () => {
     });
 
     it('should return 403 if an error occurs during authorization', async () => {
-        Role.findById.mockImplementation(() => {
+        req.contentLanguage = 'en-US'; 
+        
+        Role.find.mockImplementation(() => {
             throw new Error('Some error');
         });
 
