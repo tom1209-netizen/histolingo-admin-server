@@ -34,7 +34,6 @@ export const createAdminValidator = async (req, res, next) => {
                 .required(),
         });
 
-
         await createSchema.validateAsync({
             firstName,
             lastName,
@@ -85,12 +84,12 @@ export const loginAdminValidator = async (req, res, next) => {
             password,
         }, {
             abortEarly: false
-        })
+        });
 
         const existedAdmin = await Admin.findOne({ email });
         req.body.admin = existedAdmin;
-        const decryptedPassword = encodeService.decrypt(password, existedAdmin.salt);
-        if (!existedAdmin || decryptedPassword !== existedAdmin.password) {
+        const passwordMatches = existedAdmin ? encodeService.decrypt(password, existedAdmin.password) : false;
+        if (!existedAdmin || !passwordMatches) {
             const error = new Error("Email or password is invalid");
             error.statusCode = 403;
             throw error;

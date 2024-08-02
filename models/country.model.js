@@ -5,27 +5,26 @@ const countrySchema = new Schema(
     {
         name: {
             type: String,
-            required: true,
-            maxLength: 150,
+            require: true,
+            maxLength: 250,
         },
         description: {
             type: String,
-            required: true,
+            require: true,
             maxLength: 1000,
         },
         image: {
             type: String,
-            required: true,
+            require: true,
             maxLength: 1000,
         },
         status: {
             type: Number,
             enum: [0, 1],
-            required: true,
+            require: true,
         },
         localeData: {
             type: Schema.Types.Mixed,
-            required: true
         }
     },
     { timestamps: true }

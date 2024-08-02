@@ -18,6 +18,18 @@ class DatabaseService {
             throw error;
         }
     }
+
+    async disconnect() {
+        try {
+            await mongoose.disconnect();
+            console.log("MongoDB disconnected successfully");
+        } catch (e) {
+            const error = new Error("MongoDB disconnection failed");
+            error.status = 500;
+            error.data = null;
+            throw error;
+        }
+    }
 }
 
 const databaseService = new DatabaseService();
