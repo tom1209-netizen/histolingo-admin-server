@@ -75,7 +75,7 @@ export const loginAdminController = async (req, res, next) => {
 };
 
 export const getCurrentAdminController = (req, res, next) => {
-    const { admin } = req.body;
+    const { admin } = req.admin;
     return res.status(200).json({
         success: true,
         message: "Get admin successfully",
@@ -86,7 +86,7 @@ export const getCurrentAdminController = (req, res, next) => {
 
 export const updateAdminController = async (req, res, next) => {
     try {
-        const { admin } = req.body;
+        const { admin } = req.admin;
         const updateData = req.body;
         const updateAdmin = await adminService.updateAdmin(admin, updateData);
 
@@ -118,31 +118,6 @@ export const updateAdminController = async (req, res, next) => {
 };
 
 export const getListAdmin = async (req, res, next) => {
-    // try {
-    //     const allAdmins = await Admin.find({ status: 1 });
-    //     if (allAdmins.length === 0) {
-    //         return res.status(404).json({
-    //             success: true,
-    //             message: "No admin available",
-    //             status: 404,
-    //             data: null
-    //         });
-    //     } else {
-    //         return res.status(200).json({
-    //             success: true,
-    //             message: "Get list admin successfully",
-    //             status: 200,
-    //             data: allAdmins
-    //         });
-    //     }
-    // } catch (error) {
-    //     return res.status(error.status || 500).json({
-    //         success: false,
-    //         message: error.message || "Internal Server Error",
-    //         status: error.status || 500,
-    //         data: error.data || null
-    //     });
-    // }
 
     try {
         const { search = '', page = 1, limit = 10, status } = req.query;

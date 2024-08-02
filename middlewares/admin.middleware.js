@@ -3,7 +3,6 @@ import Admin from "../models/admin.model.js";
 import Role from "../models/role.model.js";
 import encodeService from "../utils/encode.utils.js";
 import tokenService from "../services/token.service.js";
-import { authenticationToken } from "../utils/authentication.utils.js";
 import { adminStatus } from "../constants/admin.constant.js";
 
 export const createAdminValidator = async (req, res, next) => {
@@ -101,15 +100,15 @@ export const loginAdminValidator = async (req, res, next) => {
     }
 };
 
-export const getAdminValidator = async (req, res, next) => {
-    try {
-        const token = authenticationToken(req);
-        req.body.admin = await tokenService.infoToken(token);
-        next()
-    } catch (error) {
-        next(error);
-    }
-};
+// export const getAdminValidator = async (req, res, next) => {
+//     try {
+//         const token = authenticationToken(req);
+//         req.body.admin = await tokenService.infoToken(token);
+//         next()
+//     } catch (error) {
+//         next(error);
+//     }
+// };
 
 export const getListAdminValidator = async (req, res, next) => {
     const schema = Joi.object({
@@ -168,8 +167,6 @@ export const updateAdminValidator = async (req, res, next) => {
             roles,
             status
         });
-        const token = authenticationToken(req);
-        req.body.admin = await tokenService.infoToken(token);
 
         // Find role by id
         const roleDocs = await Role.find({ _id: { $in: roles } });
