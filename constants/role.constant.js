@@ -4,45 +4,51 @@ export const roleStatus = {
 }
 
 export const rolePrivileges = {
-    topic: {
+    admin: {
         read: 1,
         create: 2,
         update: 3,
         delete: 4
     },
-    country: {
+    topic: {
         read: 5,
         create: 6,
         update: 7,
         delete: 8
     },
-    role: {
+    country: {
         read: 9,
         create: 10,
         update: 11,
         delete: 12
     },
-    documentation: {
+    role: {
         read: 13,
         create: 14,
         update: 15,
         delete: 16
     },
-    test: {
+    documentation: {
         read: 17,
         create: 18,
         update: 19,
         delete: 20
     },
-    question: {
+    test: {
         read: 21,
         create: 22,
         update: 23,
         delete: 24
     },
-    feedback: {
+    question: {
         read: 25,
-        update: 26
+        create: 26,
+        update: 27,
+        delete: 28
+    },
+    feedback: {
+        read: 29,
+        update: 30
     }
 };
 

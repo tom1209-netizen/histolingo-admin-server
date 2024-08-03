@@ -9,7 +9,7 @@ class TokenHandler {
     signAccessToken(payload) {
         try {
             const token = jwt.sign(payload, process.env.JWT_PRIVATE_KEY, {
-                expiresIn: "15m",
+                expiresIn: "3h",
                 algorithm: "HS256",
                 header: {
                     typ: "jwt"

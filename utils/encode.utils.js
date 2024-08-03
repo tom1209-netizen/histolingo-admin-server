@@ -3,8 +3,9 @@ import bcrypt from 'bcrypt';
 class Encode {
     encrypt(password) {
         try {
-            const hashPassword = bcrypt.hashSync(password, 10);
-            return hashPassword;
+            const salt = bcrypt.genSaltSync(10);
+            const hashPassword = bcrypt.hashSync(password, salt);
+            return [hashPassword, salt];
         } catch (e) {
             const error = new Error(e.message);
             error.status = 500;
