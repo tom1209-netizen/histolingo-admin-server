@@ -42,12 +42,19 @@ export const createAdminValidator = async (req, res, next) => {
             roles
         });
 
-        const existedAdmin = await Admin.findOne({ adminName });
+        const existedAdmin = await Admin.findOne({
+            $or: [
+                { adminName: req.body.adminName },
+                { email: req.body.email }
+            ]
+        });
+
         if (existedAdmin) {
-            const error = new Error("AdminName already exists");
+            const error = new Error("AdminName or email already exists");
             error.statusCode = 403;
             throw error;
         }
+
 
         // Find role by id
         const roleDocs = await Role.find({ _id: { $in: roles } });
@@ -100,24 +107,14 @@ export const loginAdminValidator = async (req, res, next) => {
     }
 };
 
-// export const getAdminValidator = async (req, res, next) => {
-//     try {
-//         const token = authenticationToken(req);
-//         req.body.admin = await tokenService.infoToken(token);
-//         next()
-//     } catch (error) {
-//         next(error);
-//     }
-// };
-
 export const getListAdminValidator = async (req, res, next) => {
     const schema = Joi.object({
         search: Joi.string().allow(''),
         page: Joi.number().integer().min(1).default(1),
         limit: Joi.number().integer().min(1).default(10),
         status: Joi.number()
-        .allow(null, "")
-        .valid(adminStatus.active, adminStatus.inactive),
+            .allow(null, "")
+            .valid(adminStatus.active, adminStatus.inactive),
     });
 
     try {
@@ -175,7 +172,7 @@ export const updateAdminValidator = async (req, res, next) => {
             error.statusCode = 400;
             throw error;
         }
-        
+
         next();
     } catch (error) {
         next(error);

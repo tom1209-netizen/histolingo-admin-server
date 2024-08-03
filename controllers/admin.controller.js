@@ -1,18 +1,11 @@
 import Admin from "../models/admin.model.js";
 import adminService from "../services/admin.service.js";
 import tokenService from "../services/token.service.js";
+import { t } from "../utils/localization.util.js";
 
 export const createAdminController = async (req, res, next) => {
     try {
-        if (!req.headers.authorization) {
-            const error = new Error("Unauthorized!");
-            error.status = 403;
-            error.data = null;
-            throw error;
-        }
-        const token = req.headers.authorization.split(' ')[1];
-        tokenService.verifyToken(token);
-        const admin = await tokenService.infoToken(token);
+        const admin = req.admin;
         const adminId = admin._id;
 
         const { firstName, lastName, adminName, email, password, roles } = req.body;
@@ -20,7 +13,7 @@ export const createAdminController = async (req, res, next) => {
 
         return res.status(201).json({
             success: true,
-            message: "Create Successfully",
+            message: t(req.contentLanguage, "admin.createSuccess"),
             status: 201,
             data: {
                 admin: {
@@ -51,7 +44,7 @@ export const loginAdminController = async (req, res, next) => {
 
         return res.status(200).json({
             success: true,
-            message: "Login Successfully",
+            message: t(req.contentLanguage, "admin.loginSuccess"),
             status: 200,
             data: {
                 admin: {
@@ -78,7 +71,7 @@ export const getCurrentAdminController = (req, res, next) => {
     const { admin } = req.admin;
     return res.status(200).json({
         success: true,
-        message: "Get admin successfully",
+        message: t(req.contentLanguage, "admin.getCurrentSuccess"),
         status: 200,
         data: admin
     });
@@ -86,13 +79,13 @@ export const getCurrentAdminController = (req, res, next) => {
 
 export const updateAdminController = async (req, res, next) => {
     try {
-        const { admin } = req.admin;
+        const admin = req.admin;
         const updateData = req.body;
         const updateAdmin = await adminService.updateAdmin(admin, updateData);
 
         return res.status(200).json({
             success: true,
-            message: "Login Successfully",
+            message: t(req.contentLanguage, "admin.updateSuccess"),
             status: 200,
             data: {
                 updateAdmin: {
@@ -147,7 +140,7 @@ export const getListAdmin = async (req, res, next) => {
 
         return res.status(200).json({
             success: true,
-            message: "List admin retrieved successfully",
+            message: t(req.contentLanguage, "admin.getListSuccess"),
             data: {
                 admins,
                 totalPages: Math.ceil(totalAdmins / limit),
@@ -167,15 +160,15 @@ export const getByIdController = async (req, res, next) => {
 
         if (!admin) {
             return res.status(404).json({
-                success: true,
-                message: "No admin available",
+                success: false,
+                message: t(req.contentLanguage, "admin.notFound"),
                 status: 404,
                 data: null
             });
         } else {
             return res.status(200).json({
                 success: true,
-                message: "Get admin successfully",
+                message: t(req.contentLanguage, "role.getByIdSuccess"),
                 status: 200,
                 data: admin
             });

@@ -19,9 +19,17 @@ class AdminService {
         return newAdmin;
     }
 
-    async updateAdmin(admin, updateData) {
+    async updateAdmin(adminId, updateData) {
         try {
-            const updatedAdmin = await Admin.findOneAndUpdate(admin, updateData, { new: true })
+            // Kiểm tra nếu có trường password
+            if (updateData.password) {
+                const [hashPassword, salt] = encodeService.encrypt(updateData.password);
+                updateData.password = hashPassword;
+                updateData.salt = salt;
+            }
+
+            const updatedAdmin = await Admin.findByIdAndUpdate(adminId, updateData, { new: true });
+
             return updatedAdmin;
         } catch (e) {
             const error = new Error(e.message);
