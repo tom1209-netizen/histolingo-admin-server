@@ -19,7 +19,7 @@ class AdminService {
         return newAdmin;
     }
 
-    async updateAdmin(adminId, updateData) {
+    async updateAdmin(admin, updateData) {
         try {
             // Kiểm tra nếu có trường password
             if (updateData.password) {
@@ -28,7 +28,7 @@ class AdminService {
                 updateData.salt = salt;
             }
 
-            const updatedAdmin = await Admin.findByIdAndUpdate(adminId, updateData, { new: true });
+            const updatedAdmin = await Admin.findOneAndUpdate(admin, updateData, { new: true });
 
             return updatedAdmin;
         } catch (e) {

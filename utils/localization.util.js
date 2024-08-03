@@ -20,3 +20,10 @@ export const t = (language, path, values = {}) => {
     }
     return target;
 };
+
+export const applyRequestContentLanguage = (req) => {
+    const contentLanguage = req.contentLanguage;
+    return (path, value) => {
+        return t(contentLanguage, path, value);
+    }
+};

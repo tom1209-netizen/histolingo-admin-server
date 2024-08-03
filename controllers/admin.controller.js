@@ -3,7 +3,7 @@ import adminService from "../services/admin.service.js";
 import tokenService from "../services/token.service.js";
 import { t } from "../utils/localization.util.js";
 
-export const createAdminController = async (req, res, next) => {
+export const createAdminController = async (req, res) => {
     try {
         const admin = req.admin;
         const adminId = admin._id;
@@ -36,7 +36,7 @@ export const createAdminController = async (req, res, next) => {
     }
 };
 
-export const loginAdminController = async (req, res, next) => {
+export const loginAdminController = async (req, res) => {
     try {
         const { admin } = req.body;
         const accessToken = tokenService.signAccessToken({ email: admin.email, _id: admin._id });
@@ -67,7 +67,7 @@ export const loginAdminController = async (req, res, next) => {
     }
 };
 
-export const getCurrentAdminController = (req, res, next) => {
+export const getCurrentAdminController = (req, res) => {
     const { admin } = req.admin;
     return res.status(200).json({
         success: true,
@@ -77,9 +77,9 @@ export const getCurrentAdminController = (req, res, next) => {
     });
 };
 
-export const updateAdminController = async (req, res, next) => {
+export const updateAdminController = async (req, res) => {
     try {
-        const admin = req.admin;
+        const admin = req.adminUpdate;
         const updateData = req.body;
         const updateAdmin = await adminService.updateAdmin(admin, updateData);
 
@@ -110,7 +110,7 @@ export const updateAdminController = async (req, res, next) => {
     }
 };
 
-export const getListAdmin = async (req, res, next) => {
+export const getListAdmin = async (req, res) => {
 
     try {
         const { search = '', page = 1, limit = 10, status } = req.query;
@@ -153,7 +153,7 @@ export const getListAdmin = async (req, res, next) => {
     }
 };
 
-export const getByIdController = async (req, res, next) => {
+export const getByIdController = async (req, res) => {
     try {
         const id = req.params.id;
         const admin = await Admin.findOne({ _id: id }, { password: 0, salt: 0 });
@@ -168,7 +168,7 @@ export const getByIdController = async (req, res, next) => {
         } else {
             return res.status(200).json({
                 success: true,
-                message: t(req.contentLanguage, "role.getByIdSuccess"),
+                message: t(req.contentLanguage, "admin.getByIdSuccess"),
                 status: 200,
                 data: admin
             });

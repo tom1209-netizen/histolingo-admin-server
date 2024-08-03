@@ -9,7 +9,7 @@ const adminRoute = Router();
 adminRoute.post("/create", authentication, authorization(rolePrivileges.admin.create), createAdminValidator, createAdminController);
 adminRoute.post("/login", loginAdminValidator, loginAdminController);
 adminRoute.get("/getCurrent", authentication, authorization(rolePrivileges.admin.read), getCurrentAdminController);
-adminRoute.put("/update", authentication, authorization(rolePrivileges.admin.update), updateAdminValidator, updateAdminController);
+adminRoute.patch("/update/:id", authentication, authorization(rolePrivileges.admin.update), updateAdminValidator, updateAdminController);
 adminRoute.get("/getList", authentication, authorization(rolePrivileges.admin.read), getListAdminValidator, getListAdmin);
 adminRoute.get("/getById/:id", authentication, authorization(rolePrivileges.admin.read), getByIdController);
 
