@@ -5,7 +5,6 @@ import { t } from "../utils/localization.util.js";
 export const createCountryController = async (req, res) => {
     try {
         const { name, description, image, localeData } = req.body;
-        console.log(req.body);
         const newCountry = await countryService.createCountry(name, description, image, localeData);
 
         return res.status(201).json({
@@ -49,6 +48,7 @@ export const updateCountryController = async (req, res) => {
                     name: updatedCountry.name,
                     description: updatedCountry.description,
                     image: updatedCountry.image,
+                    localeData: updatedCountry.localeData,
                 }
             },
         });

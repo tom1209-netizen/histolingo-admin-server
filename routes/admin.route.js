@@ -12,5 +12,6 @@ adminRoute.get("/getCurrent", authentication, authorization(rolePrivileges.admin
 adminRoute.patch("/update/:id", authentication, authorization(rolePrivileges.admin.update), updateAdminValidator, updateAdminController);
 adminRoute.get("/getList", authentication, authorization(rolePrivileges.admin.read), getListAdminValidator, getListAdmin);
 adminRoute.get("/getById/:id", authentication, authorization(rolePrivileges.admin.read), getByIdController);
+adminRoute.post("/generateRefreshToken", );
 
 export default adminRoute;

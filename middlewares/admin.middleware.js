@@ -3,9 +3,10 @@ import Admin from "../models/admin.model.js";
 import Role from "../models/role.model.js";
 import encodeService from "../utils/encode.utils.js";
 import { adminStatus } from "../constants/admin.constant.js";
-import { t } from "../utils/localization.util.js";
+import { applyRequestContentLanguage, t } from "../utils/localization.util.js";
 
 export const createAdminValidator = async (req, res, next) => {
+    const __ = applyRequestContentLanguage(req);
     try {
         const { firstName, lastName, adminName, email, password, roles } = req.body;
 
@@ -52,7 +53,7 @@ export const createAdminValidator = async (req, res, next) => {
         if (existedAdmin) {
             return res.status(404).json({
                 success: false,
-                message: t(req.contentLanguage, "admin.adminExists"),
+                message: __("validation.unique", { field: __("model.admin.name") }),
                 status: 404,
                 data: null
             });
@@ -63,7 +64,7 @@ export const createAdminValidator = async (req, res, next) => {
         if (roleDocs.length !== roles.length) {
             return res.status(404).json({
                 success: false,
-                message: t(req.contentLanguage, "role.roleNotFound"),
+                message: __("validation.notFound", { field: __("model.role.name") }),
                 status: 404,
                 data: null
             });
@@ -98,16 +99,16 @@ export const loginAdminValidator = async (req, res, next) => {
         });
 
         const existedAdmin = await Admin.findOne({ email });
-        req.body.admin = existedAdmin;
         const passwordMatches = existedAdmin ? encodeService.decrypt(password, existedAdmin.password) : false;
         if (!existedAdmin || !passwordMatches) {
             return res.status(404).json({
                 success: false,
-                message: t(req.contentLanguage, "admin.adminNotFound"),
+                message: __("validation.notFound", { field: __("model.admin.name") }),
                 status: 404,
                 data: null
             });
         }
+        req.body.admin = existedAdmin;
 
         next();
     } catch (error) {
@@ -183,7 +184,7 @@ export const updateAdminValidator = async (req, res, next) => {
         if (existedAdmin) {
             return res.status(404).json({
                 success: false,
-                message: t(req.contentLanguage, "admin.adminExists"),
+                message: __("validation.unique", { field: __("model.admin.name") }),
                 status: 404,
                 data: null
             });
@@ -194,7 +195,7 @@ export const updateAdminValidator = async (req, res, next) => {
         if (!adminUpdate) {
             return res.status(404).json({
                 success: false,
-                message: t(req.contentLanguage, "admin.notFound"),
+                message: __("validation.notFound", { field: __("model.admin.name") }),
                 status: 404,
                 data: null
             });
@@ -207,7 +208,7 @@ export const updateAdminValidator = async (req, res, next) => {
         if (roleDocs.length !== roles.length) {
             return res.status(404).json({
                 success: false,
-                message: t(req.contentLanguage, "role.roleNotFound"),
+                message: __("validation.notFound", { field: __("model.role.name") }),
                 status: 404,
                 data: null
             });

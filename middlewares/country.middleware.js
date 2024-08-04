@@ -6,7 +6,7 @@ import { countryStatus } from "../constants/country.constant.js";
 export const createCountryValidator = async (req, res, next) => {
     const __ = applyRequestContentLanguage(req);
     try {
-        const { name, description, image } = req.body;
+        const { name, description, image, localeData } = req.body;
 
         const createSchema = Joi.object({
             name: Joi.string()
@@ -17,19 +17,38 @@ export const createCountryValidator = async (req, res, next) => {
                 .required(),
             image: Joi.string()
                 .max(1000),
+            localeData: Joi.object({
+                "en-US": Joi.object({
+                    name: Joi.string().max(250).required(),
+                    description: Joi.string().max(1000).required()
+                }).required(),
+                "vi-VN": Joi.object({
+                    name: Joi.string().max(250).required(),
+                    description: Joi.string().max(1000).required()
+                }).required(),
+                "ja-JP": Joi.object({
+                    name: Joi.string().max(250).required(),
+                    description: Joi.string().max(1000).required()
+                }).required(),
+                "ru-RU": Joi.object({
+                    name: Joi.string().max(250).required(),
+                    description: Joi.string().max(1000).required()
+                }).required()
+            }).required()
         });
 
         await createSchema.validateAsync({
             name,
             description,
-            image
-        })
+            image,
+            localeData
+        });
 
         const existedCountry = await Country.findOne({ name });
         if (existedCountry) {
             return res.status(400).json({
                 success: false,
-                message: __("validation.unique", {field: __("model.country.name")}),
+                message: __("validation.unique", { field: __("model.country.name") }),
                 status: 404,
                 data: null
             });
@@ -42,8 +61,9 @@ export const createCountryValidator = async (req, res, next) => {
 };
 
 export const updateCountryValidator = async (req, res, next) => {
+    const __ = applyRequestContentLanguage(req);
     try {
-        const { name, description, image } = req.body;
+        const { name, description, image, localeData } = req.body;
 
         const createSchema = Joi.object({
             name: Joi.string()
@@ -54,12 +74,31 @@ export const updateCountryValidator = async (req, res, next) => {
                 .required(),
             image: Joi.string()
                 .max(1000),
+            localeData: Joi.object({
+                "en-US": Joi.object({
+                    name: Joi.string().max(250).required(),
+                    description: Joi.string().max(1000).required()
+                }).required(),
+                "vi-VN": Joi.object({
+                    name: Joi.string().max(250).required(),
+                    description: Joi.string().max(1000).required()
+                }).required(),
+                "ja-JP": Joi.object({
+                    name: Joi.string().max(250).required(),
+                    description: Joi.string().max(1000).required()
+                }).required(),
+                "ru-RU": Joi.object({
+                    name: Joi.string().max(250).required(),
+                    description: Joi.string().max(1000).required()
+                }).required()
+            }).required()
         });
 
         await createSchema.validateAsync({
             name,
             description,
-            image
+            image,
+            localeData
         });
 
         const id = req.params.id;
@@ -69,7 +108,7 @@ export const updateCountryValidator = async (req, res, next) => {
         if (!country) {
             return res.status(404).json({
                 success: false,
-                message: t(req.contentLanguage, "country.notFound"),
+                message: __("validation.notFound", {field: __("model.country.name")}),
                 status: 404,
                 data: null
             });
@@ -79,7 +118,7 @@ export const updateCountryValidator = async (req, res, next) => {
         if (existedCountry) {
             return res.status(404).json({
                 success: false,
-                message: t(req.contentLanguage, "country.countryExists"),
+                message: __("validation.unique", { field: __("model.country.name") }),
                 status: 404,
                 data: null
             });
