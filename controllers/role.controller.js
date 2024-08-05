@@ -1,16 +1,18 @@
-import roleService from "../services/role.service.js";
+import { roleService } from "../services/role.service.js";
 import { isValidStatus } from "../utils/validation.utils.js";
 import { rolePrivileges } from "../constants/role.constant.js";
-import { t } from "../utils/localization.util.js"
+import { applyRequestContentLanguage } from "../utils/localization.util.js";
 
 export const createRoleController = async (req, res) => {
+    const __ = applyRequestContentLanguage(req);
+
     try {
         const { name, permissions } = req.body;
         const newRole = await roleService.createRole(name, permissions);
-        console.log(req.contentLanguage)
+        console.log(req.contentLanguage);
         return res.status(201).json({
             success: true,
-            message: t(req.contentLanguage, "role.createRoleSuccess"),
+            message: __("role.createRoleSuccess"),
             status: 201,
             data: {
                 role: {
@@ -23,7 +25,7 @@ export const createRoleController = async (req, res) => {
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,
-            message: error.message || "Internal Server Error",
+            message: error.message || __("error.internalServerError"),
             status: error.status || 500,
             data: error.data || null
         });
@@ -31,7 +33,9 @@ export const createRoleController = async (req, res) => {
 }
 
 export const getRolesController = async (req, res) => {
-    const { page = 1, page_size = 10, name, status } = req.query;
+    const __ = applyRequestContentLanguage(req);
+
+    const { page = 1, page_size = 10, name, sortOrder = 1, status } = req.query;
 
     const maxPageSize = 100;
     const limitedPageSize = Math.min(page_size, maxPageSize);
@@ -47,11 +51,11 @@ export const getRolesController = async (req, res) => {
     }
 
     try {
-        const roles = await roleService.getRoles(filters, page, limitedPageSize);
+        const roles = await roleService.getRoles(filters, page, limitedPageSize, sortOrder);
 
         return res.status(200).json({
             success: true,
-            message: t(req.contentLanguage, "role.getRolesSuccess"),
+            message: __("role.getRolesSuccess"),
             status: 200,
             data: {
                 roles,
@@ -63,7 +67,7 @@ export const getRolesController = async (req, res) => {
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,
-            message: error.message || "Internal Server Error",
+            message: error.message || __("error.internalServerError"),
             status: error.status || 500,
             data: error.data || null
         });
@@ -71,6 +75,8 @@ export const getRolesController = async (req, res) => {
 }
 
 export const getRoleController = async (req, res) => {
+    const __ = applyRequestContentLanguage(req);
+
     try {
         const { id } = req.params;
 
@@ -79,7 +85,7 @@ export const getRoleController = async (req, res) => {
         if (!role) {
             return res.status(404).json({
                 success: false,
-                message: t(req.contentLanguage, "role.notFound"),
+                message: __("role.notFound"),
                 status: 404,
                 data: null
             });
@@ -87,16 +93,16 @@ export const getRoleController = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: t(req.contentLanguage, "role.getRoleSuccess"),
+            message: __("role.getRoleSuccess"),
             status: 200,
             data: {
                 role
             }
-        })
+        });
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,
-            message: error.message || "Internal Server Error",
+            message: error.message || __("error.internalServerError"),
             status: error.status || 500,
             data: error.data || null
         });
@@ -104,22 +110,21 @@ export const getRoleController = async (req, res) => {
 }
 
 export const getAllPermissionController = async (req, res) => {
+    const __ = applyRequestContentLanguage(req);
 
     try {
         return res.status(200).json({
             success: true,
-            message: t(req.contentLanguage, "role.getAllPermissionSuccess"),
+            message: __("role.getAllPermissionSuccess"),
             status: 200,
             data: {
                 rolePrivileges
             }
-        })
-
-
-    } catch(error) {
+        });
+    } catch (error) {
         return res.status(error.status || 500).json({
             success: false,
-            message: error.message || "Internal Server Error",
+            message: error.message || __("error.internalServerError"),
             status: error.status || 500,
             data: error.data || null
         });
@@ -127,14 +132,22 @@ export const getAllPermissionController = async (req, res) => {
 }
 
 export const updateRoleController = async (req, res) => {
+    const __ = applyRequestContentLanguage(req);
+
     try {
         const { id } = req.params;
         const { name, permissions } = req.body;
-        const updatedRole = await roleService.updateRole(id, name, permissions);
+
+        const updatedData = {};
+        if (name) updatedData.name = name;
+        if (permissions) updatedData.permissions = permissions;
+
+        const updatedRole = await roleService.updateRole(id, updatedData);
+
         if (!updatedRole) {
             return res.status(404).json({
                 success: false,
-                message: "Role not found",
+                message: __("role.notFound"),
                 status: 404,
                 data: null
             });
@@ -142,20 +155,60 @@ export const updateRoleController = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: "Update roles Successfully",
+            message: __("role.updateRoleSuccess"),
             status: 200,
             data: {
                 role: {
-                    name: updatedRole.name,
-                    permissions: updatedRole.permissions,
+                    id: deletedRole._id,
+                    name: deletedRole.name,
+                    permissions: deletedRole.permissions,
+                    status: deletedRole.status,
                 }
             }
         });
-
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,
-            message: error.message || "Internal Server Error",
+            message: error.message || __("error.internalServerError"),
+            status: error.status || 500,
+            data: error.data || null
+        });
+    }
+}
+
+export const deleteRoleController = async (req, res) => {
+    const __ = applyRequestContentLanguage(req);
+
+    try {
+        const { id } = req.params;
+        const deletedRole = await roleService.deleteRole(id);
+
+        if (!deletedRole) {
+            return res.status(404).json({
+                success: false,
+                message: __("role.notFound"),
+                status: 404,
+                data: null
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: __("role.deleteRoleSuccess"),
+            status: 200,
+            data: {
+                role: {
+                    id: deletedRole._id,
+                    name: deletedRole.name,
+                    permissions: deletedRole.permissions,
+                    status: deletedRole.status,
+                }
+            }
+        });
+    } catch (error) {
+        return res.status(error.status || 500).json({
+            success: false,
+            message: error.message || __("error.internalServerError"),
             status: error.status || 500,
             data: error.data || null
         });
