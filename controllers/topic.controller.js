@@ -136,3 +136,35 @@ export const updateTopicController = async (req, res) => {
         });
     }
 }
+
+export const softDeleteTopicController = async (req, res) => {
+    const __ = applyRequestContentLanguage(req);
+    try {
+        const { id } = req.params;
+
+        const updatedTopic = await TopicService.updateTopic(id, { status: 0 });
+
+        return res.status(200).json({
+            success: true,
+            message: __("topic.softDeleteSuccess"),
+            status: 200,
+            data: {
+                topic: {
+                    name: updatedTopic.name,
+                    description: updatedTopic.description,
+                    image: updatedTopic.image,
+                    countryId: updatedTopic.countryId,
+                    status: updatedTopic.status,
+                    localeData: updatedTopic.localeData
+                }
+            }
+        });
+    } catch (error) {
+        return res.status(error.status || 500).json({
+            success: false,
+            message: error.message || __("error.internalServerError"),
+            status: error.status || 500,
+            data: error.data || null
+        });
+    }
+};
