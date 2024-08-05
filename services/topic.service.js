@@ -17,7 +17,7 @@ class TopicService {
         const skip = (page - 1) * page_size;
 
         const topics = await Topic.find(filters)
-            .sort({ createAt: sortOrder })
+            .sort({ createdAt: sortOrder })
             .skip(skip)
             .limit(page_size);
 
@@ -29,18 +29,10 @@ class TopicService {
         return topic;
     }
 
-    async updateTopic(id, name, description, image, countryId, localeData) {
-        const updatedTopic = await Topic.findByIdAndUpdate(id,
-            {
-                name,
-                description,
-                image,
-                countryId,
-                localeData,
-            },
-            { new: true });
+    async updateTopic(id, updateData) {
+        const updatedTopic = await Topic.findByIdAndUpdate(id, updateData, { new: true });
         return updatedTopic;
     }
 }
 
-export const TopicService = new TopicService();
+export const topicService = new TopicService();
