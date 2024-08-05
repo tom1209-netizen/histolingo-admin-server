@@ -23,7 +23,7 @@ export const t = (language, path, values = {}) => {
 
 export const applyRequestContentLanguage = (req) => {
     const contentLanguage = req.contentLanguage;
-    return (path, value) => {
+    return (path, value = {}) => {
         return t(contentLanguage, path, value);
     }
 };
