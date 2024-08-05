@@ -17,7 +17,7 @@ class TopicService {
         const skip = (page - 1) * page_size;
 
         const topics = await Topic.find(filters)
-            .sort({ createdAt: sortOrder })
+            .sort({ createdAt: parseInt(sortOrder, 10) })
             .skip(skip)
             .limit(page_size);
 

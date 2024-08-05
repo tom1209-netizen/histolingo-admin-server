@@ -13,7 +13,8 @@ import {
     getRolesController,
     getRoleController,
     updateRoleController,
-    getAllPermissionController
+    getAllPermissionController,
+    deleteRoleController
 } from "../controllers/role.controller.js";
 import {
     rolePrivileges
@@ -51,12 +52,20 @@ roleRoute.get(
     getRoleController
 );
 
-roleRoute.put(
+roleRoute.patch(
     "/:id",
     authentication,
     authorization(rolePrivileges.role.update),
     updateRoleValidator,
     updateRoleController
+);
+
+roleRoute.delete(
+    "/:id",
+    authentication,
+    authorization(rolePrivileges.role.delete),
+    getRoleValidator,
+    deleteRoleController
 );
 
 export default roleRoute;

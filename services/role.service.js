@@ -6,12 +6,13 @@ class RoleService {
         return newRole;
     }
 
-    async getRoles (filters, page, page_size)  {
+    async getRoles (filters, page, page_size, sortOrder)  {
         const skip = (page - 1) * page_size;
 
         const roles = await Role.find(filters)
-                                                                            .skip(skip)
-                                                                            .limit(page_size);
+            .sort({ createdAt: parseInt(sortOrder, 10) })
+            .skip(skip)
+            .limit(page_size);
 
         return roles;
     }
@@ -21,11 +22,15 @@ class RoleService {
         return role;
     }
 
-    async updateRole(id, name, permissions) {
-        const updatedRole = await Role.findByIdAndUpdate(id, { name, permissions }, { new: true });
+    async updateRole(id, updateData) {
+        const updatedRole = await Role.findByIdAndUpdate(id, updateData, { new: true });
         return updatedRole;
+    }
+
+    async deleteRole(id) {
+        const deletedRole = await Role.findByIdAndUpdate(id, { status: 0 });
+        return deletedRole;
     }
 }
 
-const roleService = new RoleService();
-export default roleService;
+export const roleService = new RoleService();
