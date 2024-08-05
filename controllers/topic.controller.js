@@ -4,6 +4,7 @@ import { isValidStatus } from "../utils/validation.utils.js";
 
 export const createTopicController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
+
     try {
         const { name, description, image, countryId, localeData } = req.body;
         const newTopic = await topicService.createTopic(name, description, image, countryId, localeData);
@@ -35,6 +36,7 @@ export const createTopicController = async (req, res) => {
 
 export const getTopicsController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
+
     const { page = 1, page_size = 10, name, status, sortOrder = 1 } = req.query;
 
     const maxPageSize = 100;
@@ -76,6 +78,7 @@ export const getTopicsController = async (req, res) => {
 
 export const getTopicController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
+
     try {
         const { id } = req.params;
         const topic = await topicService.getTopic(id);
@@ -155,15 +158,15 @@ export const updateTopicController = async (req, res) => {
     }
 };
 
-export const softDeleteTopicController = async (req, res) => {
+export const deleteTopicController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
 
     try {
         const { id } = req.params;
 
-        const updatedTopic = await topicService.updateTopic(id, { status: 0 });
+        const deletedTopic = await topicService.deleteTopic(id);
 
-        if (!updatedTopic) {
+        if (!deletedTopic) {
             return res.status(404).json({
                 success: false,
                 message: __("topic.notFound"),
@@ -174,16 +177,16 @@ export const softDeleteTopicController = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: __("topic.softDeleteSuccess"),
+            message: __("topic.deleteSuccess"),
             status: 200,
             data: {
                 topic: {
-                    name: updatedTopic.name,
-                    description: updatedTopic.description,
-                    image: updatedTopic.image,
-                    countryId: updatedTopic.countryId,
-                    status: updatedTopic.status,
-                    localeData: updatedTopic.localeData,
+                    name: deletedTopic.name,
+                    description: deletedTopic.description,
+                    image: deletedTopic.image,
+                    countryId: deletedTopic.countryId,
+                    status: deletedTopic.status,
+                    localeData: deletedTopic.localeData,
                 },
             },
         });
