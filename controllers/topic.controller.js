@@ -1,4 +1,4 @@
-import { TopicService } from "../services/topic.service.js";
+import { topicService } from "../services/topic.service.js";
 import { applyRequestContentLanguage } from "../utils/localization.util.js";
 import { isValidStatus } from "../utils/validation.utils.js";
 
@@ -6,7 +6,7 @@ export const createTopicController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
     try {
         const { name, description, image, countryId, localeData } = req.body;
-        const newTopic = await TopicService.createTopic(name, description, image, countryId, localeData);
+        const newTopic = await topicService.createTopic(name, description, image, countryId, localeData);
 
         return res.status(201).json({
             success: true,
@@ -35,7 +35,7 @@ export const createTopicController = async (req, res) => {
 
 export const getTopicsController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
-    const { page = 1, page_size = 10, name, status, sortOrder } = req.query;
+    const { page = 1, page_size = 10, name, status, sortOrder = 1 } = req.query;
 
     const maxPageSize = 100;
     const limitedPageSize = Math.min(page_size, maxPageSize);
@@ -51,7 +51,7 @@ export const getTopicsController = async (req, res) => {
     }
 
     try {
-        const topics = await TopicService.getTopics(filters, page, limitedPageSize, sortOrder);
+        const topics = await topicService.getTopics(filters, page, limitedPageSize, sortOrder);
 
         return res.status(200).json({
             success: true,
@@ -78,7 +78,7 @@ export const getTopicController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
     try {
         const { id } = req.params;
-        const topic = await TopicService.getTopic(id);
+        const topic = await topicService.getTopic(id);
 
         return res.status(200).json({
             success: true,
@@ -107,11 +107,28 @@ export const getTopicController = async (req, res) => {
 
 export const updateTopicController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
+
     try {
         const { id } = req.params;
         const { name, description, image, countryId, localeData } = req.body;
 
-        const updatedTopic = await TopicService.updateTopic(id, name, description, image, countryId, localeData);
+        const updateData = {};
+        if (name !== undefined) updateData.name = name;
+        if (description !== undefined) updateData.description = description;
+        if (image !== undefined) updateData.image = image;
+        if (countryId !== undefined) updateData.countryId = countryId;
+        if (localeData !== undefined) updateData.localeData = localeData;
+
+        const updatedTopic = await topicService.updateTopic(id, updateData);
+
+        if (!updatedTopic) {
+            return res.status(404).json({
+                success: false,
+                message: __("topic.notFound"),
+                status: 404,
+                data: null,
+            });
+        }
 
         return res.status(200).json({
             success: true,
@@ -123,26 +140,37 @@ export const updateTopicController = async (req, res) => {
                     description: updatedTopic.description,
                     image: updatedTopic.image,
                     countryId: updatedTopic.countryId,
-                    localeData: updatedTopic.localeData
-                }
-            }
+                    status: updatedTopic.status,
+                    localeData: updatedTopic.localeData,
+                },
+            },
         });
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,
             message: error.message || __("error.internalServerError"),
             status: error.status || 500,
-            data: error.data || null
+            data: error.data || null,
         });
     }
-}
+};
 
 export const softDeleteTopicController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
+
     try {
         const { id } = req.params;
 
-        const updatedTopic = await TopicService.updateTopic(id, { status: 0 });
+        const updatedTopic = await topicService.updateTopic(id, { status: 0 });
+
+        if (!updatedTopic) {
+            return res.status(404).json({
+                success: false,
+                message: __("topic.notFound"),
+                status: 404,
+                data: null,
+            });
+        }
 
         return res.status(200).json({
             success: true,
@@ -155,16 +183,16 @@ export const softDeleteTopicController = async (req, res) => {
                     image: updatedTopic.image,
                     countryId: updatedTopic.countryId,
                     status: updatedTopic.status,
-                    localeData: updatedTopic.localeData
-                }
-            }
+                    localeData: updatedTopic.localeData,
+                },
+            },
         });
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,
             message: error.message || __("error.internalServerError"),
             status: error.status || 500,
-            data: error.data || null
+            data: error.data || null,
         });
     }
 };
