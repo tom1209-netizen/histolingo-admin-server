@@ -3,7 +3,7 @@ import encodeService from "../utils/encode.utils.js";
 
 class AdminService {
     async createAdmin(firstName, lastName, adminName, email, password, roles, adminId) {
-        const [hashPassword, salt] = encodeService.encrypt(password);
+        const hashPassword = encodeService.encrypt(password);
         const newAdmin = await Admin.create(
             {
                 firstName,
@@ -12,7 +12,6 @@ class AdminService {
                 email,
                 password: hashPassword,
                 roles,
-                salt,
                 supervisorId: adminId
             }
         );
