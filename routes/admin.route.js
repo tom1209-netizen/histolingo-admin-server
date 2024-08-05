@@ -6,12 +6,12 @@ import { rolePrivileges } from "../constants/role.constant.js";
 
 const adminRoute = Router();
 
-adminRoute.post("/create", authentication, authorization(rolePrivileges.admin.create), createAdminValidator, createAdminController);
+adminRoute.post("/", authentication, authorization(rolePrivileges.admin.create), createAdminValidator, createAdminController);
 adminRoute.post("/login", loginAdminValidator, loginAdminController);
-adminRoute.get("/getCurrent", authentication, authorization(rolePrivileges.admin.read), getCurrentAdminController);
-adminRoute.patch("/update/:id", authentication, authorization(rolePrivileges.admin.update), updateAdminValidator, updateAdminController);
-adminRoute.get("/getList", authentication, authorization(rolePrivileges.admin.read), getListAdminValidator, getListAdmin);
-adminRoute.get("/getById/:id", authentication, authorization(rolePrivileges.admin.read), getByIdController);
+adminRoute.get("/me", authentication, authorization(rolePrivileges.admin.read), getCurrentAdminController);
+adminRoute.patch("/:id", authentication, authorization(rolePrivileges.admin.update), updateAdminValidator, updateAdminController);
+adminRoute.get("/", authentication, authorization(rolePrivileges.admin.read), getListAdminValidator, getListAdmin);
+adminRoute.get("/:id", authentication, authorization(rolePrivileges.admin.read), getByIdController);
 adminRoute.post("/generateRefreshToken", );
 
 export default adminRoute;

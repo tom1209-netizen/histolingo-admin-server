@@ -6,9 +6,9 @@ import { createCountryController, getCountryByIdController, getListCountryContro
 
 const countryRoute = Router();
 
-countryRoute.post("/create", authentication, authorization(rolePrivileges.country.create), createCountryValidator, createCountryController);
-countryRoute.patch("/update/:id", authentication, authorization(rolePrivileges.country.update), updateCountryValidator, updateCountryController);
-countryRoute.get("/getById/:id", authentication, authorization(rolePrivileges.country.read), getCountryByIdController);
-countryRoute.get("/getList", authentication, authorization(rolePrivileges.country.read), getListCountryValidator, getListCountryController);
+countryRoute.post("/", authentication, authorization(rolePrivileges.country.create), createCountryValidator, createCountryController);
+countryRoute.patch("/:id", authentication, authorization(rolePrivileges.country.update), updateCountryValidator, updateCountryController);
+countryRoute.get("/:id", authentication, authorization(rolePrivileges.country.read), getCountryByIdController);
+countryRoute.get("/", authentication, authorization(rolePrivileges.country.read), getListCountryValidator, getListCountryController);
 
 export default countryRoute;
