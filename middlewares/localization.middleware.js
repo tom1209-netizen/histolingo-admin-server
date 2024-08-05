@@ -1,6 +1,9 @@
 import { localeData } from "../localization.js";
+import { applyRequestContentLanguage } from "../utils/localization.util.js";
 
 export const loadContentLanguage = async (req, res, next) => {
+  const __ = applyRequestContentLanguage(req);
+
   try {
     let contentLanguage = req.header("Content-Language");
 
@@ -8,11 +11,11 @@ export const loadContentLanguage = async (req, res, next) => {
       contentLanguage = "en-US";
     }
     if (!localeData[contentLanguage]) {
-      throw new Error("System does not support this language");
+      return res.status(400).json({ message: __("error.unsupportedLanguage") });
     }
     req.contentLanguage = contentLanguage;
     next();
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: __("error.internalServerError") });
   }
 };
