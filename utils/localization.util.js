@@ -1,6 +1,6 @@
 import { localeData } from "../localization.js";
 
-export const t = (language, path, values = {}) => {
+const t = (language, path, values = {}) => {
     let currentLocaleData = localeData[language];
 
     const parts = path.split('.');
@@ -19,4 +19,11 @@ export const t = (language, path, values = {}) => {
         }
     }
     return target;
+};
+
+export const applyRequestContentLanguage = (req) => {
+    const contentLanguage = req.contentLanguage;
+    return (path, value = {}) => {
+        return t(contentLanguage, path, value);
+    }
 };

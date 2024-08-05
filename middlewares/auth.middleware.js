@@ -1,12 +1,14 @@
 import tokenService from "../services/token.service.js";
 import Role from "../models/role.model.js";
-import { t } from "../utils/localization.util.js";
+import { applyRequestContentLanguage } from "../utils/localization.util.js";
 
 export const authentication = async (req, res, next) => {
+    const __ = applyRequestContentLanguage(req);
+
     try {
         if (!req.headers.authorization) {
             return res.status(403).json({
-                message: t(req.contentLanguage, "auth.noToken"),
+                message: __("auth.noToken"),
                 status: 403,
                 error: "Unauthorized"
             });
@@ -19,7 +21,7 @@ export const authentication = async (req, res, next) => {
         next();
     } catch (error) {
         return res.status(403).json({
-            message: t(req.contentLanguage, "auth.tokenInvalid"),
+            message: __("auth.tokenInvalid"),
             status: 403,
             error: "Unauthorized",
             details: error.message
@@ -28,10 +30,12 @@ export const authentication = async (req, res, next) => {
 };
 
 export const authorization = (requiredPermission) => async (req, res, next) => {
+    const __ = applyRequestContentLanguage(req);
+
     try {
         if (!req.admin) {
             return res.status(403).json({
-                message: t(req.contentLanguage, "admin.notFound"),
+                message: __("admin.notFound"),
                 status: 403,
                 error: "Forbidden"
             });
@@ -41,7 +45,7 @@ export const authorization = (requiredPermission) => async (req, res, next) => {
 
         if (!roles || roles.length === 0) {
             return res.status(403).json({
-                message: t(req.contentLanguage, "role.notFound"),
+                message: __("role.notFound"),
                 status: 403,
                 error: "Forbidden"
             });
@@ -50,7 +54,7 @@ export const authorization = (requiredPermission) => async (req, res, next) => {
         const hasPermission = roles.some(role => role.permissions.includes(requiredPermission));
         if (!hasPermission) {
             return res.status(403).json({
-                message: t(req.contentLanguage, "auth.permissionDenied"),
+                message: __("auth.permissionDenied"),
                 status: 403,
                 error: "Forbidden"
             });
@@ -59,7 +63,7 @@ export const authorization = (requiredPermission) => async (req, res, next) => {
         next();
     } catch (error) {
         return res.status(403).json({
-            message: "An error occurred during authorization",
+            message: __("auth.authorizationError"),
             status: 403,
             error: "Forbidden",
             details: error.message

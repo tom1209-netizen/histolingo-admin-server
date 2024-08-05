@@ -1,6 +1,6 @@
 import Topic from "../models/topic.model.js";
 
-class topicService {
+class TopicService {
     async createTopic(name, description, image, countryId, localeData) {
         const newTopic = await Topic.create(
             { name,
@@ -13,10 +13,11 @@ class topicService {
         return newTopic;
     }
 
-    async getTopics(filters, page, page_size) {
+    async getTopics(filters, page, page_size, sortOrder) {
         const skip = (page - 1) * page_size;
 
         const topics = await Topic.find(filters)
+            .sort({ createAt: sortOrder })
             .skip(skip)
             .limit(page_size);
 
@@ -42,4 +43,4 @@ class topicService {
     }
 }
 
-export default topicService = new topicService();
+export const TopicService = new TopicService();
