@@ -77,6 +77,7 @@ export const createAdminValidator = async (req, res, next) => {
 };
 
 export const loginAdminValidator = async (req, res, next) => {
+    const __ = applyRequestContentLanguage(req);
     try {
         const { email, password } = req.body;
 
@@ -136,6 +137,7 @@ export const getListAdminValidator = async (req, res, next) => {
 };
 
 export const updateAdminValidator = async (req, res, next) => {
+    const __ = applyRequestContentLanguage(req);
     try {
         const updateSchema = Joi.object({
             firstName: Joi.string()
