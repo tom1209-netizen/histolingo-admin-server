@@ -13,7 +13,7 @@ import {
     getTopicsController,
     getTopicController,
     updateTopicController,
-    softDeleteTopicController
+    deleteTopicController
 } from "../controllers/Topic.controller.js";
 import { rolePrivileges } from "../constants/role.constant.js";
 
@@ -54,7 +54,7 @@ topicRoute.delete(
     "/:id",
     authentication,
     authorization(rolePrivileges.topic.delete),
-    softDeleteTopicController
+    deleteTopicController
 );
 
 export default topicRoute;
