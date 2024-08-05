@@ -3,7 +3,7 @@ import encodeService from "../utils/encode.utils.js";
 
 class AdminService {
     async createAdmin(firstName, lastName, adminName, email, password, roles, adminId) {
-        const [hashPassword, salt] = encodeService.encrypt(password);
+        const hashPassword = encodeService.encrypt(password);
         const newAdmin = await Admin.create(
             {
                 firstName,
@@ -12,14 +12,13 @@ class AdminService {
                 email,
                 password: hashPassword,
                 roles,
-                salt,
                 supervisorId: adminId
             }
         );
         return newAdmin;
     }
 
-    async updateAdmin(adminId, updateData) {
+    async updateAdmin(admin, updateData) {
         try {
             // Kiểm tra nếu có trường password
             if (updateData.password) {
@@ -28,7 +27,7 @@ class AdminService {
                 updateData.salt = salt;
             }
 
-            const updatedAdmin = await Admin.findByIdAndUpdate(adminId, updateData, { new: true });
+            const updatedAdmin = await Admin.findOneAndUpdate(admin, updateData, { new: true });
 
             return updatedAdmin;
         } catch (e) {

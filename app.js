@@ -8,6 +8,7 @@ import topicRoute from "./routes/topic.route.js";
 import passwordRoutes from "./routes/passwordController.route.js";
 import { initLocaleData } from "./localization.js";
 import { loadContentLanguage } from "./middlewares/localization.middleware.js";
+import countryRoute from "./routes/country.route.js";
 
 const app = express();
 
@@ -29,7 +30,8 @@ app.get("/", (req, res) => {
 });
 
 app.use("/roles", roleRoute);
-app.use("/admin", adminRoute);
+app.use("/admins", adminRoute);
+app.use("/countries", countryRoute);
 app.use('/topics', topicRoute);
 app.use("/password", passwordRoutes);
 

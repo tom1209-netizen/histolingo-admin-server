@@ -2,10 +2,11 @@ import Joi from "joi";
 import Admin from "../models/admin.model.js";
 import Role from "../models/role.model.js";
 import encodeService from "../utils/encode.utils.js";
-import tokenService from "../services/token.service.js";
 import { adminStatus } from "../constants/admin.constant.js";
+import { applyRequestContentLanguage, t } from "../utils/localization.util.js";
 
 export const createAdminValidator = async (req, res, next) => {
+    const __ = applyRequestContentLanguage(req);
     try {
         const { firstName, lastName, adminName, email, password, roles } = req.body;
 
@@ -50,18 +51,23 @@ export const createAdminValidator = async (req, res, next) => {
         });
 
         if (existedAdmin) {
-            const error = new Error("AdminName or email already exists");
-            error.statusCode = 403;
-            throw error;
+            return res.status(404).json({
+                success: false,
+                message: __("validation.unique", { field: __("model.admin.name") }),
+                status: 404,
+                data: null
+            });
         }
-
 
         // Find role by id
         const roleDocs = await Role.find({ _id: { $in: roles } });
         if (roleDocs.length !== roles.length) {
-            const error = new Error("Some roles do not exist");
-            error.statusCode = 400;
-            throw error;
+            return res.status(404).json({
+                success: false,
+                message: __("validation.notFound", { field: __("model.role.name") }),
+                status: 404,
+                data: null
+            });
         }
 
         next();
@@ -71,6 +77,7 @@ export const createAdminValidator = async (req, res, next) => {
 };
 
 export const loginAdminValidator = async (req, res, next) => {
+    const __ = applyRequestContentLanguage(req);
     try {
         const { email, password } = req.body;
 
@@ -93,13 +100,16 @@ export const loginAdminValidator = async (req, res, next) => {
         });
 
         const existedAdmin = await Admin.findOne({ email });
-        req.body.admin = existedAdmin;
         const passwordMatches = existedAdmin ? encodeService.decrypt(password, existedAdmin.password) : false;
         if (!existedAdmin || !passwordMatches) {
-            const error = new Error("Email or password is invalid");
-            error.statusCode = 403;
-            throw error;
+            return res.status(404).json({
+                success: false,
+                message: __("validation.notFound", { field: __("model.admin.name") }),
+                status: 404,
+                data: null
+            });
         }
+        req.body.admin = existedAdmin;
 
         next();
     } catch (error) {
@@ -127,6 +137,7 @@ export const getListAdminValidator = async (req, res, next) => {
 };
 
 export const updateAdminValidator = async (req, res, next) => {
+    const __ = applyRequestContentLanguage(req);
     try {
         const updateSchema = Joi.object({
             firstName: Joi.string()
@@ -145,8 +156,7 @@ export const updateAdminValidator = async (req, res, next) => {
                 .required(),
             password: Joi.string()
                 .min(8)
-                .max(250)
-                .required(),
+                .max(250),
             roles: Joi.array()
                 .items(Joi.string().hex().length(24))
                 .required(),
@@ -165,12 +175,45 @@ export const updateAdminValidator = async (req, res, next) => {
             status
         });
 
+        const existedAdmin = await Admin.findOne({
+            $or: [
+                { adminName: req.body.adminName },
+                { email: req.body.email }
+            ],
+            _id: { $ne: req.params.id }
+        });
+
+        if (existedAdmin) {
+            return res.status(404).json({
+                success: false,
+                message: __("validation.unique", { field: __("model.admin.name") }),
+                status: 404,
+                data: null
+            });
+        }
+
+        const id = req.params.id;
+        const adminUpdate = await Admin.findOne({ _id: id });
+        if (!adminUpdate) {
+            return res.status(404).json({
+                success: false,
+                message: __("validation.notFound", { field: __("model.admin.name") }),
+                status: 404,
+                data: null
+            });
+        }
+
+        req.adminUpdate = adminUpdate;
+
         // Find role by id
         const roleDocs = await Role.find({ _id: { $in: roles } });
         if (roleDocs.length !== roles.length) {
-            const error = new Error("Some roles do not exist");
-            error.statusCode = 400;
-            throw error;
+            return res.status(404).json({
+                success: false,
+                message: __("validation.notFound", { field: __("model.role.name") }),
+                status: 404,
+                data: null
+            });
         }
 
         next();

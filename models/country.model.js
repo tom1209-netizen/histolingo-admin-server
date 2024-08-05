@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { countryStatus } from "../constants/country.constant.js";
 const { Schema, model } = mongoose;
 
 const countrySchema = new Schema(
@@ -20,7 +21,8 @@ const countrySchema = new Schema(
         },
         status: {
             type: Number,
-            enum: [0, 1],
+            enum: [countryStatus.active, countryStatus.inactive],
+            default: countryStatus.active,
             require: true,
         },
         localeData: {

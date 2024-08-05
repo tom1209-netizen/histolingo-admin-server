@@ -5,7 +5,7 @@ class Encode {
         try {
             const salt = bcrypt.genSaltSync(10);
             const hashPassword = bcrypt.hashSync(password, salt);
-            return [hashPassword, salt];
+            return hashPassword;
         } catch (e) {
             const error = new Error(e.message);
             error.status = 500;
