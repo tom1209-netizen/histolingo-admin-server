@@ -35,7 +35,7 @@ export const createRoleController = async (req, res) => {
 export const getRolesController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
 
-    const { page = 1, page_size = 10, name, sortOrder = 1, status } = req.query;
+    const { page = 1, page_size = 10, name, sortOrder = -1, status } = req.query;
 
     const maxPageSize = 100;
     const limitedPageSize = Math.min(page_size, maxPageSize);

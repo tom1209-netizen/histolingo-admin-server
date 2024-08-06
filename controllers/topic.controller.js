@@ -30,7 +30,7 @@ export const createTopicController = async (req, res) => {
 export const getTopicsController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
 
-    const { page = 1, page_size = 10, name, status, sortOrder = 1 } = req.query;
+    const { page = 1, page_size = 10, name, status, sortOrder = -1 } = req.query;
 
     const maxPageSize = 100;
     const limitedPageSize = Math.min(page_size, maxPageSize);
