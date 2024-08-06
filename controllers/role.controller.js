@@ -9,17 +9,13 @@ export const createRoleController = async (req, res) => {
     try {
         const { name, permissions } = req.body;
         const newRole = await roleService.createRole(name, permissions);
-        console.log(req.contentLanguage);
+
         return res.status(201).json({
             success: true,
             message: __("role.createRoleSuccess"),
             status: 201,
             data: {
-                role: {
-                    id: newRole._id,
-                    name: newRole.name,
-                    permissions: newRole.permissions,
-                }
+                newRole
             },
         });
     } catch (error) {
@@ -158,12 +154,7 @@ export const updateRoleController = async (req, res) => {
             message: __("role.updateRoleSuccess"),
             status: 200,
             data: {
-                role: {
-                    id: deletedRole._id,
-                    name: deletedRole.name,
-                    permissions: deletedRole.permissions,
-                    status: deletedRole.status,
-                }
+                updatedRole
             }
         });
     } catch (error) {
@@ -197,12 +188,7 @@ export const deleteRoleController = async (req, res) => {
             message: __("role.deleteRoleSuccess"),
             status: 200,
             data: {
-                role: {
-                    id: deletedRole._id,
-                    name: deletedRole.name,
-                    permissions: deletedRole.permissions,
-                    status: deletedRole.status,
-                }
+                deletedRole
             }
         });
     } catch (error) {
