@@ -14,14 +14,7 @@ export const createTopicController = async (req, res) => {
             message: __("topic.createTopicSuccess"),
             status: 201,
             data: {
-                topic: {
-                    name: newTopic.name,
-                    description: newTopic.description,
-                    image: newTopic.image,
-                    countryId: newTopic.countryId,
-                    status: newTopic.status,
-                    localeData: newTopic.localeData
-                }
+                newTopic
             },
         });
     } catch (error) {
@@ -88,14 +81,7 @@ export const getTopicController = async (req, res) => {
             message: __("topic.getTopicSuccess"),
             status: 200,
             data: {
-                topic: {
-                    name: topic.name,
-                    description: topic.description,
-                    image: topic.image,
-                    countryId: topic.countryId,
-                    status: topic.status,
-                    localeData: topic.localeData
-                }
+                topic
             }
         });
     } catch (error) {
@@ -138,14 +124,7 @@ export const updateTopicController = async (req, res) => {
             message: __("topic.updateTopicSuccess"),
             status: 200,
             data: {
-                topic: {
-                    name: updatedTopic.name,
-                    description: updatedTopic.description,
-                    image: updatedTopic.image,
-                    countryId: updatedTopic.countryId,
-                    status: updatedTopic.status,
-                    localeData: updatedTopic.localeData,
-                },
+                updatedTopic
             },
         });
     } catch (error) {
@@ -180,14 +159,7 @@ export const deleteTopicController = async (req, res) => {
             message: __("topic.deleteSuccess"),
             status: 200,
             data: {
-                topic: {
-                    name: deletedTopic.name,
-                    description: deletedTopic.description,
-                    image: deletedTopic.image,
-                    countryId: deletedTopic.countryId,
-                    status: deletedTopic.status,
-                    localeData: deletedTopic.localeData,
-                },
+                deletedTopic
             },
         });
     } catch (error) {
