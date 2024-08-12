@@ -5,6 +5,11 @@ export const questionType = {
     fillInTheBlank: 3,
 }
 
+export const questionStatus = {
+    active: 1,
+    inactive: 0,
+}
+
 export const answer = {
     a: 0,
     b: 1,

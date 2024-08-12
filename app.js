@@ -6,6 +6,7 @@ import roleRoute from "./routes/role.route.js";
 import adminRoute from "./routes/admin.route.js";
 import topicRoute from "./routes/topic.route.js";
 import passwordRoutes from "./routes/passwordController.route.js";
+import questionRoute from "./routes/question.route.js";
 import { initLocaleData } from "./localization.js";
 import { loadContentLanguage } from "./middlewares/localization.middleware.js";
 import countryRoute from "./routes/country.route.js";
@@ -34,6 +35,7 @@ app.use("/admins", adminRoute);
 app.use("/countries", countryRoute);
 app.use('/topics', topicRoute);
 app.use("/password", passwordRoutes);
+app.use("/questions", questionRoute);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
