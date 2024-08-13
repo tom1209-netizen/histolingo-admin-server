@@ -118,6 +118,7 @@ export const loginAdminValidator = async (req, res, next) => {
 };
 
 export const getListAdminValidator = async (req, res, next) => {
+    const __ = applyRequestContentLanguage(req);
     const schema = Joi.object({
         page: Joi.number()
             .integer()
