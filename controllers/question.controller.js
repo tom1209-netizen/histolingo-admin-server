@@ -30,7 +30,7 @@ export const createQuestionController = async (req, res) => {
 export const getQuestionsController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
 
-    const { page = 1, page_size = 10, sortOrder = -1, status } = req.query;
+    const { page = 1, page_size = 10, search, sortOrder = -1, status } = req.query;
 
     const maxPageSize = 100;
     const limitedPageSize = Math.min(page_size, maxPageSize);
@@ -39,6 +39,10 @@ export const getQuestionsController = async (req, res) => {
 
     if (isValidStatus(status)) {
         filters.status = status;
+    }
+
+    if (search) {
+        filters.ask = { $regex: new RegExp(search, 'i') };
     }
 
     try {

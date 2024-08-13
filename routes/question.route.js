@@ -16,7 +16,9 @@ import {
 import {
     createQuestionValidator,
     getQuestionValidator,
-    updateQuestionValidator
+    getQuestionsValidator,
+    updateQuestionValidator,
+    deleteQuestionValidator
 } from "../middlewares/question.middleware.js";
 
 const questionRoute = Router();
@@ -33,6 +35,7 @@ questionRoute.get(
     "/",
     authentication,
     authorization(rolePrivileges.question.read),
+    getQuestionsController,
     getQuestionsController
 );
 
@@ -40,7 +43,7 @@ questionRoute.get(
     "/:id",
     authentication,
     authorization(rolePrivileges.question.read),
-    getQuestionValidator,
+    getQuestionsValidator,
     getQuestionController
 );
 
@@ -56,6 +59,7 @@ questionRoute.delete(
     "/:id",
     authentication,
     authorization(rolePrivileges.question.delete),
+    deleteQuestionValidator,
     deleteQuestionController
 );
 
