@@ -2,9 +2,7 @@ import { BaseQuestion } from "../models/question.model.js";
 
 class QuestionService {
     async createQuestion(data) {
-        const newQuestion = await BaseQuestion.create(data)
-            .populate("topicId")
-            .populate("countryId");
+        const newQuestion = await BaseQuestion.create(data);
         return newQuestion;
     }
 
