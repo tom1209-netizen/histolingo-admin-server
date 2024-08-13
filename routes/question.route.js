@@ -35,7 +35,7 @@ questionRoute.get(
     "/",
     authentication,
     authorization(rolePrivileges.question.read),
-    getQuestionsController,
+    getQuestionsValidator,
     getQuestionsController
 );
 
@@ -43,7 +43,7 @@ questionRoute.get(
     "/:id",
     authentication,
     authorization(rolePrivileges.question.read),
-    getQuestionsValidator,
+    getQuestionValidator,
     getQuestionController
 );
 
