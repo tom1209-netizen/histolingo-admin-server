@@ -52,6 +52,7 @@ export const getFeedbacksValidator = async (req, res, next) => {
             }),
         search: Joi.string()
             .optional()
+            .allow('')
             .messages({
                 'string.base': __('question.invalidSearch')
             }),
