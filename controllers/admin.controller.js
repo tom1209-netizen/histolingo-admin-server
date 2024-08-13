@@ -113,7 +113,7 @@ export const updateAdminController = async (req, res) => {
 export const getListAdmin = async (req, res) => {
 
     try {
-        const { search = '', page = 1, limit = 10, status } = req.query;
+        const { page = 1, page_size = 10, search = '', status, sortOrder = -1 } = req.query;
 
         // Tạo điều kiện tìm kiếm
         const searchCondition = search
@@ -132,8 +132,9 @@ export const getListAdmin = async (req, res) => {
 
         // Lấy danh sách Admin theo điều kiện tìm kiếm và phân trang
         const admins = await Admin.find(searchCondition)
-            .skip((page - 1) * limit)
-            .limit(Number(limit));
+            .skip((page - 1) * page_size)
+            .limit(Number(page_size))
+            .sort(sortOrder === -1 ? { createdAt: -1 } : { createdAt: 1 });
 
         // Lấy tổng số lượng Admin để tính toán phân trang
         const totalAdmins = await Admin.countDocuments(searchCondition);
@@ -143,7 +144,7 @@ export const getListAdmin = async (req, res) => {
             message: t(req.contentLanguage, "admin.getListSuccess"),
             data: {
                 admins,
-                totalPages: Math.ceil(totalAdmins / limit),
+                totalPages: Math.ceil(totalAdmins / page_size),
                 totalCount: totalAdmins,
                 currentPage: Number(page)
             },
