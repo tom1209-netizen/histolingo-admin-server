@@ -7,7 +7,7 @@ export const createRoleValidator = async (req, res, next) => {
     const __ = applyRequestContentLanguage(req);
     const { name, permissions } = req.body;
 
-    const createSchema = Joi.object({
+    const createRoleSchema = Joi.object({
         name: Joi.string()
             .min(1)
             .max(250)
@@ -38,7 +38,7 @@ export const createRoleValidator = async (req, res, next) => {
     });
 
     try {
-        await createSchema.validateAsync({ name, permissions });
+        await createRoleSchema.validateAsync({ name, permissions });
 
         const existedRole = await Role.findOne({ name });
         if (existedRole) {
@@ -66,7 +66,7 @@ export const updateRoleValidator = async (req, res, next) => {
     const { id } = req.params;
     const { name, permissions } = req.body;
 
-    const updateSchema = Joi.object({
+    const updateRoleSchema = Joi.object({
         id: Joi.string()
             .hex()
             .length(24)
@@ -98,7 +98,7 @@ export const updateRoleValidator = async (req, res, next) => {
     });
 
     try {
-        await updateSchema.validateAsync({ id, name, permissions });
+        await updateRoleSchema.validateAsync({ id, name, permissions });
 
         const roleExists = await roleService.getRole(id);
         if (!roleExists) {
@@ -125,7 +125,7 @@ export const getRoleValidator = async (req, res, next) => {
     const __ = applyRequestContentLanguage(req);
     const { id } = req.params;
 
-    const getSchema = Joi.object({
+    const getRoleSchema = Joi.object({
         id: Joi.string()
             .hex()
             .length(24)
@@ -139,7 +139,62 @@ export const getRoleValidator = async (req, res, next) => {
     });
 
     try {
-        await getSchema.validateAsync({ id });
+        await getRoleSchema.validateAsync({ id });
+
+        next();
+    } catch (error) {
+        return res.status(error.status || 500).json({
+            success: false,
+            message: error.message || __('error.internalServerError'),
+            status: error.status || 500,
+            data: error.data || null
+        });
+    }
+}
+
+export const getRolesValidator = async (req, res, next) => {
+    const __ = applyRequestContentLanguage(req);
+
+    const getRolesSchema = Joi.object({
+        page: Joi.number()
+            .integer()
+            .min(1)
+            .optional()
+            .messages({
+                'number.base': __('question.invalidPage'),
+                'number.min': __('question.pageMin')
+            }),
+        page_size: Joi.number()
+            .integer()
+            .min(1)
+            .optional()
+            .messages({
+                'number.base': __('question.invalidPageSize'),
+                'number.min': __('question.pageSizeMin')
+            }),
+        search: Joi.string()
+            .optional()
+            .allow('')
+            .messages({
+                'string.base': __('question.invalidSearch')
+            }),
+        sortOrder: Joi.number()
+            .valid(1, -1)
+            .optional()
+            .messages({
+                'any.only': __('question.invalidSortOrder')
+            }),
+        status: Joi.number()
+            .valid(0, 1)
+            .optional()
+            .messages({
+                'any.only': __('question.invalidStatus')
+            }),
+    });
+
+    try {
+        const data = req.query;
+        await getRolesSchema.validateAsync(data);
 
         next();
     } catch (error) {

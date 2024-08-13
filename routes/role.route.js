@@ -7,6 +7,7 @@ import {
     createRoleValidator,
     updateRoleValidator,
     getRoleValidator,
+    getRolesValidator
 } from "../middlewares/role.middleware.js";
 import {
     createRoleController,
@@ -34,6 +35,7 @@ roleRoute.get(
     "/",
     authentication,
     authorization(rolePrivileges.role.read),
+    getRolesValidator,
     getRolesController
 );
 
