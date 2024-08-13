@@ -6,7 +6,7 @@ export const createTopicValidator = async (req, res, next) => {
     const { name, description, image, countryId, localeData } = req.body;
     const __ = applyRequestContentLanguage(req);
 
-    const createSchema = Joi.object({
+    const createTopicSchema = Joi.object({
         name: Joi.string()
             .max(250)
             .required()
@@ -62,7 +62,7 @@ export const createTopicValidator = async (req, res, next) => {
     });
 
     try {
-        await createSchema.validateAsync({ name, description, image, countryId, localeData });
+        await createTopicSchema.validateAsync({ name, description, image, countryId, localeData });
 
         const existedTopic = await Topic.findOne({ name });
         if (existedTopic) {
@@ -90,7 +90,7 @@ export const updateTopicValidator = async (req, res, next) => {
     const { name, description, image, countryId, localeData } = req.body;
     const __ = applyRequestContentLanguage(req);
 
-    const updateSchema = Joi.object({
+    const updateTopicSchema = Joi.object({
         id: Joi.string()
             .hex()
             .length(24)
@@ -146,7 +146,7 @@ export const updateTopicValidator = async (req, res, next) => {
     });
 
     try {
-        await updateSchema.validateAsync({ id, name, description, image, countryId, localeData });
+        await updateTopicSchema.validateAsync({ id, name, description, image, countryId, localeData });
 
         const existedTopic = await Topic.findById(id);
         if (!existedTopic) {
@@ -173,7 +173,7 @@ export const getTopicValidator = async (req, res, next) => {
     const { id } = req.params;
     const __ = applyRequestContentLanguage(req);
 
-    const getSchema = Joi.object({
+    const getTopicSchema = Joi.object({
         id: Joi.string()
             .hex()
             .length(24)
@@ -187,7 +187,7 @@ export const getTopicValidator = async (req, res, next) => {
     });
 
     try {
-        await getSchema.validateAsync({ id });
+        await getTopicSchema.validateAsync({ id });
 
         const existedTopic = await Topic.findById(id);
         if (!existedTopic) {
@@ -209,3 +209,58 @@ export const getTopicValidator = async (req, res, next) => {
         });
     }
 };
+
+export const getTopicsValidator = async (req, res, next) => {
+    const __ = applyRequestContentLanguage(req);
+
+    const getTopicsSchema = Joi.object({
+        page: Joi.number()
+            .integer()
+            .min(1)
+            .optional()
+            .messages({
+                'number.base': __('question.invalidPage'),
+                'number.min': __('question.pageMin')
+            }),
+        page_size: Joi.number()
+            .integer()
+            .min(1)
+            .optional()
+            .messages({
+                'number.base': __('question.invalidPageSize'),
+                'number.min': __('question.pageSizeMin')
+            }),
+        search: Joi.string()
+            .optional()
+            .allow('')
+            .messages({
+                'string.base': __('question.invalidSearch')
+            }),
+        sortOrder: Joi.number()
+            .valid(1, -1)
+            .optional()
+            .messages({
+                'any.only': __('question.invalidSortOrder')
+            }),
+        status: Joi.number()
+            .valid(0, 1)
+            .optional()
+            .messages({
+                'any.only': __('question.invalidStatus')
+            }),
+    });
+
+    try {
+        const data = req.query;
+        await getTopicsSchema.validateAsync(data);
+
+        next();
+    } catch (error) {
+        return res.status(error.status || 500).json({
+            success: false,
+            message: error.message || __('error.internalServerError'),
+            status: error.status || 500,
+            data: error.data || null
+        });
+    }
+}
