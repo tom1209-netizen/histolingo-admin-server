@@ -7,6 +7,7 @@ import {
     createTopicValidator,
     updateTopicValidator,
     getTopicValidator,
+    getTopicsValidator
 } from "../middlewares/Topic.middleware.js";
 import {
     createTopicController,
@@ -31,6 +32,7 @@ topicRoute.get(
     "/",
     authentication,
     authorization(rolePrivileges.topic.read),
+    getTopicsValidator,
     getTopicsController
 );
 
