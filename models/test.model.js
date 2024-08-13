@@ -36,6 +36,10 @@ const testSchema = new Schema(
             default: testStatus.active,
             require: true,
         },
+        localeData: {
+            type: Schema.Types.Mixed,
+            required: true
+        }
     },
     { timestamps: true }
 );

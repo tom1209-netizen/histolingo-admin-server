@@ -70,6 +70,12 @@ export const createAdminValidator = async (req, res, next) => {
             });
         }
 
+        // Extract role names
+        const roleNames = roleDocs.map(role => role.name);
+        
+        // Add role names to the request object
+        req.roleNames = roleNames;
+
         next();
     } catch (error) {
         next(error);
@@ -165,6 +171,22 @@ export const getListAdminValidator = async (req, res, next) => {
     }
 };
 
+export const getRolesToAdminValidator = async (req, res, next) => {
+    const schema = Joi.object({
+        search: Joi.string().allow('')
+    });
+    console.log(req.query)
+    try {
+        const value = await schema.validateAsync(req.query);
+        req.query = value;
+        console.log(req.query);
+        console.log(value)
+        next();
+    } catch (error) {
+        next(error);
+    }
+};
+
 export const updateAdminValidator = async (req, res, next) => {
     const __ = applyRequestContentLanguage(req);
     try {
@@ -244,6 +266,10 @@ export const updateAdminValidator = async (req, res, next) => {
                 data: null
             });
         }
+
+        const roleNames = roleDocs.map(role => role.name);
+        
+        req.roleNames = roleNames;
 
         next();
     } catch (error) {

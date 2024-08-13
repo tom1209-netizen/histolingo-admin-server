@@ -11,6 +11,9 @@ import questionRoute from "./routes/question.route.js";
 import { initLocaleData } from "./localization.js";
 import { loadContentLanguage } from "./middlewares/localization.middleware.js";
 import countryRoute from "./routes/country.route.js";
+import documentationRoute from "./routes/documentation.route.js";
+import playerRoute from "./routes/player.route.js";
+import testRoute from "./routes/test.route.js";
 
 const app = express();
 
@@ -35,6 +38,9 @@ app.use("/roles", roleRoute);
 app.use("/admins", adminRoute);
 app.use("/countries", countryRoute);
 app.use('/topics', topicRoute);
+app.use("/documentations", documentationRoute);
+app.use("/players", playerRoute);
+app.use("/tests", testRoute);
 app.use("/password", passwordRoutes);
 app.use("/feedbacks", feedbackRoute);
 app.use("/questions", questionRoute);

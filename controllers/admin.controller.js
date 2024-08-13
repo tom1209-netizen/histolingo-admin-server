@@ -1,19 +1,23 @@
+import { adminStatus } from "../constants/admin.constant.js";
 import Admin from "../models/admin.model.js";
+import Role from "../models/role.model.js";
 import adminService from "../services/admin.service.js";
 import tokenService from "../services/token.service.js";
-import { t } from "../utils/localization.util.js";
+import { applyRequestContentLanguage } from "../utils/localization.util.js";
 
 export const createAdminController = async (req, res) => {
+    const __ = applyRequestContentLanguage(req);
     try {
         const admin = req.admin;
         const adminId = admin._id;
+        const roleNames = req.roleNames;
 
         const { firstName, lastName, adminName, email, password, roles } = req.body;
         const newAdmin = await adminService.createAdmin(firstName, lastName, adminName, email, password, roles, adminId);
 
         return res.status(201).json({
             success: true,
-            message: t(req.contentLanguage, "admin.createSuccess"),
+            message: __("message.createdSuccess", { field: __("model.admin.name") }),
             status: 201,
             data: {
                 admin: {
@@ -22,7 +26,7 @@ export const createAdminController = async (req, res) => {
                     lastName: newAdmin.lastName,
                     adminName: newAdmin.adminName,
                     email: newAdmin.email,
-                    roles: newAdmin.roles,
+                    roles: roleNames,
                 },
             },
         });
@@ -37,6 +41,7 @@ export const createAdminController = async (req, res) => {
 };
 
 export const loginAdminController = async (req, res) => {
+    const __ = applyRequestContentLanguage(req);
     try {
         const { admin } = req.body;
         const accessToken = tokenService.signAccessToken({ email: admin.email, _id: admin._id });
@@ -44,7 +49,7 @@ export const loginAdminController = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: t(req.contentLanguage, "admin.loginSuccess"),
+            message: __("message.loginSuccess", { field: __("model.admin.name") }),
             status: 200,
             data: {
                 admin: {
@@ -68,24 +73,27 @@ export const loginAdminController = async (req, res) => {
 };
 
 export const getCurrentAdminController = (req, res) => {
+    const __ = applyRequestContentLanguage(req);
     const { admin } = req.admin;
     return res.status(200).json({
         success: true,
-        message: t(req.contentLanguage, "admin.getCurrentSuccess"),
+        message: __("message.getSuccess", { field: __("model.admin.name") }),
         status: 200,
         data: admin
     });
 };
 
 export const updateAdminController = async (req, res) => {
+    const __ = applyRequestContentLanguage(req);
     try {
         const admin = req.adminUpdate;
         const updateData = req.body;
         const updateAdmin = await adminService.updateAdmin(admin, updateData);
+        const roleNames = req.roleNames;
 
         return res.status(200).json({
             success: true,
-            message: t(req.contentLanguage, "admin.updateSuccess"),
+            message: __("message.updatedSuccess", { field: __("model.admin.name") }),
             status: 200,
             data: {
                 updateAdmin: {
@@ -95,7 +103,7 @@ export const updateAdminController = async (req, res) => {
                     adminName: updateAdmin.adminName,
                     email: updateAdmin.email,
                     password: updateAdmin.password,
-                    role: updateAdmin.roles,
+                    role: roleNames,
                     status: updateAdmin.status,
                 }
             },
@@ -111,7 +119,7 @@ export const updateAdminController = async (req, res) => {
 };
 
 export const getListAdmin = async (req, res) => {
-
+    const __ = applyRequestContentLanguage(req);
     try {
         const { page = 1, page_size = 10, search = '', status, sortOrder = -1 } = req.query;
 
@@ -141,7 +149,7 @@ export const getListAdmin = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: t(req.contentLanguage, "admin.getListSuccess"),
+            message: __("message.getSuccess", { field: __("model.admin.name") }),
             data: {
                 admins,
                 totalPages: Math.ceil(totalAdmins / page_size),
@@ -150,11 +158,51 @@ export const getListAdmin = async (req, res) => {
             },
         });
     } catch (error) {
-        next(error);
+        return res.status(error.status || 500).json({
+            success: false,
+            message: error.message || "Internal Server Error",
+            status: error.status || 500,
+            data: error.data || null
+        });
+    }
+};
+
+export const getRolesToAdminController = async (req, res) => {
+    const __ = applyRequestContentLanguage(req);
+    try {
+        console.log(req.query)
+        const { search = '' } = req.query;
+
+        const searchCondition = search
+            ? {
+                name: { $regex: search, $options: 'i' },
+                status: adminStatus.active
+            }
+            : { status: adminStatus.active };
+
+            console.log(searchCondition)
+        const roles = await Role.find(searchCondition);
+
+        return res.status(200).json({
+            success: true,
+            message: __("message.getSuccess", { field: __("model.role.name") }),
+            data: {
+                roles,
+                totalCount: roles.length
+            },
+        });
+    } catch (error) {
+        return res.status(error.status || 500).json({
+            success: false,
+            message: error.message || "Internal Server Error",
+            status: error.status || 500,
+            data: error.data || "alo"
+        });
     }
 };
 
 export const getByIdController = async (req, res) => {
+    const __ = applyRequestContentLanguage(req);
     try {
         const id = req.params.id;
         const admin = await Admin.findOne({ _id: id }, { password: 0, salt: 0 });
@@ -162,18 +210,44 @@ export const getByIdController = async (req, res) => {
         if (!admin) {
             return res.status(404).json({
                 success: false,
-                message: t(req.contentLanguage, "admin.notFound"),
+                message: __("validation.notFound", { field: __("model.admin.name") }),
                 status: 404,
                 data: null
             });
         } else {
             return res.status(200).json({
                 success: true,
-                message: t(req.contentLanguage, "admin.getByIdSuccess"),
+                message: __("message.getSuccess", { field: __("model.admin.name") }),
                 status: 200,
                 data: admin
             });
         }
+    } catch (error) {
+        return res.status(error.status || 500).json({
+            success: false,
+            message: error.message || "Internal Server Error",
+            status: error.status || 500,
+            data: error.data || null
+        });
+    }
+};
+
+export const generateRefreshTokenController = async (req, res) => {
+    const __ = applyRequestContentLanguage(req);
+    try {
+        const admin = req.admin;
+        const accessToken = tokenService.signAccessToken({ email: admin.email, _id: admin._id });
+        const refreshToken = tokenService.signRefreshToken({ _id: admin._id });
+
+        return res.status(200).json({
+            success: true,
+            message: __("message.generateTokenSuccess"),
+            status: 200,
+            data: {
+                accessToken,
+                refreshToken,
+            },
+        });
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,

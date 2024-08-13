@@ -17,24 +17,12 @@ export const createCountryValidator = async (req, res, next) => {
                 .required(),
             image: Joi.string()
                 .max(1000),
-            localeData: Joi.object({
-                "en-US": Joi.object({
+            localeData: Joi.object().pattern(/^[a-z]{2}-[A-Z]{2}$/,
+                Joi.object({
                     name: Joi.string().max(250).required(),
                     description: Joi.string().max(1000).required()
-                }).required(),
-                "vi-VN": Joi.object({
-                    name: Joi.string().max(250).required(),
-                    description: Joi.string().max(1000).required()
-                }).required(),
-                "ja-JP": Joi.object({
-                    name: Joi.string().max(250).required(),
-                    description: Joi.string().max(1000).required()
-                }).required(),
-                "ru-RU": Joi.object({
-                    name: Joi.string().max(250).required(),
-                    description: Joi.string().max(1000).required()
-                }).required()
-            }).required()
+                })
+            ).default({})
         });
 
         await createSchema.validateAsync({
@@ -52,7 +40,7 @@ export const createCountryValidator = async (req, res, next) => {
                 status: 404,
                 data: null
             });
-        }
+        };
 
         next();
     } catch (error) {
@@ -74,24 +62,12 @@ export const updateCountryValidator = async (req, res, next) => {
                 .required(),
             image: Joi.string()
                 .max(1000),
-            localeData: Joi.object({
-                "en-US": Joi.object({
-                    name: Joi.string().max(250).required(),
-                    description: Joi.string().max(1000).required()
-                }).required(),
-                "vi-VN": Joi.object({
-                    name: Joi.string().max(250).required(),
-                    description: Joi.string().max(1000).required()
-                }).required(),
-                "ja-JP": Joi.object({
-                    name: Joi.string().max(250).required(),
-                    description: Joi.string().max(1000).required()
-                }).required(),
-                "ru-RU": Joi.object({
-                    name: Joi.string().max(250).required(),
-                    description: Joi.string().max(1000).required()
-                }).required()
-            }).required()
+                localeData: Joi.object().pattern(/^[a-z]{2}-[A-Z]{2}$/,
+                    Joi.object({
+                        name: Joi.string().max(250).required(),
+                        description: Joi.string().max(1000).required()
+                    })
+                ).default({})
         });
 
         await createSchema.validateAsync({
@@ -106,9 +82,9 @@ export const updateCountryValidator = async (req, res, next) => {
         req.country = country;
 
         if (!country) {
-            return res.status(404).json({
+            return res.status(400).json({
                 success: false,
-                message: __("validation.notFound", {field: __("model.country.name")}),
+                message: __("validation.notFound", { field: __("model.country.name") }),
                 status: 404,
                 data: null
             });
@@ -116,7 +92,7 @@ export const updateCountryValidator = async (req, res, next) => {
 
         const existedCountry = await Country.findOne({ name: req.body.name, _id: { $ne: req.params.id } });
         if (existedCountry) {
-            return res.status(404).json({
+            return res.status(400).json({
                 success: false,
                 message: __("validation.unique", { field: __("model.country.name") }),
                 status: 404,
