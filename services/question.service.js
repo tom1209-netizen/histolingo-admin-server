@@ -6,8 +6,8 @@ class QuestionService {
         return newQuestion;
     }
 
-    async getQuestions(filters, page, page_size, sortOrder) {
-        const skip = (page - 1) * page_size;
+    async getQuestions(filters, page, pageSize, sortOrder) {
+        const skip = (page - 1) * pageSize;
 
         const results = await BaseQuestion.aggregate([
             { $match: filters },
@@ -17,7 +17,7 @@ class QuestionService {
                     documents: [
                         { $sort: { createdAt: Number(sortOrder) } },
                         { $skip: skip },
-                        { $limit: page_size },
+                        { $limit: pageSize },
                         {
                             $lookup: {
                                 from: 'topics',
