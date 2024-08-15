@@ -8,9 +8,10 @@ import topicRoute from "./routes/topic.route.js";
 import feedbackRoute from "./routes/feedback.route.js";
 import passwordRoutes from "./routes/passwordController.route.js";
 import questionRoute from "./routes/question.route.js";
+import countryRoute from "./routes/country.route.js";
+import uploadRoute from "./routes/upload.route.js";
 import { initLocaleData } from "./localization.js";
 import { loadContentLanguage } from "./middlewares/localization.middleware.js";
-import countryRoute from "./routes/country.route.js";
 
 const app = express();
 
@@ -38,6 +39,7 @@ app.use('/topics', topicRoute);
 app.use("/password", passwordRoutes);
 app.use("/feedbacks", feedbackRoute);
 app.use("/questions", questionRoute);
+app.use("/upload", uploadRoute)
 
 // Error handling middleware
 app.use((err, req, res, next) => {
