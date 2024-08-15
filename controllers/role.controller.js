@@ -31,14 +31,14 @@ export const createRoleController = async (req, res) => {
 export const getRolesController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
 
-    const { page = 1, page_size = 10, search, sortOrder = -1, status } = req.query;
+    const { page = 1, pageSize = 10, search, sortOrder = -1, status } = req.query;
 
     const maxPageSize = 100;
-    const limitedPageSize = Math.min(page_size, maxPageSize);
+    const limitedPageSize = Math.min(pageSize, maxPageSize);
 
     const filters = {};
 
-    if (name) {
+    if (search) {
         filters.name = { $regex: new RegExp(search, 'i') };
     }
 
@@ -47,7 +47,7 @@ export const getRolesController = async (req, res) => {
     }
 
     try {
-        const roles = await roleService.getRoles(filters, page, limitedPageSize, sortOrder);
+        const { roles, totalRolesCount } = await roleService.getRoles(filters, page, limitedPageSize, sortOrder);
 
         return res.status(200).json({
             success: true,
@@ -55,9 +55,9 @@ export const getRolesController = async (req, res) => {
             status: 200,
             data: {
                 roles,
-                totalRoles: roles.length,
-                totalPage: Math.ceil(roles.length / limitedPageSize),
-                currentPage: page
+                totalRoles: totalRolesCount,
+                totalPage: Math.ceil(totalRolesCount / limitedPageSize),
+                currentPage: Number(page)
             }
         });
     } catch (error) {

@@ -5,10 +5,10 @@ import { isValidStatus } from "../utils/validation.utils.js";
 export const getFeedbacksController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
 
-    const { page = 1, page_size = 10, search, sortOrder = -1, status } = req.query;
+    const { page = 1, pageSize = 10, search, sortOrder = -1, status } = req.query;
 
     const maxPageSize = 100;
-    const limitedPageSize = Math.min(page_size, maxPageSize);
+    const limitedPageSize = Math.min(pageSize, maxPageSize);
 
     const filters = {};
 
@@ -21,7 +21,7 @@ export const getFeedbacksController = async (req, res) => {
     }
 
     try {
-        const feedbacks = await feedbackService.getFeedbacks(filters, page, limitedPageSize, sortOrder);
+        const { feedbacks, totalFeedbacksCount } = await feedbackService.getFeedbacks(filters, page, limitedPageSize, sortOrder);
 
         return res.status(200).json({
             success: true,
@@ -29,9 +29,9 @@ export const getFeedbacksController = async (req, res) => {
             status: 200,
             data: {
                 feedbacks,
-                totalFeedbacks: feedbacks.length,
-                totalPage: Math.ceil(feedbacks.length / limitedPageSize),
-                currentPage: page
+                totalFeedbacks: totalFeedbacksCount,
+                totalPage: Math.ceil(totalFeedbacksCount / limitedPageSize),
+                currentPage: Number(page)
             }
         });
     } catch (error) {

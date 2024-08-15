@@ -2,7 +2,6 @@ import Country from "../models/country.model.js";
 
 class CountryService {
     async createCountry(name, description, image, localeData) {
-        console.log(localeData);
         const newCountry = await Country.create(
             {
                 name,

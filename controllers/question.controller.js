@@ -30,10 +30,10 @@ export const createQuestionController = async (req, res) => {
 export const getQuestionsController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
 
-    const { page = 1, page_size = 10, search, sortOrder = -1, status } = req.query;
+    const { page = 1, pageSize = 10, search, sortOrder = -1, status } = req.query;
 
     const maxPageSize = 100;
-    const limitedPageSize = Math.min(page_size, maxPageSize);
+    const limitedPageSize = Math.min(pageSize, maxPageSize);
 
     const filters = {};
 
@@ -46,7 +46,7 @@ export const getQuestionsController = async (req, res) => {
     }
 
     try {
-        const questions = await questionService.getQuestions(filters, page, limitedPageSize, sortOrder);
+        const { questions, totalQuestionsCount} = await questionService.getQuestions(filters, page, limitedPageSize, sortOrder);
 
         return res.status(200).json({
             success: true,
@@ -54,9 +54,9 @@ export const getQuestionsController = async (req, res) => {
             status: 200,
             data: {
                 questions,
-                totalQuestions: questions.length,
-                totalPage: Math.ceil(questions.length / limitedPageSize),
-                currentPage: page
+                totalQuestions: totalQuestionsCount,
+                totalPage: Math.ceil(totalQuestionsCount / limitedPageSize),
+                currentPage: Number(page)
             },
         });
     } catch (error) {

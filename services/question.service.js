@@ -9,14 +9,48 @@ class QuestionService {
     async getQuestions(filters, page, page_size, sortOrder) {
         const skip = (page - 1) * page_size;
 
-        const questions = await BaseQuestion.find(filters)
-            .sort({ createdAt: parseInt(sortOrder, 10) })
-            .skip(skip)
-            .limit(page_size)
-            .populate("topicId")
-            .populate("countryId");
+        const results = await BaseQuestion.aggregate([
+            { $match: filters },
+            {
+                $facet: {
+                    totalCount: [{ $count: "count" }],
+                    documents: [
+                        { $sort: { createdAt: Number(sortOrder) } },
+                        { $skip: skip },
+                        { $limit: page_size },
+                        {
+                            $lookup: {
+                                from: 'topics',
+                                localField: 'topicId',
+                                foreignField: '_id',
+                                as: 'topic',
+                                pipeline: [
+                                    { $project: { name: 1 } }
+                                ]
+                            }
+                        },
+                        {
+                            $lookup: {
+                                from: 'countries',
+                                localField: 'countryId',
+                                foreignField: '_id',
+                                as: 'country',
+                                pipeline: [
+                                    { $project: { name: 1 } }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        ]);
 
-        return questions;
+        const totalQuestionsCount = results[0].totalCount[0]
+            ? results[0].totalCount[0].count
+            : 0;
+        const questions = results[0].documents;
+
+        return { questions, totalQuestionsCount };
     }
 
     async getQuestion(id) {

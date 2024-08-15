@@ -1,20 +1,29 @@
 import Feedback from "../models/feedback.model.js";
 
 class FeedbackService {
-    async createFeedback(feedback) {
-        const newFeedback = await Feedback.create(feedback);
-        return newFeedback;
-    }
+    async getFeedbacks(filters, page, pageSize, sortOrder) {
+        const skip = (page - 1) * pageSize;
 
-    async getFeedbacks(filters, page, page_size, sortOrder) {
-        const skip = (page - 1) * page_size;
+        const results = await Feedback.aggregate([
+            { $match: filters },
+            {
+                $facet: {
+                    totalCount: [{ $count: "count" }],
+                    documents: [
+                        { $sort: { createdAt: Number(sortOrder) } },
+                        { $skip: skip },
+                        { $limit: pageSize }
+                    ]
+                }
+            }
+        ]);
 
-        const feedbacks = await Feedback.find(filters)
-            .sort({ createdAt: parseInt(sortOrder, 10) })
-            .skip(skip)
-            .limit(page_size);
+        const totalFeedbacksCount = results[0].totalCount[0]
+            ? results[0].totalCount[0].count
+            : 0;
+        const feedbacks = results[0].documents;
 
-        return feedbacks;
+        return { feedbacks, totalFeedbacksCount };
     }
 
     async getFeedback(id) {
