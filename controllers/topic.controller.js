@@ -42,7 +42,7 @@ export const getTopicsController = async (req, res) => {
     }
 
     if (isValidStatus(status)) {
-        filters.status = status;
+        filters.status = Number(status);
     }
 
     if (countryName) {

@@ -43,7 +43,7 @@ export const getRolesController = async (req, res) => {
     }
 
     if (isValidStatus(status)) {
-        filters.status = status;
+        filters.status = Number(status);
     }
 
     try {

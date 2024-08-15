@@ -13,7 +13,7 @@ export const getFeedbacksController = async (req, res) => {
     const filters = {};
 
     if (isValidStatus(status)) {
-        filters.status = status;
+        filters.status = Number(status);
     }
 
     if (search) {
