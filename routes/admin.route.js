@@ -33,24 +33,28 @@ adminRoute.post(
     createAdminValidator,
     createAdminController
 );
+
+adminRoute.get(
+    "/getRoles",
+    authentication,
+    authorization(rolePrivileges.admin.create),
+    getRolesToAdminValidator,
+    getRolesToAdminController
+);
+
 adminRoute.post(
     "/login",
     loginAdminValidator,
     loginAdminController
 );
+
 adminRoute.get(
     "/me",
     authentication,
     authorization(rolePrivileges.admin.read),
     getCurrentAdminController
 );
-adminRoute.patch(
-    "/:id",
-    authentication,
-    authorization(rolePrivileges.admin.update),
-    updateAdminValidator,
-    updateAdminController
-);
+
 adminRoute.get(
     "/",
     authentication,
@@ -58,23 +62,26 @@ adminRoute.get(
     getListAdminValidator,
     getListAdmin
 );
-adminRoute.get(
-    "/:id",
-    authentication,
-    authorization(rolePrivileges.admin.read),
-    getByIdController
-);
+
 adminRoute.post(
     "/generateRefreshToken",
     authentication,
     generateRefreshTokenController
 );
-adminRoute.get(
-    "/getRoles",
+
+adminRoute.patch(
+    "/:id",
     authentication,
-    authorization(rolePrivileges.admin.create),
-    // getRolesToAdminValidator,
-    // getRolesToAdminController
+    authorization(rolePrivileges.admin.update),
+    updateAdminValidator,
+    updateAdminController
+);
+
+adminRoute.get(
+    "/:id",
+    authentication,
+    authorization(rolePrivileges.admin.read),
+    getByIdController
 );
 
 export default adminRoute;

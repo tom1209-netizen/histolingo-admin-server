@@ -5,17 +5,17 @@ import { applyRequestContentLanguage } from "../utils/localization.util.js";
 export const getListPlayerController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
     try {
-        const { search = '', page = 1, limit = 10, status } = req.query;
+        const { search = '', page = 1, page_size = 10, status } = req.query;
 
         const searchCondition = search
-            ? { name: { $regex: search, $options: 'i' } } : {};
+            ? { fullName: { $regex: search, $options: 'i' } } : {};
         if (status !== null && status !== undefined && status !== "") {
             searchCondition.status = status;
         }
 
         const players = await Player.find(searchCondition)
-            .skip((page - 1) * limit)
-            .limit(Number(limit));
+            .skip((page - 1) * page_size)
+            .limit(Number(page_size));
 
         const totalPlayers = await Player.countDocuments(searchCondition);
 
@@ -24,7 +24,7 @@ export const getListPlayerController = async (req, res) => {
             message: __("message.getSuccess", { field: __("model.player.name") }),
             data: {
                 players,
-                totalPages: Math.ceil(totalPlayers / limit),
+                totalPages: Math.ceil(totalPlayers / page_size),
                 totalCount: totalPlayers,
                 currentPage: Number(page)
             },

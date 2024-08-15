@@ -175,12 +175,9 @@ export const getRolesToAdminValidator = async (req, res, next) => {
     const schema = Joi.object({
         search: Joi.string().allow('')
     });
-    console.log(req.query)
     try {
         const value = await schema.validateAsync(req.query);
         req.query = value;
-        console.log(req.query);
-        console.log(value)
         next();
     } catch (error) {
         next(error);

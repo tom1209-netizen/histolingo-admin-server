@@ -10,13 +10,14 @@ import {
 } from "../constants/role.constant.js";
 import {
     createTestValidator,
+    getDataValidator,
     getListTestValidator,
-    getTopicsValidator,
     updateTestValidator
 
 } from "../middlewares/test.middleware.js";
 import {
     createTestController,
+    getCountriesController,
     getListTestController,
     getTestByIdController,
     getTopicsController,
@@ -32,6 +33,22 @@ testRoute.post(
     authorization(rolePrivileges.test.create),
     createTestValidator,
     createTestController
+);
+
+testRoute.get(
+    "/getCountries",
+    authentication,
+    authorization(rolePrivileges.test.create),
+    getDataValidator,
+    getCountriesController
+);
+
+testRoute.get(
+    "/getTopicsTest",
+    authentication,
+    authorization(rolePrivileges.test.create),
+    getDataValidator,
+    getTopicsController
 );
 
 testRoute.patch(
@@ -57,19 +74,6 @@ testRoute.get(
     getTestByIdController
 );
 
-testRoute.get(
-    "/getCountriesTest",
-    authentication,
-    authorization(rolePrivileges.test.create),
 
-);
-
-testRoute.get(
-    "/getTopics",
-    authentication,
-    authorization(rolePrivileges.test.create),
-    getTopicsValidator,
-    getTopicsController
-);
 
 export default testRoute;

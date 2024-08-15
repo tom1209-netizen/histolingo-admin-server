@@ -142,7 +142,7 @@ export const updateTestValidator = async (req, res, next) =>{
     }
 };
 
-export const getTopicsValidator = async (req, res, next) => {
+export const getDataValidator = async (req, res, next) => {
     const schema = Joi.object({
         search: Joi.string().allow('')
     });
@@ -156,19 +156,6 @@ export const getTopicsValidator = async (req, res, next) => {
     }
 };
 
-export const getCountriesValidator = async (req, res, next) => {
-    const schema = Joi.object({
-        search: Joi.string().allow('')
-    });
-
-    try {
-        const value = await schema.validateAsync(req.query);
-        req.query = value;
-        next();
-    } catch (error) {
-        next(error);
-    }
-};
 
 export const getListTestValidator = async (req, res, next) => {
     const schema = Joi.object({

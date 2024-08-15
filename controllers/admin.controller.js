@@ -170,7 +170,6 @@ export const getListAdmin = async (req, res) => {
 export const getRolesToAdminController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
     try {
-        console.log(req.query)
         const { search = '' } = req.query;
 
         const searchCondition = search
@@ -180,8 +179,7 @@ export const getRolesToAdminController = async (req, res) => {
             }
             : { status: adminStatus.active };
 
-            console.log(searchCondition)
-        const roles = await Role.find(searchCondition);
+        const roles = await Role.find(searchCondition, "_id name");
 
         return res.status(200).json({
             success: true,
@@ -196,7 +194,7 @@ export const getRolesToAdminController = async (req, res) => {
             success: false,
             message: error.message || "Internal Server Error",
             status: error.status || 500,
-            data: error.data || "alo"
+            data: error.data || null
         });
     }
 };

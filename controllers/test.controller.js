@@ -1,30 +1,28 @@
+import { topicStatus } from '../constants/topic.constant.js';
 import Admin from '../models/admin.model.js';
 import Test from '../models/test.model.js';
+import Topic from '../models/topic.model.js';
 import testService from '../services/test.service.js';
 import { applyRequestContentLanguage } from '../utils/localization.util.js';
 
-export const getTopicsController = async (req, res) => {
+export const getCountriesController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
 
     try {
         const { search = '' } = req.query;
         const searchCondition = search
             ? {
-                $or: [
-                    { firstName: { $regex: search, $options: 'i' } },
-                    { lastName: { $regex: search, $options: 'i' } },
-                    { adminName: { $regex: search, $options: 'i' } },
-                    { email: { $regex: search, $options: 'i' } }
-                ]
+                name: { $regex: search, $options: 'i' },
+                status: topicStatus.active
             }
-            : {};
+            : { status: topicStatus.active };
 
-        const admins = await Admin.find(searchCondition, 'firstName lastName adminName _id'); // Chỉ lấy ra các trường cần thiết
+        const countries = await testService.getCountriesTest(searchCondition);
 
         return res.status(200).json({
             success: true,
-            message: __("message.getSuccess", { field: __("model.admin.name") }),
-            data: admins
+            message: __("message.getSuccess", { field: __("model.country.name") }),
+            data: countries
         });
     } catch (error) {
         return res.status(error.status || 500).json({
@@ -36,29 +34,25 @@ export const getTopicsController = async (req, res) => {
     }
 };
 
-
-export const getCountriesController = async (req, res) => {
+export const getTopicsController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
 
     try {
         const { search = '' } = req.query;
         const searchCondition = search
             ? {
-                $or: [
-                    { firstName: { $regex: search, $options: 'i' } },
-                    { lastName: { $regex: search, $options: 'i' } },
-                    { adminName: { $regex: search, $options: 'i' } },
-                    { email: { $regex: search, $options: 'i' } }
-                ]
+                name: { $regex: search, $options: 'i' },
+                status: topicStatus.active
             }
-            : {};
+            : { status: topicStatus.active };
 
-        const admins = await Admin.find(searchCondition, 'firstName lastName adminName _id'); // Chỉ lấy ra các trường cần thiết
+
+        const topics = await testService.getTopicsTest(searchCondition);
 
         return res.status(200).json({
             success: true,
-            message: __("message.getSuccess", { field: __("model.admin.name") }),
-            data: admins
+            message: __("message.getSuccess", { field: __("model.topic.name") }),
+            data: topics
         });
     } catch (error) {
         return res.status(error.status || 500).json({
