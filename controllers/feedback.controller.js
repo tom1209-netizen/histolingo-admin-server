@@ -28,7 +28,10 @@ export const getFeedbacksController = async (req, res) => {
             message: __("feedback.getFeedbacksSuccess"),
             status: 200,
             data: {
-                feedbacks
+                feedbacks,
+                totalFeedbacks: feedbacks.length,
+                totalPage: Math.ceil(feedbacks.length / limitedPageSize),
+                currentPage: page
             }
         });
     } catch (error) {

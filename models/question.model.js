@@ -65,16 +65,8 @@ const multipleChoiceSchema = new Schema({
 
 // Matching Question
 const matchingSchema = new Schema({
-    leftColumn: {
-        type: [String],
-        required: true,
-    },
-    rightColumn: {
-        type: [String],
-        required: true,
-    },
     answer: {
-        type: [[Number]],
+        type: [Object],
         required: true,
     },
 });

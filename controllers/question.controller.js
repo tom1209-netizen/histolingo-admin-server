@@ -103,7 +103,7 @@ export const updateQuestionController = async (req, res) => {
 
     try {
         const updatedQuestion = await questionService.updateQuestion(id, data);
-
+        console.log("reached")
         return res.status(200).json({
             success: true,
             message: __("question.updateQuestionSuccess"),

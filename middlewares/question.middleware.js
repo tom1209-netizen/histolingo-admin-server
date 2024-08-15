@@ -85,39 +85,27 @@ export const createQuestionValidator = async (req, res, next) => {
     });
 
     const matchingSchema = baseQuestionSchema.keys({
-        leftColumn: Joi.array()
-            .items(
-                Joi.string().messages({
-                    'string.base': __('question.invalidLeftColumnItem')
-                })
-            )
-            .required()
-            .messages({
-                'array.base': __('question.invalidLeftColumnArray'),
-                'any.required': __('question.leftColumnRequired')
-            }),
-        rightColumn: Joi.array()
-            .items(
-                Joi.string().messages({
-                    'string.base': __('question.invalidRightColumnItem')
-                })
-            )
-            .required()
-            .messages({
-                'array.base': __('question.invalidRightColumnArray'),
-                'any.required': __('question.rightColumnRequired')
-            }),
         answer: Joi.array()
             .items(
-                Joi.array()
-                    .length(2)
-                    .messages({
-                        'array.length': __('question.invalidMatchingAnswerPair')
-                    })
+                Joi.object({
+                    leftColumn: Joi.string()
+                        .required()
+                        .messages({
+                            'string.base': __('question.invalidLeftColumn'),
+                            'any.required': __('question.leftColumnRequired')
+                        }),
+                    rightColumn: Joi.string()
+                        .required()
+                        .messages({
+                            'string.base': __('question.invalidRightColumn'),
+                            'any.required': __('question.rightColumnRequired')
+                        })
+                })
             )
             .required()
             .messages({
                 'array.base': __('question.invalidMatchingAnswerArray'),
+                'array.includes': __('question.invalidMatchingAnswerItem'),
                 'any.required': __('question.matchingAnswerRequired')
             })
     });
@@ -152,9 +140,7 @@ export const createQuestionValidator = async (req, res, next) => {
         await questionSchema.validateAsync(data);
 
         const existedQuestion = await BaseQuestion.findOne({ ask: data.ask });
-        console.log(existedQuestion)
         if (existedQuestion) {
-            console.log("question exists")
             return res.status(404).json({
                 success: false,
                 message: __('question.questionExists'),
@@ -176,7 +162,6 @@ export const createQuestionValidator = async (req, res, next) => {
 
         const existedCountry = await Country.findById(data.countryId);
         if (!existedCountry) {
-            console.log("country not found")
             return res.status(404).json({
                 success: false,
                 message: __('country.notFound'),
@@ -354,34 +339,22 @@ export const updateQuestionValidator = async (req, res, next) => {
     });
 
     const matchingSchema = baseQuestionSchema.keys({
-        leftColumn: Joi.array()
-            .items(
-                Joi.string().messages({
-                    'string.base': __('question.invalidLeftColumnItem')
-                })
-            )
-            .messages({
-                'array.base': __('question.invalidLeftColumnArray'),
-            }),
-        rightColumn: Joi.array()
-            .items(
-                Joi.string().messages({
-                    'string.base': __('question.invalidRightColumnItem')
-                })
-            )
-            .messages({
-                'array.base': __('question.invalidRightColumnArray'),
-            }),
         answer: Joi.array()
             .items(
-                Joi.array()
-                    .length(2)
-                    .messages({
-                        'array.length': __('question.invalidMatchingAnswerPair')
-                    })
+                Joi.object({
+                    leftColumn: Joi.string()
+                        .messages({
+                            'string.base': __('question.invalidLeftColumn'),
+                        }),
+                    rightColumn: Joi.string()
+                        .messages({
+                            'string.base': __('question.invalidRightColumn'),
+                        })
+                })
             )
             .messages({
                 'array.base': __('question.invalidMatchingAnswerArray'),
+                'array.includes': __('question.invalidMatchingAnswerItem'),
             })
     });
 
