@@ -236,6 +236,11 @@ export const getTopicsValidator = async (req, res, next) => {
             .messages({
                 'string.base': __('question.invalidSearch')
             }),
+        countryName: Joi.string()
+            .optional()
+            .messages({
+                'string.base': __('question.invalidSearch')
+            }),
         sortOrder: Joi.number()
             .valid(1, -1)
             .optional()

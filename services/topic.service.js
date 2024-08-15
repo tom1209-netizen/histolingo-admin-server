@@ -17,6 +17,18 @@ class TopicService {
         const skip = (page - 1) * pageSize;
 
         const results = await Topic.aggregate([
+            {
+                $lookup: {
+                    from: "countries",
+                    localField: "countryId",
+                    foreignField: "_id",
+                    as: "country",
+                    pipeline: [
+                        { $project: { name: 1 } }
+                    ]
+                }
+            },
+            ...(filters['country.name'] ? [{ $match: { "country.name": filters['country.name'] } }] : []),
             { $match: filters },
             {
                 $facet: {
@@ -25,20 +37,9 @@ class TopicService {
                         { $sort: { createdAt: Number(sortOrder) } },
                         { $skip: skip },
                         { $limit: pageSize },
-                        {
-                            $lookup: {
-                                from: "countries",
-                                localField: "countryId",
-                                foreignField: "_id",
-                                as: "country",
-                                pipeline: [
-                                    { $project: { name: 1 } }
-                                ]
-                            }
-                        },
                     ]
                 }
-            }
+            },
         ]);
 
         const totalTopicsCount = results[0].totalCount[0]
