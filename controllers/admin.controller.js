@@ -134,7 +134,8 @@ export const getListAdmin = async (req, res) => {
         const admins = await Admin.find(searchCondition)
             .skip((page - 1) * page_size)
             .limit(Number(page_size))
-            .sort(sortOrder === -1 ? { createdAt: -1 } : { createdAt: 1 });
+            .sort(sortOrder === -1 ? { createdAt: -1 } : { createdAt: 1 })
+            .populate('roles', 'name');
 
         // Lấy tổng số lượng Admin để tính toán phân trang
         const totalAdmins = await Admin.countDocuments(searchCondition);
@@ -157,7 +158,8 @@ export const getListAdmin = async (req, res) => {
 export const getByIdController = async (req, res) => {
     try {
         const id = req.params.id;
-        const admin = await Admin.findOne({ _id: id }, { password: 0, salt: 0 });
+        const admin = await Admin.findOne({ _id: id }, { password: 0, salt: 0 })
+                    .populate('roles', 'name');
 
         if (!admin) {
             return res.status(404).json({
