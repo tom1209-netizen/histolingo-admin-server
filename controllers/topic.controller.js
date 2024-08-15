@@ -30,14 +30,14 @@ export const createTopicController = async (req, res) => {
 export const getTopicsController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
 
-    const { page = 1, page_size = 10, search, status, sortOrder = -1 } = req.query;
+    const { page = 1, pageSize = 10, search, countryName, status, sortOrder = -1 } = req.query;
 
     const maxPageSize = 100;
-    const limitedPageSize = Math.min(page_size, maxPageSize);
+    const limitedPageSize = Math.min(pageSize, maxPageSize);
 
     const filters = {};
 
-    if (name) {
+    if (search) {
         filters.name = { $regex: new RegExp(search, 'i') };
     }
 
@@ -45,8 +45,12 @@ export const getTopicsController = async (req, res) => {
         filters.status = status;
     }
 
+    if (countryName) {
+        filters['country.name'] = countryName;
+    }
+
     try {
-        const topics = await topicService.getTopics(filters, page, limitedPageSize, sortOrder);
+        const { topics, totalTopicsCount } = await topicService.getTopics(filters, page, limitedPageSize, sortOrder);
 
         return res.status(200).json({
             success: true,
@@ -54,9 +58,9 @@ export const getTopicsController = async (req, res) => {
             status: 200,
             data: {
                 topics,
-                totalTopics: topics.length,
-                totalPage: Math.ceil(topics.length / limitedPageSize),
-                currentPage: page
+                totalTopics: totalTopicsCount,
+                totalPage: Math.ceil(totalTopicsCount / limitedPageSize),
+                currentPage: Number(page)
             }
         });
     } catch (error) {

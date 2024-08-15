@@ -222,7 +222,7 @@ export const getTopicsValidator = async (req, res, next) => {
                 'number.base': __('question.invalidPage'),
                 'number.min': __('question.pageMin')
             }),
-        page_size: Joi.number()
+        pageSize: Joi.number()
             .integer()
             .min(1)
             .optional()
@@ -233,6 +233,11 @@ export const getTopicsValidator = async (req, res, next) => {
         search: Joi.string()
             .optional()
             .allow('')
+            .messages({
+                'string.base': __('question.invalidSearch')
+            }),
+        countryName: Joi.string()
+            .optional()
             .messages({
                 'string.base': __('question.invalidSearch')
             }),

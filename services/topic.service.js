@@ -13,15 +13,41 @@ class TopicService {
         return newTopic;
     }
 
-    async getTopics(filters, page, page_size, sortOrder) {
-        const skip = (page - 1) * page_size;
+    async getTopics(filters, page, pageSize, sortOrder) {
+        const skip = (page - 1) * pageSize;
 
-        const topics = await Topic.find(filters)
-            .sort({ createdAt: parseInt(sortOrder, 10) })
-            .skip(skip)
-            .limit(page_size);
+        const results = await Topic.aggregate([
+            {
+                $lookup: {
+                    from: "countries",
+                    localField: "countryId",
+                    foreignField: "_id",
+                    as: "country",
+                    pipeline: [
+                        { $project: { name: 1 } }
+                    ]
+                }
+            },
+            ...(filters['country.name'] ? [{ $match: { "country.name": filters['country.name'] } }] : []),
+            { $match: filters },
+            {
+                $facet: {
+                    totalCount: [{ $count: "count" }],
+                    documents: [
+                        { $sort: { createdAt: Number(sortOrder) } },
+                        { $skip: skip },
+                        { $limit: pageSize },
+                    ]
+                }
+            },
+        ]);
 
-        return topics;
+        const totalTopicsCount = results[0].totalCount[0]
+            ? results[0].totalCount[0].count
+            : 0;
+        const topics = results[0].documents;
+
+        return { topics, totalTopicsCount };
     }
 
     async getTopic(id) {

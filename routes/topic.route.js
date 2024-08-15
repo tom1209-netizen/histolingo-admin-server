@@ -15,7 +15,7 @@ import {
     getTopicController,
     updateTopicController,
     deleteTopicController
-} from "../controllers/Topic.controller.js";
+} from "../controllers/topic.controller.js";
 import { rolePrivileges } from "../constants/role.constant.js";
 
 const topicRoute = Router();

@@ -6,15 +6,29 @@ class RoleService {
         return newRole;
     }
 
-    async getRoles (filters, page, page_size, sortOrder)  {
-        const skip = (page - 1) * page_size;
+    async getRoles (filters, page, pageSize, sortOrder)  {
+        const skip = (page - 1) * pageSize;
 
-        const roles = await Role.find(filters)
-            .sort({ createdAt: parseInt(sortOrder, 10) })
-            .skip(skip)
-            .limit(page_size);
+        const results = await Role.aggregate([
+            { $match: filters },
+            {
+                $facet: {
+                    totalCount: [{ $count: "count" }],
+                    documents: [
+                        { $sort: { createdAt: Number(sortOrder) } },
+                        { $skip: skip },
+                        { $limit: pageSize },
+                    ]
+                }
+            }
+        ]);
 
-        return roles;
+        const totalRolesCount = results[0].totalCount[0]
+            ? results[0].totalCount[0].count
+            : 0;
+        const roles = results[0].documents;
+
+        return { roles, totalRolesCount };
     }
 
     async getRole(id) {

@@ -23,7 +23,7 @@ export const createAdminController = async (req, res) => {
                 admin: {
                     id: newAdmin._id,
                     firstName: newAdmin.firstName,
-                    lastName: newAdmin.lastName,
+                    lastName: newAdmin.lastNames,
                     adminName: newAdmin.adminName,
                     email: newAdmin.email,
                     roles: roleNames,
@@ -121,7 +121,7 @@ export const updateAdminController = async (req, res) => {
 export const getListAdmin = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
     try {
-        const { page = 1, page_size = 10, search = '', status, sortOrder = -1 } = req.query;
+        const { page = 1, pageSize = 10, search = '', status, sortOrder = -1 } = req.query;
 
         // Tạo điều kiện tìm kiếm
         const searchCondition = search
@@ -140,9 +140,10 @@ export const getListAdmin = async (req, res) => {
 
         // Lấy danh sách Admin theo điều kiện tìm kiếm và phân trang
         const admins = await Admin.find(searchCondition)
-            .skip((page - 1) * page_size)
-            .limit(Number(page_size))
-            .sort(sortOrder === -1 ? { createdAt: -1 } : { createdAt: 1 });
+            .skip((page - 1) * pageSize)
+            .limit(Number(pageSize))
+            .sort(sortOrder === -1 ? { createdAt: -1 } : { createdAt: 1 })
+            .populate('roles', 'name');
 
         // Lấy tổng số lượng Admin để tính toán phân trang
         const totalAdmins = await Admin.countDocuments(searchCondition);
@@ -152,7 +153,7 @@ export const getListAdmin = async (req, res) => {
             message: __("message.getSuccess", { field: __("model.admin.name") }),
             data: {
                 admins,
-                totalPages: Math.ceil(totalAdmins / page_size),
+                totalPages: Math.ceil(totalAdmins / pageSize),
                 totalCount: totalAdmins,
                 currentPage: Number(page)
             },
@@ -203,7 +204,8 @@ export const getByIdController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
     try {
         const id = req.params.id;
-        const admin = await Admin.findOne({ _id: id }, { password: 0, salt: 0 });
+        const admin = await Admin.findOne({ _id: id }, { password: 0, salt: 0 })
+                    .populate('roles', 'name');
 
         if (!admin) {
             return res.status(404).json({
