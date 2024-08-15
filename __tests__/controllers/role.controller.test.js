@@ -77,7 +77,7 @@ describe('Role Controllers', () => {
         roleService.getRoles.mockResolvedValue(filteredRoles);
 
         const response = await request(app)
-            .get('/roles?page=1&page_size=10&name=Admin&status=active')
+            .get('/roles?page=1&pageSize=10&name=Admin&status=active')
             .set('Authorization', 'Bearer dummyToken')
             .set('Content-Language', 'en-US');  
 

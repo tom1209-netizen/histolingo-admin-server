@@ -42,13 +42,13 @@ describe('RoleService', () => {
             status: 'active'
         };
         const page = 1;
-        const page_size = 10;
+        const pageSize = 10;
 
-        const result = await RoleService.getRoles(filters, page, page_size);
+        const result = await RoleService.getRoles(filters, page, pageSize);
 
         expect(Role.find).toHaveBeenCalledWith(filters);
-        expect(Role.find().skip).toHaveBeenCalledWith((page - 1) * page_size);
-        expect(Role.find().limit).toHaveBeenCalledWith(page_size);
+        expect(Role.find().skip).toHaveBeenCalledWith((page - 1) * pageSize);
+        expect(Role.find().limit).toHaveBeenCalledWith(pageSize);
         expect(result).toEqual(filteredRoles);
     });
 

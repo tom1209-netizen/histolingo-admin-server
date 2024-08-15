@@ -142,7 +142,7 @@ export const getListCountryValidator = async (req, res, next) => {
                 'number.base': __('question.invalidPage'),
                 'number.min': __('question.pageMin')
             }),
-        page_size: Joi.number()
+        pageSize: Joi.number()
             .integer()
             .min(1)
             .optional()
