@@ -19,7 +19,7 @@ export const createAdminController = async (req, res) => {
                 admin: {
                     id: newAdmin._id,
                     firstName: newAdmin.firstName,
-                    lastName: newAdmin.lastName,
+                    lastName: newAdmin.lastNames,
                     adminName: newAdmin.adminName,
                     email: newAdmin.email,
                     roles: newAdmin.roles,
@@ -94,7 +94,6 @@ export const updateAdminController = async (req, res) => {
                     lastName: updateAdmin.lastName,
                     adminName: updateAdmin.adminName,
                     email: updateAdmin.email,
-                    password: updateAdmin.password,
                     role: updateAdmin.roles,
                     status: updateAdmin.status,
                 }
