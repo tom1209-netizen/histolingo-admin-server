@@ -40,11 +40,6 @@ class RoleService {
         const updatedRole = await Role.findByIdAndUpdate(id, updateData, { new: true });
         return updatedRole;
     }
-
-    async deleteRole(id) {
-        const deletedRole = await Role.findByIdAndUpdate(id, { status: 0 });
-        return deletedRole;
-    }
 }
 
 export const roleService = new RoleService();

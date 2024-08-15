@@ -59,11 +59,6 @@ class TopicService {
         const updatedTopic = await Topic.findByIdAndUpdate(id, updateData, { new: true });
         return updatedTopic;
     }
-
-    async deleteTopic(id) {
-        const deletedTopic = await Topic.findByIdAndUpdate(id, {status: 0});
-        return deletedTopic;
-    }
 }
 
 export const topicService = new TopicService();
