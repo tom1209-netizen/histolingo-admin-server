@@ -10,14 +10,14 @@ import {
 } from "../constants/role.constant.js";
 import {
     createCountryValidator,
-    getListCountryValidator,
+    getCountriesValidator,
     updateCountryValidator
 
 } from "../middlewares/country.middleware.js";
 import {
     createCountryController,
     getCountryByIdController,
-    getListCountryController,
+    getCountriesController,
     updateCountryController
 
 } from "../controllers/country.controller.js";
@@ -48,8 +48,8 @@ countryRoute.get(
     "/",
     authentication,
     authorization(rolePrivileges.country.read),
-    getListCountryValidator,
-    getListCountryController
+    getCountriesValidator,
+    getCountriesController
 );
 
 export default countryRoute;

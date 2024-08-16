@@ -29,15 +29,79 @@ class TestService {
         }
     }
 
-    async getListTests(searchCondition, page, page_size, sortOrder) {
-        const skip = (page - 1) * page_size;
+    async getTests(filters, page, pageSize, sortOrder) {
+        const skip = (page - 1) * pageSize;
 
-        const tests = await Test.find(searchCondition)
-            .sort({ createdAt: parseInt(sortOrder, 10) })
-            .skip(skip)
-            .limit(page_size);
+        const results = await Test.aggregate([
+            { $match: filters },
+            {
+                $lookup: {
+                    from: "topics",
+                    localField: "topicId",
+                    foreignField: "_id",
+                    as: "topicDetails"
+                }
+            },
+            {
+                $lookup: {
+                    from: "countries",
+                    localField: "countryId",
+                    foreignField: "_id",
+                    as: "countryDetails"
+                }
+            },
+            {
+                $lookup: {
+                    from: "admins",
+                    localField: "createdBy",
+                    foreignField: "_id",
+                    as: "adminDetails"
+                }
+            },
+            { $unwind: "$topicDetails" },
+            { $unwind: "$countryDetails" },
+            { $unwind: "$adminDetails" },
+            {
+                $facet: {
+                    totalCount: [{ $count: "count" }],
+                    documents: [
+                        { $sort: { createdAt: Number(sortOrder) } },
+                        { $skip: skip },
+                        { $limit: pageSize },
+                        {
+                            $project: {
+                                _id: 1,
+                                name: 1,
+                                questionNumber: 1,
+                                status: 1,
+                                localeData: 1,
+                                createdAt: 1,
+                                updatedAt: 1,
+                                createdBy: {
+                                    _id: "$adminDetails._id",
+                                    name: "$adminDetails.adminName"
+                                },
+                                topic: {
+                                    _id: "$topicDetails._id",
+                                    name: "$topicDetails.name"
+                                },
+                                country: {
+                                    _id: "$countryDetails._id",
+                                    name: "$countryDetails.name"
+                                },
+                            }
+                        }
+                    ]
+                }
+            }
+        ]);
 
-        return tests;
+        const totalTestsCount = results[0].totalCount[0]
+            ? results[0].totalCount[0].count
+            : 0;
+        const tests = results[0].documents;
+
+        return { tests, totalTestsCount };
     }
 
     async getTest(id){

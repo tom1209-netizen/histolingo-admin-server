@@ -69,22 +69,17 @@ export const updateDocumentationValidator = async (req, res, next) => {
 
         const createSchema = Joi.object({
             source: Joi.string()
-                .max(1000)
-                .required(),
+                .max(1000),
             name: Joi.string()
-                .max(250)
-                .required(),
+                .max(250),
             content: Joi.string()
-                .max(100000)
-                .required(),
+                .max(100000),
             topicId: Joi.string()
                 .hex()
-                .length(24)
-                .required(),
+                .length(24),
             countryId: Joi.string()
                 .hex()
-                .length(24)
-                .required(),
+                .length(24),
             localeData: Joi.object().pattern(/^[a-z]{2}-[A-Z]{2}$/,
                 Joi.object({
                     content: Joi.string().max(250).required(),
@@ -122,7 +117,7 @@ export const updateDocumentationValidator = async (req, res, next) => {
     }
 };
 
-export const getListDocumentationValidator = async (req, res, next) => {
+export const getDocumentationsValidator = async (req, res, next) => {
     const schema = Joi.object({
         search: Joi.string().allow(''),
         page: Joi.number().integer().min(1).default(1),

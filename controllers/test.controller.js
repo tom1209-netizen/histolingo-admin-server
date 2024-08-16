@@ -136,12 +136,15 @@ export const updateTestController = async (req, res) => {
     }
 };
 
-export const getListTestController = async (req, res) => {
+export const getTestsController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
     try {
-        const { search = '', page = 1, page_size = 10, sortOrder = 1, status } = req.query;
+        const { page = 1, pageSize = 10, search = '', status, sortOrder = -1 } = req.query;
 
-        const searchCondition = search
+        const maxPageSize = 100;
+        const limitedPageSize = Math.min(pageSize, maxPageSize);
+
+        const filters = search
             ? {
                 $or: [
                     { name: { $regex: search, $options: 'i' } },
@@ -151,20 +154,18 @@ export const getListTestController = async (req, res) => {
             }
             : {};
         if (status !== null && status !== undefined && status !== "") {
-            searchCondition.status = status;
+            filters.status = status;
         }
 
-        const tests = await testService.getListTests(searchCondition, page, page_size, sortOrder);
-
-        const totalTests = await Test.countDocuments(searchCondition);
+        const { tests, totalTestsCount } = await testService.getTests(filters, page, limitedPageSize, sortOrder);
 
         return res.status(200).json({
             success: true,
             message: __("message.getSuccess", { field: __("model.test.name") }),
             data: {
                 tests,
-                totalPages: Math.ceil(totalTests / page_size),
-                totalCount: totalTests,
+                totalPages: Math.ceil(totalTestsCount / limitedPageSize),
+                totalCount: totalTestsCount,
                 currentPage: Number(page)
             },
         });
@@ -178,11 +179,11 @@ export const getListTestController = async (req, res) => {
     }
 };
 
-export const getTestByIdController = async (req, res) => {
+export const getTestController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
 
     try {
-        const id = req.params.id;
+        const { id } = req.params;
         const test = await testService.getTest(id);
 
         if (!test) {

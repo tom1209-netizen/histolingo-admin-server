@@ -74,7 +74,7 @@ export const loginAdminController = async (req, res) => {
 
 export const getCurrentAdminController = (req, res) => {
     const __ = applyRequestContentLanguage(req);
-    const { admin } = req.admin;
+    const admin = req.admin;
     return res.status(200).json({
         success: true,
         message: __("message.getSuccess", { field: __("model.admin.name") }),
@@ -86,9 +86,9 @@ export const getCurrentAdminController = (req, res) => {
 export const updateAdminController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
     try {
-        const admin = req.adminUpdate;
+        const { id } = req.params;
         const updateData = req.body;
-        const updateAdmin = await adminService.updateAdmin(admin, updateData);
+        const updateAdmin = await adminService.updateAdmin(id, updateData);
         const roleNames = req.roleNames;
 
         return res.status(200).json({
@@ -118,13 +118,17 @@ export const updateAdminController = async (req, res) => {
     }
 };
 
-export const getListAdmin = async (req, res) => {
+export const getAdmins = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
     try {
         const { page = 1, pageSize = 10, search = '', status, sortOrder = -1 } = req.query;
 
+        const maxPageSize = 100;
+        const limitedPageSize = Math.min(pageSize, maxPageSize);
+
+
         // Tạo điều kiện tìm kiếm
-        const searchCondition = search
+        const filters = search
             ? {
                 $or: [
                     { firstName: { $regex: search, $options: 'i' } },
@@ -135,26 +139,18 @@ export const getListAdmin = async (req, res) => {
             }
             : {};
         if (status !== null && status !== undefined && status !== "") {
-            searchCondition.status = status;
+            filters.status = status;
         }
 
-        // Lấy danh sách Admin theo điều kiện tìm kiếm và phân trang
-        const admins = await Admin.find(searchCondition)
-            .skip((page - 1) * pageSize)
-            .limit(Number(pageSize))
-            .sort(sortOrder === -1 ? { createdAt: -1 } : { createdAt: 1 })
-            .populate('roles', 'name');
-
-        // Lấy tổng số lượng Admin để tính toán phân trang
-        const totalAdmins = await Admin.countDocuments(searchCondition);
+        const { admins, totalAdminsCount } = await adminService.getAdmins(filters, page, limitedPageSize, sortOrder);
 
         return res.status(200).json({
             success: true,
             message: __("message.getSuccess", { field: __("model.admin.name") }),
             data: {
                 admins,
-                totalPages: Math.ceil(totalAdmins / pageSize),
-                totalCount: totalAdmins,
+                totalPages: Math.ceil(totalAdminsCount / limitedPageSize),
+                totalCount: totalAdminsCount,
                 currentPage: Number(page)
             },
         });
@@ -173,14 +169,14 @@ export const getRolesToAdminController = async (req, res) => {
     try {
         const { search = '' } = req.query;
 
-        const searchCondition = search
+        const filters = search
             ? {
                 name: { $regex: search, $options: 'i' },
                 status: adminStatus.active
             }
             : { status: adminStatus.active };
 
-        const roles = await Role.find(searchCondition, "_id name");
+        const roles = await adminService.getRolesToAdmin;
 
         return res.status(200).json({
             success: true,
@@ -200,12 +196,11 @@ export const getRolesToAdminController = async (req, res) => {
     }
 };
 
-export const getByIdController = async (req, res) => {
+export const getAdminController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
     try {
         const id = req.params.id;
-        const admin = await Admin.findOne({ _id: id }, { password: 0, salt: 0 })
-                    .populate('roles', 'name');
+        const admin = await adminService.getAdmin(id);
 
         if (!admin) {
             return res.status(404).json({

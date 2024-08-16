@@ -36,10 +36,10 @@ export const updateDocumentationController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
 
     try {
-        const documentation = req.documentation;
+        const { id } = req.params;
         const updateData = req.body;
 
-        const updatedDocumentation = await documentationService.updateDocumentation(documentation, updateData);
+        const updatedDocumentation = await documentationService.updateDocumentation(id, updateData);
 
         return res.status(200).json({
             success: true,
@@ -65,7 +65,7 @@ export const updateDocumentationController = async (req, res) => {
     }
 };
 
-export const getDocumentationByIdController = async (req, res) => {
+export const getDocumentationController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
 
     try {
@@ -105,27 +105,28 @@ export const getDocumentationByIdController = async (req, res) => {
     }
 };
 
-export const getListDocumentationController = async (req, res) => {
+export const getDocumentationsController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
     try {
-        const { search = '', page = 1, limit = 10, status } = req.query;
+        const { page = 1, pageSize = 10, search = '', status, sortOrder = -1 } = req.query;
 
-        const searchCondition = search
+        const maxPageSize = 100;
+        const limitedPageSize = Math.min(pageSize, maxPageSize);
+
+        const filters = search
             ? { name: { $regex: search, $options: 'i' } } : {};
         if (status !== null && status !== undefined && status !== "") {
-            searchCondition.status = status;
+            filters.status = status;
         }
 
-        const documentations = await documentationService.getListDocumentations(searchCondition, page, limit);
-
-        const totalDocumentations = await Documentation.countDocuments(searchCondition);
+        const { documentations, totalDocumentations } = await documentationService.getDocumentations(filters, page, limitedPageSize, sortOrder);
 
         return res.status(200).json({
             success: true,
             message: __("message.getSuccess", { field: __("model.documentation.displayListName") }),
             data: {
                 documentations,
-                totalPages: Math.ceil(totalDocumentations / limit),
+                totalPages: Math.ceil(totalDocumentations / limitedPageSize),
                 totalCount: totalDocumentations,
                 currentPage: Number(page)
             },

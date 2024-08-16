@@ -55,11 +55,9 @@ export const updateCountryValidator = async (req, res, next) => {
 
         const createSchema = Joi.object({
             name: Joi.string()
-                .max(250)
-                .required(),
+                .max(250),
             description: Joi.string()
-                .max(1000)
-                .required(),
+                .max(1000),
             image: Joi.string()
                 .max(1000),
                 localeData: Joi.object().pattern(/^[a-z]{2}-[A-Z]{2}$/,
@@ -106,7 +104,7 @@ export const updateCountryValidator = async (req, res, next) => {
     }
 };
 
-export const getListCountryValidator = async (req, res, next) => {
+export const getCountriesValidator = async (req, res, next) => {
     const __ = applyRequestContentLanguage(req);
 
     const schema = Joi.object({

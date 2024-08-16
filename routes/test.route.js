@@ -11,15 +11,15 @@ import {
 import {
     createTestValidator,
     getDataValidator,
-    getListTestValidator,
+    getTestsValidator,
     updateTestValidator
 
 } from "../middlewares/test.middleware.js";
 import {
     createTestController,
     getCountriesController,
-    getListTestController,
-    getTestByIdController,
+    getTestsController,
+    getTestController,
     getTopicsController,
     updateTestController
 
@@ -63,15 +63,15 @@ testRoute.get(
     "/",
     authentication,
     authorization(rolePrivileges.test.read),
-    getListTestValidator,
-    getListTestController
+    getTestsValidator,
+    getTestsController
 );
 
 testRoute.get(
     "/:id",
     authentication,
     authorization(rolePrivileges.test.read),
-    getTestByIdController
+    getTestController
 );
 
 

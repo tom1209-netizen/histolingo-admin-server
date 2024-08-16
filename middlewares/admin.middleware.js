@@ -123,7 +123,7 @@ export const loginAdminValidator = async (req, res, next) => {
     }
 };
 
-export const getListAdminValidator = async (req, res, next) => {
+export const getAdminsValidator = async (req, res, next) => {
     const __ = applyRequestContentLanguage(req);
     const schema = Joi.object({
         page: Joi.number()
@@ -189,25 +189,20 @@ export const updateAdminValidator = async (req, res, next) => {
     try {
         const updateSchema = Joi.object({
             firstName: Joi.string()
-                .max(100)
-                .required(),
+                .max(100),
             lastName: Joi.string()
-                .max(100)
-                .required(),
+                .max(100),
             adminName: Joi.string()
                 .min(8)
-                .max(100)
-                .required(),
+                .max(100),
             email: Joi.string()
                 .email()
-                .max(250)
-                .required(),
+                .max(250),
             password: Joi.string()
                 .min(8)
                 .max(250),
             roles: Joi.array()
-                .items(Joi.string().hex().length(24))
-                .required(),
+                .items(Joi.string().hex().length(24)),
             status: Joi.number()
                 .valid(adminStatus.active, adminStatus.inactive),
         });

@@ -1,9 +1,9 @@
 import Player from "../models/player.model.js";
 
 class PlayerService {
-    async deletePlayer(id) {
-        const deletedPlayer = await Player.findOneAndUpdate(id, { status: 0 });
-        return deletedPlayer;
+    async updateStatusPlayer(id, newStatus) {
+        const updatedPlayer = await Player.findOneAndUpdate(id, { status: newStatus }, { new: true });
+        return updatedPlayer;
     }
 };
 

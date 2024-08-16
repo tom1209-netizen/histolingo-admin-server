@@ -9,11 +9,13 @@ import {
 
 } from "../constants/role.constant.js";
 import {
-    getListPlayerValidator
+    getListPlayerValidator,
+    getPlayerById
 
 } from "../middlewares/player.middleware.js";
 import {
-    getListPlayerController
+    getListPlayerController,
+    updateStatusPlayerController
 
 } from "../controllers/player.controller.js";
 
@@ -27,10 +29,12 @@ playerRoute.get(
     getListPlayerController
 );
 
-playerRoute.delete(
+playerRoute.patch(
     "/:id",
     authentication,
-    authorization(rolePrivileges.player.delete)
-)
+    authorization(rolePrivileges.player.delete),
+    getPlayerById,
+    updateStatusPlayerController
+);
 
 export default playerRoute;

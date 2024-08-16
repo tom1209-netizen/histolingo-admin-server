@@ -3,15 +3,15 @@ import {
     createAdminValidator,
     loginAdminValidator,
     updateAdminValidator,
-    getListAdminValidator,
+    getAdminsValidator,
     getRolesToAdminValidator
 } from "../middlewares/admin.middleware.js";
 import {
     createAdminController,
     generateRefreshTokenController,
-    getByIdController,
+    getAdminController,
     getCurrentAdminController,
-    getListAdmin,
+    getAdmins,
     getRolesToAdminController,
     loginAdminController,
     updateAdminController
@@ -59,8 +59,8 @@ adminRoute.get(
     "/",
     authentication,
     authorization(rolePrivileges.admin.read),
-    getListAdminValidator,
-    getListAdmin
+    getAdminsValidator,
+    getAdmins
 );
 
 adminRoute.post(
@@ -81,7 +81,7 @@ adminRoute.get(
     "/:id",
     authentication,
     authorization(rolePrivileges.admin.read),
-    getByIdController
+    getAdminController
 );
 
 export default adminRoute;

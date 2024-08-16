@@ -13,9 +13,9 @@ class DocumentationService {
         return newDocumentation
     }
 
-    async updateDocumentation(documentation, updateData) {
+    async updateDocumentation(id, updateData) {
         try {
-            const updatedDocumentation = Documentation.findOneAndUpdate(documentation, updateData, { new: true });
+            const updatedDocumentation = Documentation.findByIdAndUpdate(id, updateData, { new: true });
             return updatedDocumentation;
         } catch (e) {
             const error = new Error(e.message);
@@ -30,11 +30,67 @@ class DocumentationService {
         return documentation;
     }
 
-    async getListDocumentations(searchCondition, page, limit) {
-        const documentations = await Documentation.find(searchCondition)
-            .skip((page - 1) * limit)
-            .limit(Number(limit));
-        return documentations;
+    async getDocumentations(filters, page, pageSize, sortOrder) {
+        const skip = (page - 1) * pageSize;
+
+        const results = await Documentation.aggregate([
+            { $match: filters },
+            {
+                $lookup: {
+                    from: "topics",
+                    localField: "topicId",
+                    foreignField: "_id",
+                    as: "topicDetails"
+                }
+            },
+            {
+                $lookup: {
+                    from: "countries",
+                    localField: "countryId",
+                    foreignField: "_id",
+                    as: "countryDetails"
+                }
+            },
+            { $unwind: "$topicDetails" },
+            { $unwind: "$countryDetails" },
+            {
+                $facet: {
+                    totalCount: [{ $count: "count" }],
+                    documents: [
+                        { $sort: { createdAt: Number(sortOrder) } },
+                        { $skip: skip },
+                        { $limit: pageSize },
+                        {
+                            $project: {
+                                _id: 1,
+                                source: 1,
+                                name: 1,
+                                content: 1,
+                                status: 1,
+                                localeData: 1,
+                                createdAt: 1,
+                                updatedAt: 1,
+                                topic: {
+                                    _id: "$topicDetails._id",
+                                    name: "$topicDetails.name"
+                                },
+                                country: {
+                                    _id: "$countryDetails._id",
+                                    name: "$countryDetails.name"
+                                },
+                            }
+                        }
+                    ]
+                }
+            }
+        ]);
+
+        const totalDocumentationsCount = results[0].totalCount[0]
+            ? results[0].totalCount[0].count
+            : 0;
+        const documentations = results[0].documents;
+
+        return { documentations, totalDocumentationsCount };
     }
 }
 

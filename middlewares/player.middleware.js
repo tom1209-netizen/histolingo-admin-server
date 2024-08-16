@@ -1,6 +1,7 @@
 import Joi from "joi";
 import { playerStatus } from "../constants/player.constant.js";
 import Player from "../models/player.model.js";
+import { applyRequestContentLanguage } from "../utils/localization.util.js";
 
 export const getListPlayerValidator = async (req, res, next) => {
     const schema = Joi.object({
@@ -34,7 +35,7 @@ export const getPlayerById = async (req, res, next) => {
 
         await schema.validateAsync({ id });
 
-        const player = Player.findOne({ _id: id });
+        const player = await Player.findOne({ _id: id });
         if (!player) {
             return res.status(404).json({
                 success: false,

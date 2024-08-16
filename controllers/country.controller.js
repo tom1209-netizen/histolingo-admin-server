@@ -35,10 +35,10 @@ export const createCountryController = async (req, res) => {
 export const updateCountryController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
     try {
-        const { country } = req.body;
+        const { id } = req.params;
         const updateData = req.body;
 
-        const updatedCountry = await countryService.updateCountry(country, updateData);
+        const updatedCountry = await countryService.updateCountry(id, updateData);
 
         return res.status(200).json({
             success: true,
@@ -68,7 +68,7 @@ export const getCountryByIdController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
     try {
         const id = req.params.id;
-        const country = await Country.findById({ _id: id });
+        const country = await countryService.getCountry(id);
 
         if (!country) {
             return res.status(404).json({
@@ -103,29 +103,28 @@ export const getCountryByIdController = async (req, res) => {
     }
 };
 
-export const getListCountryController = async (req, res) => {
+export const getCountriesController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
     try {
-        const { search = '', page = 1, limit = 10, status } = req.query;
+        const { search = '', page = 1, pageSize = 10, status, sortOrder = -1  } = req.query;
 
-        const searchCondition = search
+        const maxPageSize = 100;
+        const limitedPageSize = Math.min(pageSize, maxPageSize);
+
+        const filters = search
             ? { name: { $regex: search, $options: 'i' } } : {};
         if (status !== null && status !== undefined && status !== "") {
-            searchCondition.status = status;
+            filters.status = status;
         }
 
-        const countries = await Country.find(searchCondition)
-            .skip((page - 1) * limit)
-            .limit(Number(limit));
-
-        const totalCountries = await Country.countDocuments(searchCondition);
+        const { countries, totalCountries } = await countryService.getCountries(filters, page, limitedPageSize, sortOrder);
 
         return res.status(200).json({
             success: true,
             message: __("message.getSuccess", { field: __("model.country.name") }),
             data: {
                 countries,
-                totalPages: Math.ceil(totalCountries / limit),
+                totalPages: Math.ceil(totalCountries / limitedPageSize),
                 totalCount: totalCountries,
                 currentPage: Number(page)
             },

@@ -39,26 +39,38 @@ export const getListPlayerController = async (req, res) => {
     }
 };
 
-export const deletePlayerController = async (req, res) => {
+export const updateStatusPlayerController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
     try {
+        const id = req.params.id;
         const player = req.player;
-        const deletedPlayer = await playerService.deletePlayer(player);
+        const newStatus = player.status === 1 ? 0 : 1;
+        const updatedPlayer = await playerService.updateStatusPlayer(id, newStatus);
+
+        if (!updatedPlayer) {
+            return res.status(404).json({
+                success: false,
+                message: __("validation.notFound", { field: __("model.player.name") }),
+                status: 404,
+                data: null
+            });
+        }
 
         return res.status(200).json({
             success: true,
             message: __("message.updatedSuccess", { field: __("model.player.name") }),
             status: 200,
             data: {
-                deletedPlayer: {
-                    fullName: deletedPlayer.fullName,
-                    email: deletedPlayer.email,
-                    phoneNumber: deletedPlayer.phoneNumber,
-                    userName: deletedPlayer.userName,
-                    totalScore: deletedPlayer.totalScore,
-                    totalTime: deletedPlayer.totalTime,
-                    rank: deletedPlayer.rank,
-                    sex: deletedPlayer.sex,
+                updatedPlayer: {
+                    fullName: updatedPlayer.fullName,
+                    email: updatedPlayer.email,
+                    phoneNumber: updatedPlayer.phoneNumber,
+                    userName: updatedPlayer.userName,
+                    totalScore: updatedPlayer.totalScore,
+                    totalTime: updatedPlayer.totalTime,
+                    rank: updatedPlayer.rank,
+                    sex: updatedPlayer.sex,
+                    status: updatedPlayer.status
                 }
             },
         });
@@ -70,4 +82,4 @@ export const deletePlayerController = async (req, res) => {
             data: error.data || null
         });
     }
-}
+};

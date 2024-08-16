@@ -12,7 +12,6 @@ import countryRoute from "./routes/country.route.js";
 import uploadRoute from "./routes/upload.route.js";
 import { initLocaleData } from "./localization.js";
 import { loadContentLanguage } from "./middlewares/localization.middleware.js";
-import countryRoute from "./routes/country.route.js";
 import documentationRoute from "./routes/documentation.route.js";
 import playerRoute from "./routes/player.route.js";
 import testRoute from "./routes/test.route.js";

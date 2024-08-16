@@ -10,14 +10,14 @@ import {
 } from "../constants/role.constant.js";
 import {
     createDocumentationValidator,
-    getListDocumentationValidator,
+    getDocumentationsValidator,
     updateDocumentationValidator
 
 } from "../middlewares/documentation.middleware.js";
 import {
     createDocumentationController,
-    getDocumentationByIdController,
-    getListDocumentationController,
+    getDocumentationController,
+    getDocumentationsController,
     updateDocumentationController
 
 } from "../controllers/documentation.controller.js";
@@ -42,14 +42,14 @@ documentationRoute.get(
     "/:id",
     authentication,
     authorization(rolePrivileges.documentation.read),
-    getDocumentationByIdController
+    getDocumentationController
 );
 documentationRoute.get(
     "/",
     authentication,
     authorization(rolePrivileges.documentation.read),
-    getListDocumentationValidator,
-    getListDocumentationController
+    getDocumentationsValidator,
+    getDocumentationsController
 );
 
 export default documentationRoute;

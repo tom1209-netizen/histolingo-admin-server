@@ -157,7 +157,7 @@ export const getDataValidator = async (req, res, next) => {
 };
 
 
-export const getListTestValidator = async (req, res, next) => {
+export const getTestsValidator = async (req, res, next) => {
     const schema = Joi.object({
         search: Joi.string().allow(''),
         page: Joi.number().integer().min(1).default(1),
