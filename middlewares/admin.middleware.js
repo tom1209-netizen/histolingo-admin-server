@@ -18,7 +18,7 @@ export const createAdminValidator = async (req, res, next) => {
                 .max(100)
                 .required(),
             adminName: Joi.string()
-                .min(8)
+                .min(1)
                 .max(100)
                 .required(),
             email: Joi.string()
@@ -70,6 +70,12 @@ export const createAdminValidator = async (req, res, next) => {
             });
         }
 
+        // Extract role names
+        const roleNames = roleDocs.map(role => role.name);
+        
+        // Add role names to the request object
+        req.roleNames = roleNames;
+
         next();
     } catch (error) {
         next(error);
@@ -117,7 +123,7 @@ export const loginAdminValidator = async (req, res, next) => {
     }
 };
 
-export const getListAdminValidator = async (req, res, next) => {
+export const getAdminsValidator = async (req, res, next) => {
     const __ = applyRequestContentLanguage(req);
     const schema = Joi.object({
         page: Joi.number()
@@ -165,6 +171,19 @@ export const getListAdminValidator = async (req, res, next) => {
     }
 };
 
+export const getRolesToAdminValidator = async (req, res, next) => {
+    const schema = Joi.object({
+        search: Joi.string().allow('')
+    });
+    try {
+        const value = await schema.validateAsync(req.query);
+        req.query = value;
+        next();
+    } catch (error) {
+        next(error);
+    }
+};
+
 export const updateAdminValidator = async (req, res, next) => {
     const __ = applyRequestContentLanguage(req);
     try {
@@ -174,7 +193,7 @@ export const updateAdminValidator = async (req, res, next) => {
             lastName: Joi.string()
                 .max(100),
             adminName: Joi.string()
-                .min(8)
+                .min(1)
                 .max(100),
             email: Joi.string()
                 .email()
@@ -239,6 +258,10 @@ export const updateAdminValidator = async (req, res, next) => {
                 data: null
             });
         }
+
+        const roleNames = roleDocs.map(role => role.name);
+        
+        req.roleNames = roleNames;
 
         next();
     } catch (error) {

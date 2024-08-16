@@ -1,15 +1,16 @@
 import Country from "../models/country.model.js";
 import countryService from "../services/country.service.js";
-import { t } from "../utils/localization.util.js";
+import { applyRequestContentLanguage, t } from "../utils/localization.util.js";
 
 export const createCountryController = async (req, res) => {
+    const __ = applyRequestContentLanguage(req);
     try {
         const { name, description, image, localeData } = req.body;
         const newCountry = await countryService.createCountry(name, description, image, localeData);
 
         return res.status(201).json({
             success: true,
-            message: t(req.contentLanguage, "country.createSuccess"),
+            message: __("message.createdSuccess", { field: __("model.country.name") }),
             status: 201,
             data: {
                 country: {
@@ -32,15 +33,16 @@ export const createCountryController = async (req, res) => {
 };
 
 export const updateCountryController = async (req, res) => {
+    const __ = applyRequestContentLanguage(req);
     try {
-        const { country } = req.body;
+        const { id } = req.params;
         const updateData = req.body;
 
-        const updatedCountry = await countryService.updateCountry(country, updateData);
+        const updatedCountry = await countryService.updateCountry(id, updateData);
 
         return res.status(200).json({
             success: true,
-            message: t(req.contentLanguage, "country.updateSuccess"),
+            message: __("message.updatedSuccess", { field: __("model.country.name") }),
             status: 200,
             data: {
                 updatedCountry: {
@@ -63,23 +65,32 @@ export const updateCountryController = async (req, res) => {
 };
 
 export const getCountryByIdController = async (req, res) => {
+    const __ = applyRequestContentLanguage(req);
     try {
         const id = req.params.id;
-        const country = await Country.findById({ _id: id });
+        const country = await countryService.getCountry(id);
 
         if (!country) {
             return res.status(404).json({
                 success: false,
-                message: t(req.contentLanguage, "country.notFound"),
+                message: __("validation.notFound", { field: __("model.country.name") }),
                 status: 404,
                 data: null
             });
         } else {
             return res.status(200).json({
                 success: true,
-                message: t(req.contentLanguage, "country.getByIdSuccess"),
+                message: __("message.getSuccess", { field: __("model.country.name") }),
                 status: 200,
-                data: country
+                data: {
+                    country: {
+                        _id: country._id,
+                        name: country.name,
+                        description: country.description,
+                        image: country.image,
+                        localeData: country.localeData,
+                    }
+                }
             });
         }
     } catch (error) {
@@ -92,36 +103,38 @@ export const getCountryByIdController = async (req, res) => {
     }
 };
 
-export const getListCountryController = async (req, res) => {
+export const getCountriesController = async (req, res) => {
+    const __ = applyRequestContentLanguage(req);
     try {
-        const { search = '', page = 1, limit = 10, status } = req.query;
+        const { search = '', page = 1, pageSize = 10, status, sortOrder = -1  } = req.query;
 
-        // Tạo điều kiện tìm kiếm
-        const searchCondition = search
+        const maxPageSize = 100;
+        const limitedPageSize = Math.min(pageSize, maxPageSize);
+
+        const filters = search
             ? { name: { $regex: search, $options: 'i' } } : {};
         if (status !== null && status !== undefined && status !== "") {
-            searchCondition.status = status;
+            filters.status = status;
         }
 
-        // Lấy danh sách theo điều kiện tìm kiếm và phân trang
-        const countries = await Country.find(searchCondition)
-            .skip((page - 1) * limit)
-            .limit(Number(limit));
-
-        // Lấy tổng số lượng Country để tính toán phân trang
-        const totalCountries = await Country.countDocuments(searchCondition);
+        const { countries, totalCountries } = await countryService.getCountries(filters, page, limitedPageSize, sortOrder);
 
         return res.status(200).json({
             success: true,
-            message: t(req.contentLanguage, "country.getListSuccess"),
+            message: __("message.getSuccess", { field: __("model.country.name") }),
             data: {
                 countries,
-                totalPages: Math.ceil(totalCountries / limit),
+                totalPages: Math.ceil(totalCountries / limitedPageSize),
                 totalCount: totalCountries,
                 currentPage: Number(page)
             },
         });
     } catch (error) {
-        next(error);
+        return res.status(error.status || 500).json({
+            success: false,
+            message: error.message || "Internal Server Error",
+            status: error.status || 500,
+            data: error.data || null
+        });
     }
-}
+};
