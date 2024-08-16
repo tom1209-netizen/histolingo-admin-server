@@ -18,7 +18,7 @@ export const createAdminValidator = async (req, res, next) => {
                 .max(100)
                 .required(),
             adminName: Joi.string()
-                .min(8)
+                .min(1)
                 .max(100)
                 .required(),
             email: Joi.string()
@@ -193,7 +193,7 @@ export const updateAdminValidator = async (req, res, next) => {
             lastName: Joi.string()
                 .max(100),
             adminName: Joi.string()
-                .min(8)
+                .min(1)
                 .max(100),
             email: Joi.string()
                 .email()

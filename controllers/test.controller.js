@@ -1,7 +1,4 @@
 import { topicStatus } from '../constants/topic.constant.js';
-import Admin from '../models/admin.model.js';
-import Test from '../models/test.model.js';
-import Topic from '../models/topic.model.js';
 import testService from '../services/test.service.js';
 import { applyRequestContentLanguage } from '../utils/localization.util.js';
 
