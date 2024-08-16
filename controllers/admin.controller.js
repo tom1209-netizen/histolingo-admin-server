@@ -134,7 +134,8 @@ export const getListAdmin = async (req, res) => {
             .skip((page - 1) * pageSize)
             .limit(Number(pageSize))
             .sort(sortOrder === -1 ? { createdAt: -1 } : { createdAt: 1 })
-            .populate('roles', 'name');
+            .populate('roles', 'name')
+            .populate('supervisorId', 'adminName')
 
         // Lấy tổng số lượng Admin để tính toán phân trang
         const totalAdmins = await Admin.countDocuments(searchCondition);
