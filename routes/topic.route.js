@@ -14,7 +14,6 @@ import {
     getTopicsController,
     getTopicController,
     updateTopicController,
-    deleteTopicController
 } from "../controllers/topic.controller.js";
 import { rolePrivileges } from "../constants/role.constant.js";
 
@@ -50,13 +49,6 @@ topicRoute.patch(
     authorization(rolePrivileges.topic.update),
     updateTopicValidator,
     updateTopicController
-);
-
-topicRoute.delete(
-    "/:id",
-    authentication,
-    authorization(rolePrivileges.topic.delete),
-    deleteTopicController
 );
 
 export default topicRoute;

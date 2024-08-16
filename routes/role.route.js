@@ -15,7 +15,6 @@ import {
     getRoleController,
     updateRoleController,
     getAllPermissionController,
-    deleteRoleController
 } from "../controllers/role.controller.js";
 import {
     rolePrivileges
@@ -60,14 +59,6 @@ roleRoute.patch(
     authorization(rolePrivileges.role.update),
     updateRoleValidator,
     updateRoleController
-);
-
-roleRoute.delete(
-    "/:id",
-    authentication,
-    authorization(rolePrivileges.role.delete),
-    getRoleValidator,
-    deleteRoleController
 );
 
 export default roleRoute;
