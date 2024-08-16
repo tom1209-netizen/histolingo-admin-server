@@ -130,7 +130,7 @@ export const getListAdmin = async (req, res) => {
         }
 
         // Lấy danh sách Admin theo điều kiện tìm kiếm và phân trang
-        const admins = await Admin.find(searchCondition)
+        const admins = await Admin.find(searchCondition, { password: 0 })
             .skip((page - 1) * pageSize)
             .limit(Number(pageSize))
             .sort(sortOrder === -1 ? { createdAt: -1 } : { createdAt: 1 })
