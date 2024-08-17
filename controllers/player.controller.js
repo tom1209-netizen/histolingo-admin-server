@@ -2,30 +2,35 @@ import Player from "../models/player.model.js";
 import playerService from "../services/player.service.js";
 import { applyRequestContentLanguage } from "../utils/localization.util.js";
 
-export const getListPlayerController = async (req, res) => {
+export const getPlayersController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
     try {
-        const { search = '', page = 1, page_size = 10, status } = req.query;
+        const { page = 1, pageSize = 10, search = '', status, sortOrder = -1 } = req.query;
 
-        const searchCondition = search
-            ? { fullName: { $regex: search, $options: 'i' } } : {};
+        const maxPageSize = 100;
+        const limitedPageSize = Math.min(pageSize, maxPageSize);
+
+        const filters = search
+            ? {
+                $or: [
+                    { userName: { $regex: search, $options: 'i' } },
+                    { fullName: { $regex: search, $options: 'i' } },
+                ]
+            }
+            : {};
         if (status !== null && status !== undefined && status !== "") {
-            searchCondition.status = status;
+            filters.status = status;
         }
 
-        const players = await Player.find(searchCondition)
-            .skip((page - 1) * page_size)
-            .limit(Number(page_size));
-
-        const totalPlayers = await Player.countDocuments(searchCondition);
+        const { players, totalPlayersCount } = await playerService.getPlayers(filters, page, limitedPageSize, sortOrder);
 
         return res.status(200).json({
             success: true,
             message: __("message.getSuccess", { field: __("model.player.name") }),
             data: {
                 players,
-                totalPages: Math.ceil(totalPlayers / page_size),
-                totalCount: totalPlayers,
+                totalPages: Math.ceil(totalPlayersCount / pageSize),
+                totalCount: totalPlayersCount,
                 currentPage: Number(page)
             },
         });

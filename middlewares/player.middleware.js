@@ -4,13 +4,42 @@ import Player from "../models/player.model.js";
 import { applyRequestContentLanguage } from "../utils/localization.util.js";
 
 export const getListPlayerValidator = async (req, res, next) => {
+    const __ = applyRequestContentLanguage(req);
     const schema = Joi.object({
-        search: Joi.string().allow(''),
-        page: Joi.number().integer().min(1).default(1),
-        limit: Joi.number().integer().min(1).default(10),
+        page: Joi.number()
+            .integer()
+            .min(1)
+            .optional()
+            .messages({
+                'number.base': __('question.invalidPage'),
+                'number.min': __('question.pageMin')
+            }),
+        pageSize: Joi.number()
+            .integer()
+            .min(1)
+            .optional()
+            .messages({
+                'number.base': __('question.invalidPageSize'),
+                'number.min': __('question.pageSizeMin')
+            }),
+        search: Joi.string()
+            .optional()
+            .allow('')
+            .messages({
+                'string.base': __('question.invalidSearch')
+            }),
+        sortOrder: Joi.number()
+            .valid(1, -1)
+            .optional()
+            .messages({
+                'any.only': __('question.invalidSortOrder')
+            }),
         status: Joi.number()
-            .allow(null, "")
-            .valid(playerStatus.active, playerStatus.inactive),
+            .valid(0, 1)
+            .optional()
+            .messages({
+                'any.only': __('question.invalidStatus')
+            }),
     });
 
     try {
