@@ -89,8 +89,12 @@ export const getDocumentationController = async (req, res) => {
                         id: documentation._id,
                         source: documentation.source,
                         name: documentation.name,
+                        topicId: documentation.topicId,
+                        countryId: documentation.countryId,
                         content: documentation.content,
-                        localeData: documentation.localeData
+                        localeData: documentation.localeData,
+                        createdAt: documentation.createdAt,
+                        updatedAt: documentation.updatedAt
                     }
                 }
             });

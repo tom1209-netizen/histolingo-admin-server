@@ -64,7 +64,7 @@ export const updateCountryController = async (req, res) => {
     }
 };
 
-export const getCountryByIdController = async (req, res) => {
+export const getCountryController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
     try {
         const id = req.params.id;
@@ -88,7 +88,10 @@ export const getCountryByIdController = async (req, res) => {
                         name: country.name,
                         description: country.description,
                         image: country.image,
+                        status: country.status,
                         localeData: country.localeData,
+                        createdAt: country.createdAt,
+                        updatedAt: country.updatedAt
                     }
                 }
             });
@@ -117,15 +120,15 @@ export const getCountriesController = async (req, res) => {
             filters.status = status;
         }
 
-        const { countries, totalCountries } = await countryService.getCountries(filters, page, limitedPageSize, sortOrder);
+        const { countries, totalCountriesCount } = await countryService.getCountries(filters, page, limitedPageSize, sortOrder);
 
         return res.status(200).json({
             success: true,
             message: __("message.getSuccess", { field: __("model.country.name") }),
             data: {
                 countries,
-                totalPages: Math.ceil(totalCountries / limitedPageSize),
-                totalCount: totalCountries,
+                totalPages: Math.ceil(totalCountriesCount / limitedPageSize),
+                totalCount: totalCountriesCount,
                 currentPage: Number(page)
             },
         });
