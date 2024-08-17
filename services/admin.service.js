@@ -52,7 +52,30 @@ class AdminService {
                     as: "roleDetails" // Tên của field sẽ chứa thông tin role sau khi join
                 }
             },
-            { $unwind: "$roleDetails" }, // Unwind roleDetails để có thể truy cập các trường trong đó
+            {
+                $lookup: {
+                    from: "admins",
+                    localField: "supervisorId",
+                    foreignField: "_id",
+                    as: "supervisorDetails"
+                }
+            },
+            { $unwind: { path: "$roleDetails", preserveNullAndEmptyArrays: true } }, // Unwind roleDetails để có thể truy cập các trường trong đó
+            { $unwind: { path: "$supervisorDetails", preserveNullAndEmptyArrays: true } },
+            {
+                $group: {
+                    _id: "$_id",
+                    firstName: { $first: "$firstName" },
+                    lastName: { $first: "$lastName" },
+                    adminName: { $first: "$adminName" },
+                    email: { $first: "$email" },
+                    status: { $first: "$status" },
+                    createdAt: { $first: "$createdAt" },
+                    updatedAt: { $first: "$updatedAt" },
+                    roles: { $push: "$roleDetails" },
+                    supervisorId: { $first: "$supervisorDetails" }
+                }
+            },
             {
                 $facet: {
                     totalCount: [{ $count: "count" }],
@@ -68,11 +91,14 @@ class AdminService {
                                 adminName: 1,
                                 email: 1,
                                 role: {
-                                    _id: "$roleDetails._id",
-                                    name: "$roleDetails.name"
+                                    _id: "$roles._id",
+                                    name: "$roles.name"
                                 },
                                 status: 1,
-                                supervisorId: 1,
+                                supervisorId: {
+                                    _id: "$supervisorId._id",
+                                    adminName: "$supervisorId.adminName"
+                                },
                                 createdAt: 1,
                                 updatedAt: 1,
                             }

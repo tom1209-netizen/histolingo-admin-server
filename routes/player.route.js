@@ -14,7 +14,7 @@ import {
 
 } from "../middlewares/player.middleware.js";
 import {
-    getListPlayerController,
+    getPlayersController,
     updateStatusPlayerController
 
 } from "../controllers/player.controller.js";
@@ -26,7 +26,7 @@ playerRoute.get(
     authentication,
     authorization(rolePrivileges.player.read),
     getListPlayerValidator,
-    getListPlayerController
+    getPlayersController
 );
 
 playerRoute.patch(

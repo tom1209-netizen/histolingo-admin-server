@@ -119,15 +119,15 @@ export const getDocumentationsController = async (req, res) => {
             filters.status = status;
         }
 
-        const { documentations, totalDocumentations } = await documentationService.getDocumentations(filters, page, limitedPageSize, sortOrder);
+        const { documentations, totalDocumentationsCount } = await documentationService.getDocumentations(filters, page, limitedPageSize, sortOrder);
 
         return res.status(200).json({
             success: true,
             message: __("message.getSuccess", { field: __("model.documentation.displayListName") }),
             data: {
                 documentations,
-                totalPages: Math.ceil(totalDocumentations / limitedPageSize),
-                totalCount: totalDocumentations,
+                totalPages: Math.ceil(totalDocumentationsCount / limitedPageSize),
+                totalCount: totalDocumentationsCount,
                 currentPage: Number(page)
             },
         });

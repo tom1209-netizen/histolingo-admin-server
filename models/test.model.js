@@ -36,6 +36,13 @@ const testSchema = new Schema(
             default: testStatus.active,
             require: true,
         },
+        questionsId: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: "BaseQuestion",
+                required: true,
+            },
+        ],
         localeData: {
             type: Schema.Types.Mixed,
             required: true
