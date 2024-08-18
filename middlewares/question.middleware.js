@@ -151,7 +151,6 @@ export const createQuestionValidator = async (req, res, next) => {
 
         const existedTopic = await Topic.findById(data.topicId);
         if (!existedTopic) {
-            console.log("topic not found")
             return res.status(404).json({
                 success: false,
                 message: __('topic.notFound'),
@@ -244,6 +243,18 @@ export const getQuestionsValidator = async (req, res, next) => {
             .allow('')
             .messages({
                 'string.base': __('question.invalidSearch')
+            }),
+        countryName: Joi.string()
+            .optional()
+            .allow('')
+            .messages({
+                'string.base': __('question.invalidCountryName')
+            }),
+        topicName: Joi.string()
+            .optional()
+            .allow('')
+            .messages({
+                'string.base': __('question.invalidTopicName')
             }),
         sortOrder: Joi.number()
             .valid(1, -1)
