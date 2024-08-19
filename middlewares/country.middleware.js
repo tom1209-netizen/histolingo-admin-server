@@ -51,7 +51,7 @@ export const createCountryValidator = async (req, res, next) => {
 export const updateCountryValidator = async (req, res, next) => {
     const __ = applyRequestContentLanguage(req);
     try {
-        const { name, description, image, localeData } = req.body;
+        const { name, description, image, status, localeData } = req.body;
 
         const createSchema = Joi.object({
             name: Joi.string()
@@ -60,19 +60,22 @@ export const updateCountryValidator = async (req, res, next) => {
                 .max(1000),
             image: Joi.string()
                 .max(1000),
-                localeData: Joi.object().pattern(/^[a-z]{2}-[A-Z]{2}$/,
-                    Joi.object({
-                        name: Joi.string().max(250).required(),
-                        description: Joi.string().max(1000).required()
-                    })
-                ).default({})
+            status: Joi.number()
+                .valid(countryStatus.active, countryStatus.inactive),
+            localeData: Joi.object().pattern(/^[a-z]{2}-[A-Z]{2}$/,
+                Joi.object({
+                    name: Joi.string().max(250).required(),
+                    description: Joi.string().max(1000).required()
+                })
+            ).default({})
         });
 
         await createSchema.validateAsync({
             name,
             description,
             image,
-            localeData
+            status,
+            localeData,
         });
 
         const id = req.params.id;

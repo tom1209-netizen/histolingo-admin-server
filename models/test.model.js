@@ -14,12 +14,13 @@ const testSchema = new Schema(
             ref: "Admin",
             require: true,
         },
-        questionNumber: {
-            type: Number,
-            min: 1,
-            max: 100,
-            require: true,
-        },
+        documentationsId: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: "Documentation",
+                required: true,
+            },
+        ],
         topicId: {
             type: Schema.Types.ObjectId,
             ref: "Topic",

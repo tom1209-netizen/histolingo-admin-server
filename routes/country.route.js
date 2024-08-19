@@ -16,7 +16,7 @@ import {
 } from "../middlewares/country.middleware.js";
 import {
     createCountryController,
-    getCountryByIdController,
+    getCountryController,
     getCountriesController,
     updateCountryController
 
@@ -42,7 +42,7 @@ countryRoute.get(
     "/:id",
     authentication,
     authorization(rolePrivileges.country.read),
-    getCountryByIdController
+    getCountryController
 );
 countryRoute.get(
     "/",

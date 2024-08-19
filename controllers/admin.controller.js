@@ -89,7 +89,7 @@ export const updateAdminController = async (req, res) => {
         const { id } = req.params;
         const updateData = req.body;
         const updateAdmin = await adminService.updateAdmin(id, updateData);
-        const roleNames = req.roleNames;
+        const roleNames = req.roleNames || updateAdmin.roles;
 
         return res.status(200).json({
             success: true,
@@ -176,7 +176,7 @@ export const getRolesToAdminController = async (req, res) => {
             }
             : { status: adminStatus.active };
 
-        const roles = await adminService.getRolesToAdmin;
+        const roles = await adminService.getRolesToAdmin(filters);
 
         return res.status(200).json({
             success: true,

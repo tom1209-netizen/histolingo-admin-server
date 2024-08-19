@@ -21,7 +21,8 @@ import {
     getTestsController,
     getTestController,
     getTopicsController,
-    updateTestController
+    updateTestController,
+    getQuestionsController
 
 } from "../controllers/test.controller.js";
 
@@ -49,6 +50,14 @@ testRoute.get(
     authorization(rolePrivileges.test.create),
     getDataValidator,
     getTopicsController
+);
+
+testRoute.get(
+    "/getQuestionTest",
+    authentication,
+    authorization(rolePrivileges.test.create),
+    getDataValidator,
+    getQuestionsController
 );
 
 testRoute.patch(

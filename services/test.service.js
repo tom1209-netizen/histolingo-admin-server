@@ -1,17 +1,17 @@
 import Country from "../models/country.model.js";
+import { BaseQuestion } from "../models/question.model.js";
 import Test from "../models/test.model.js";
 import Topic from "../models/topic.model.js";
 
 class TestService {
-    async createTest(name, createdBy, documentationsId, questionNumber, topicId, countryId, questions, localeData) {
+    async createTest(name, createdBy, documentationsId, topicId, countryId, questions, localeData) {
         const newTest = await Test.create({
             name,
             createdBy,
             documentationsId,
-            questionNumber,
             topicId,
             countryId,
-            questions: questions.map(q => q._id),
+            questionsId: questions.map(q => q._id),
             localeData
         });
         return newTest;
@@ -72,7 +72,7 @@ class TestService {
                             $project: {
                                 _id: 1,
                                 name: 1,
-                                questionNumber: 1,
+                                questionsId: 1,
                                 status: 1,
                                 localeData: 1,
                                 createdAt: 1,
@@ -105,20 +105,33 @@ class TestService {
     }
 
     async getTest(id){
-        const test = await Test.findById({ _id: id });
+        const test = await Test.findById({ _id: id })
+        .populate([
+            { path: 'createdBy', select: 'adminName' },
+            { path: 'documentationsId', select: 'name' },
+            { path: 'topicId', select: 'name' },
+            { path: 'countryId', select: 'name' },  
+            { path: 'questionsId', select: 'questionType ask localeData answer' },  
+        ]);
         return test;
     }
 
-    async getTopicsTest (searchCondition){
-        const topics = await Topic.find(searchCondition, 'name _id')
+    async getTopicsTest (filters){
+        const topics = await Topic.find(filters, 'name _id')
 
         return topics;
     }
 
-    async getCountriesTest (searchCondition){
-        const countries = await Country.find(searchCondition, 'name _id')
+    async getCountriesTest (filters){
+        const countries = await Country.find(filters, 'name _id')
 
         return countries;
+    }
+
+    async getQuestionsTest (filters){
+        const questions = await BaseQuestion.find(filters, 'ask _id')
+
+        return questions;
     }
 };
 
