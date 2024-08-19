@@ -65,7 +65,7 @@ export const createDocumentationValidator = async (req, res, next) => {
 export const updateDocumentationValidator = async (req, res, next) => {
     const __ = applyRequestContentLanguage(req);
     try {
-        const { source, name, content, topicId, countryId, localeData } = req.body;
+        const { source, name, content, topicId, countryId, status, localeData } = req.body;
 
         const createSchema = Joi.object({
             source: Joi.string()
@@ -80,6 +80,8 @@ export const updateDocumentationValidator = async (req, res, next) => {
             countryId: Joi.string()
                 .hex()
                 .length(24),
+            status: Joi.number()
+                .valid(documentationStatus.active, documentationStatus.inactive),
             localeData: Joi.object().pattern(/^[a-z]{2}-[A-Z]{2}$/,
                 Joi.object({
                     content: Joi.string().max(250).required(),
@@ -94,6 +96,7 @@ export const updateDocumentationValidator = async (req, res, next) => {
             content,
             topicId,
             countryId,
+            status,
             localeData
         });
 
@@ -102,7 +105,7 @@ export const updateDocumentationValidator = async (req, res, next) => {
         if (!documentation) {
             return res.status(400).json({
                 success: false,
-                message: __("validation.notFound", { field: "model.documentation.name" }),
+                message: __("validation.notFound", { field: __("model.documentation.displayName") }),
                 status: 400,
                 data: null
             })

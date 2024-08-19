@@ -50,6 +50,7 @@ export const updateCountryController = async (req, res) => {
                     name: updatedCountry.name,
                     description: updatedCountry.description,
                     image: updatedCountry.image,
+                    status: updatedCountry.status,
                     localeData: updatedCountry.localeData,
                 }
             },

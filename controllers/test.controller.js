@@ -151,6 +151,7 @@ export const updateTestController = async (req, res) => {
                     questionsId: updatedTest.questionsId,
                     topicId: updatedTest.topicId,
                     countryId: updatedTest.countryId,
+                    status: updatedTest.status,
                     localeData: updatedTest.localeData
                 }
             }

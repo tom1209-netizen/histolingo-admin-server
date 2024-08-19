@@ -51,6 +51,7 @@ export const updateDocumentationController = async (req, res) => {
                     source: updatedDocumentation.source,
                     name: updatedDocumentation.name,
                     content: updatedDocumentation.content,
+                    status: updatedDocumentation.status,
                     localeData: updatedDocumentation.localeData
                 }
             }
@@ -92,6 +93,7 @@ export const getDocumentationController = async (req, res) => {
                         topicId: documentation.topicId,
                         countryId: documentation.countryId,
                         content: documentation.content,
+                        status: documentation.status,
                         localeData: documentation.localeData,
                         createdAt: documentation.createdAt,
                         updatedAt: documentation.updatedAt

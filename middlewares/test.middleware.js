@@ -6,6 +6,7 @@ import mongoose from 'mongoose';
 import Test from '../models/test.model.js';
 import Topic from '../models/topic.model.js';
 import Country from '../models/country.model.js';
+import { testStatus } from '../constants/test.constant.js';
 
 export const createTestValidator = async (req, res, next) => {
     const __ = applyRequestContentLanguage(req);
@@ -97,7 +98,7 @@ export const createTestValidator = async (req, res, next) => {
 export const updateTestValidator = async (req, res, next) => {
     const __ = applyRequestContentLanguage(req);
     try {
-        const { name, documentationsId, questionsId, topicId, countryId, localeData } = req.body;
+        const { name, documentationsId, questionsId, topicId, countryId, status, localeData } = req.body;
         const schema = Joi.object({
             name: Joi.string()
                 .max(250),
@@ -111,6 +112,8 @@ export const updateTestValidator = async (req, res, next) => {
             countryId: Joi.string()
                 .hex()
                 .length(24),
+            status: Joi.number()
+                .valid(testStatus.active, testStatus.inactive),
             localeData: Joi.object().pattern(/^[a-z]{2}-[A-Z]{2}$/,
                 Joi.object({
                     name: Joi.string().max(250).required()
@@ -124,6 +127,7 @@ export const updateTestValidator = async (req, res, next) => {
             questionsId,
             topicId,
             countryId,
+            status,
             localeData
         });
 
@@ -138,45 +142,53 @@ export const updateTestValidator = async (req, res, next) => {
             })
         };
 
-        const documentationDocs = await Documentation.find({ _id: { $in: documentationsId } });
-        if (documentationDocs.length !== documentationsId.length) {
-            return res.status(404).json({
-                success: false,
-                message: __("validation.notFound", { field: __("model.documentation.name") }),
-                status: 404,
-                data: null
-            });
-        };
+        if (documentationsId && documentationsId.length > 0) {
+            const documentationDocs = await Documentation.find({ _id: { $in: documentationsId } });
+            if (documentationDocs.length !== documentationsId.length) {
+                return res.status(404).json({
+                    success: false,
+                    message: __("validation.notFound", { field: __("model.documentation.name") }),
+                    status: 404,
+                    data: null
+                });
+            };
+        }
 
-        const topic = await Topic.findById({ _id: topicId });
-        if (!topic) {
-            return res.status(400).json({
-                success: false,
-                message: __("validation.notFound", { field: "model.topic.name" }),
-                status: 400,
-                data: null
-            })
-        };
+        if (topicId) {
+            const topic = await Topic.findById({ _id: topicId });
+            if (!topic) {
+                return res.status(400).json({
+                    success: false,
+                    message: __("validation.notFound", { field: "model.topic.name" }),
+                    status: 400,
+                    data: null
+                })
+            };
+        }
 
-        const country = await Country.findById({ _id: countryId });
-        if (!country) {
-            return res.status(400).json({
-                success: false,
-                message: __("validation.notFound", { field: "model.country.name" }),
-                status: 400,
-                data: null
-            })
-        };
+        if (countryId) {
+            const country = await Country.findById({ _id: countryId });
+            if (!country) {
+                return res.status(400).json({
+                    success: false,
+                    message: __("validation.notFound", { field: "model.country.name" }),
+                    status: 400,
+                    data: null
+                })
+            };
+        }
 
-        const questionDocs = await BaseQuestion.find({ _id: { $in: questionsId } });
-        if (questionDocs.length !== questionsId.length) {
-            return res.status(404).json({
-                success: false,
-                message: __("validation.notFound", { field: __("model.question.name") }),
-                status: 404,
-                data: null
-            });
-        };
+        if (questionsId && questionsId.length > 0) {
+            const questionDocs = await BaseQuestion.find({ _id: { $in: questionsId } });
+            if (questionDocs.length !== questionsId.length) {
+                return res.status(404).json({
+                    success: false,
+                    message: __("validation.notFound", { field: __("model.question.name") }),
+                    status: 404,
+                    data: null
+                });
+            };
+        }
 
         req.test = test;
         next();

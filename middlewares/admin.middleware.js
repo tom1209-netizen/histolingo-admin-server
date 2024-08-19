@@ -72,7 +72,7 @@ export const createAdminValidator = async (req, res, next) => {
 
         // Extract role names
         const roleNames = roleDocs.map(role => role.name);
-        
+
         // Add role names to the request object
         req.roleNames = roleNames;
 
@@ -249,19 +249,20 @@ export const updateAdminValidator = async (req, res, next) => {
         req.adminUpdate = adminUpdate;
 
         // Find role by idg
-        const roleDocs = await Role.find({ _id: { $in: roles } });
-        if (roleDocs.length !== roles.length) {
-            return res.status(404).json({
-                success: false,
-                message: __("validation.notFound", { field: __("model.role.name") }),
-                status: 404,
-                data: null
-            });
-        }
+        if (roles && roles.length > 0) {
+            const roleDocs = await Role.find({ _id: { $in: roles } });
+            if (roleDocs.length !== roles.length) {
+                return res.status(404).json({
+                    success: false,
+                    message: __("validation.notFound", { field: __("model.role.name") }),
+                    status: 404,
+                    data: null
+                });
+            }
 
-        const roleNames = roleDocs.map(role => role.name);
-        
-        req.roleNames = roleNames;
+            const roleNames = roleDocs.map(role => role.name);
+            req.roleNames = roleNames;
+        }
 
         next();
     } catch (error) {

@@ -89,7 +89,7 @@ export const updateAdminController = async (req, res) => {
         const { id } = req.params;
         const updateData = req.body;
         const updateAdmin = await adminService.updateAdmin(id, updateData);
-        const roleNames = req.roleNames;
+        const roleNames = req.roleNames || updateAdmin.roles;
 
         return res.status(200).json({
             success: true,
