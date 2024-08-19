@@ -229,19 +229,7 @@ export const getTestController = async (req, res) => {
                 message: __("message.getSuccess", { field: __("model.test.name") }),
                 status: 200,
                 data: {
-                    test: {
-                        id: test._id,
-                        name: test.name,
-                        createdBy: test.createdBy,
-                        documentationsId: test.documentationsId,
-                        topicId: test.topicId,
-                        countryId: test.countryId,
-                        questionsId: test.questionsId,
-                        localeData: test.localeData,
-                        status: test.status,
-                        createdAt: test.createdAt,
-                        updatedAt: test.updatedAt
-                    }
+                    test
                 }
             });
         }

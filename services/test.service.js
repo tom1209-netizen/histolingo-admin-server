@@ -111,7 +111,7 @@ class TestService {
             { path: 'documentationsId', select: 'name' },
             { path: 'topicId', select: 'name' },
             { path: 'countryId', select: 'name' },  
-            { path: 'questionsId', select: 'questionType ask localeData answer' },  
+            { path: 'questionsId' },
         ]);
         return test;
     }
