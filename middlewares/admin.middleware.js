@@ -248,7 +248,7 @@ export const updateAdminValidator = async (req, res, next) => {
 
         req.adminUpdate = adminUpdate;
 
-        // Find role by id
+        // Find role by idg
         const roleDocs = await Role.find({ _id: { $in: roles } });
         if (roleDocs.length !== roles.length) {
             return res.status(404).json({

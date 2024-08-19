@@ -10,6 +10,30 @@ class QuestionService {
         const skip = (page - 1) * pageSize;
 
         const results = await BaseQuestion.aggregate([
+            {
+                $lookup: {
+                    from: "topics",
+                    localField: "topicId",
+                    foreignField: "_id",
+                    as: "topic",
+                    pipeline: [
+                        { $project: { name: 1 } }
+                    ]
+                }
+            },
+            {
+                $lookup: {
+                    from: "countries",
+                    localField: "countryId",
+                    foreignField: "_id",
+                    as: "country",
+                    pipeline: [
+                        { $project: { name: 1 } }
+                    ]
+                }
+            },
+            ...(filters['country.name'] ? [{ $match: { "country.name": filters['country.name'] } }] : []),
+            ...(filters['topic.name'] ? [{ $match: { "topic.name": filters['topic.name'] } }] : []),
             { $match: filters },
             {
                 $facet: {
@@ -18,31 +42,9 @@ class QuestionService {
                         { $sort: { createdAt: Number(sortOrder) } },
                         { $skip: skip },
                         { $limit: pageSize },
-                        {
-                            $lookup: {
-                                from: 'topics',
-                                localField: 'topicId',
-                                foreignField: '_id',
-                                as: 'topic',
-                                pipeline: [
-                                    { $project: { name: 1 } }
-                                ]
-                            }
-                        },
-                        {
-                            $lookup: {
-                                from: 'countries',
-                                localField: 'countryId',
-                                foreignField: '_id',
-                                as: 'country',
-                                pipeline: [
-                                    { $project: { name: 1 } }
-                                ]
-                            }
-                        }
                     ]
                 }
-            }
+            },
         ]);
 
         const totalQuestionsCount = results[0].totalCount[0]

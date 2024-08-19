@@ -30,7 +30,7 @@ export const createQuestionController = async (req, res) => {
 export const getQuestionsController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
 
-    const { page = 1, pageSize = 10, search, sortOrder = -1, status } = req.query;
+    const { page = 1, pageSize = 10, search, countryName, topicName, sortOrder = -1, status } = req.query;
 
     const maxPageSize = 100;
     const limitedPageSize = Math.min(pageSize, maxPageSize);
@@ -44,6 +44,15 @@ export const getQuestionsController = async (req, res) => {
     if (search) {
         filters.ask = { $regex: new RegExp(search, 'i') };
     }
+
+    if (countryName) {
+        filters['country.name'] = countryName;
+    }
+
+    if (topicName) {
+        filters['topic.name'] = topicName;
+    }
+
 
     try {
         const { questions, totalQuestionsCount} = await questionService.getQuestions(filters, page, limitedPageSize, sortOrder);
@@ -103,7 +112,7 @@ export const updateQuestionController = async (req, res) => {
 
     try {
         const updatedQuestion = await questionService.updateQuestion(id, data);
-        console.log("reached")
+
         return res.status(200).json({
             success: true,
             message: __("question.updateQuestionSuccess"),
