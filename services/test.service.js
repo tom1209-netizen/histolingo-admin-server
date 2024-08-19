@@ -72,7 +72,7 @@ class TestService {
                             $project: {
                                 _id: 1,
                                 name: 1,
-                                questionNumber: 1,
+                                questionsId: 1,
                                 status: 1,
                                 localeData: 1,
                                 createdAt: 1,
@@ -111,6 +111,7 @@ class TestService {
             { path: 'documentationsId', select: 'name' },
             { path: 'topicId', select: 'name' },
             { path: 'countryId', select: 'name' },  
+            { path: 'questionsId', select: 'questionType ask localeData answer' },  
         ]);
         return test;
     }
