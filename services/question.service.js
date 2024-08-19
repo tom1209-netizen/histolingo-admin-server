@@ -32,8 +32,12 @@ class QuestionService {
                     ]
                 }
             },
-            ...(filters['country.name'] ? [{ $match: { "country.name": filters['country.name'] } }] : []),
-            ...(filters['topic.name'] ? [{ $match: { "topic.name": filters['topic.name'] } }] : []),
+            {
+                $addFields: {
+                    topic: { $arrayElemAt: ["$topic", 0] },
+                    country: { $arrayElemAt: ["$country", 0] }
+                }
+            },
             { $match: filters },
             {
                 $facet: {
