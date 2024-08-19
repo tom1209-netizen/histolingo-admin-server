@@ -23,7 +23,7 @@ export const createRoleValidator = async (req, res, next) => {
                 Joi
                     .number()
                     .min(1)
-                    .max(26)
+                    .max(32)
                     .messages({
                         'number.base': __('validation.permissions.number'),
                         'number.min': __('validation.permissions.min', { min: 1 }),
@@ -85,9 +85,16 @@ export const updateRoleValidator = async (req, res, next) => {
                 'string.min': __('validation.name.min', { field: 'name', min: 1 }),
                 'string.max': __('validation.name.max', { field: 'name', max: 250 })
             }),
+        status: Joi.number()
+            .valid(0, 1)
+            .messages({
+                'any.only': __('validation.status.invalid')
+            }),
         permissions: Joi.array()
             .items(
                 Joi.number()
+                    .min(1)
+                    .max(32)
                 .messages({
                     'number.base': __('validation.permissions.number')
                 })

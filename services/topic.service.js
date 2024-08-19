@@ -28,7 +28,11 @@ class TopicService {
                     ]
                 }
             },
-            ...(filters['country.name'] ? [{ $match: { "country.name": filters['country.name'] } }] : []),
+            {
+                $addFields: {
+                    country: { $arrayElemAt: ["$country", 0] }
+                }
+            },
             { $match: filters },
             {
                 $facet: {

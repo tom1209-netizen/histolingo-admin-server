@@ -113,6 +113,11 @@ export const updateTopicValidator = async (req, res, next) => {
                 'string.base': __('validation.description.string', { field: 'description' }),
                 'string.max': __('validation.description.max', { field: 'description', max: 1000 })
             }),
+        status: Joi.number()
+            .valid(0, 1)
+            .messages({
+                'any.only': __('validation.status.invalid')
+            }),
         image: Joi.string()
             .uri()
             .messages({

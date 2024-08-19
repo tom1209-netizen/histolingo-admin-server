@@ -103,16 +103,9 @@ export const updateTopicController = async (req, res) => {
 
     try {
         const { id } = req.params;
-        const { name, description, image, countryId, localeData } = req.body;
+        const data = req.body;
 
-        const updateData = {};
-        if (name !== undefined) updateData.name = name;
-        if (description !== undefined) updateData.description = description;
-        if (image !== undefined) updateData.image = image;
-        if (countryId !== undefined) updateData.countryId = countryId;
-        if (localeData !== undefined) updateData.localeData = localeData;
-
-        const updatedTopic = await topicService.updateTopic(id, updateData);
+        const updatedTopic = await topicService.updateTopic(id, data);
 
         if (!updatedTopic) {
             return res.status(404).json({

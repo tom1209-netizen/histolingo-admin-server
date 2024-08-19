@@ -315,6 +315,11 @@ export const updateQuestionValidator = async (req, res, next) => {
                 'any.only': __('question.invalidQuestionType'),
             }),
         ask: Joi.string(),
+        status: Joi.number()
+            .valid(0, 1)
+            .messages({
+                'any.only': __('question.invalidStatus'),
+            }),
         localeData: Joi.object().messages({
             'object.base': __('question.invalidLocaleData')
         })
