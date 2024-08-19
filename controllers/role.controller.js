@@ -132,13 +132,9 @@ export const updateRoleController = async (req, res) => {
 
     try {
         const { id } = req.params;
-        const { name, permissions } = req.body;
+        const data = req.body;
 
-        const updatedData = {};
-        if (name) updatedData.name = name;
-        if (permissions) updatedData.permissions = permissions;
-
-        const updatedRole = await roleService.updateRole(id, updatedData);
+        const updatedRole = await roleService.updateRole(id, data);
 
         if (!updatedRole) {
             return res.status(404).json({
