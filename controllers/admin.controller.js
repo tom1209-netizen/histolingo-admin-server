@@ -176,7 +176,7 @@ export const getRolesToAdminController = async (req, res) => {
             }
             : { status: adminStatus.active };
 
-        const roles = await adminService.getRolesToAdmin;
+        const roles = await adminService.getRolesToAdmin(filters);
 
         return res.status(200).json({
             success: true,
