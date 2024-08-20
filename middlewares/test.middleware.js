@@ -6,6 +6,8 @@ import Test from '../models/test.model.js';
 import Topic from '../models/topic.model.js';
 import Country from '../models/country.model.js';
 import { testStatus } from '../constants/test.constant.js';
+import { questionType } from '../constants/question.constant.js';
+
 
 export const createTestValidator = async (req, res, next) => {
     const __ = applyRequestContentLanguage(req);
@@ -253,6 +255,173 @@ export const getTestsValidator = async (req, res, next) => {
     try {
         const value = await schema.validateAsync(req.query);
         req.query = value;
+        next();
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const compareAnswersValidator = async (req, res, next) => {
+    const __ = applyRequestContentLanguage(req);
+
+    try {
+        const answersData = req.body;
+
+        const answerSchema = Joi.object({
+            questionId: Joi.string()
+                .hex()
+                .length(24)
+                .required()
+                .messages({
+                    'string.hex': __('submit.invalidQuestionId'),
+                    'string.length': __('submit.invalidQuestionIdLength'),
+                    'any.required': __('submit.questionIdRequired')
+                }),
+            questionType: Joi.number()
+                .valid(
+                    questionType.trueFalse,
+                    questionType.multipleChoice,
+                    questionType.matching,
+                    questionType.fillInTheBlank
+                )
+                .required()
+                .messages({
+                    'any.only': __('submit.invalidQuestionType'),
+                    'any.required': __('submit.questionTypeRequired')
+                }),
+            playerAnswer: Joi.alternatives().conditional('questionType', {
+                switch: [
+                    { is: questionType.trueFalse, then: Joi.boolean() },
+                    { is: questionType.multipleChoice, then: Joi.number() },
+                    {
+                        is: questionType.matching, then: Joi.array().items(Joi.object({
+                            leftColumn: Joi.string()
+                                .required()
+                                .messages({
+                                    'string.base': __('question.invalidLeftColumn'),
+                                    'any.required': __('question.leftColumnRequired')
+                                }),
+                            rightColumn: Joi.string()
+                                .required()
+                                .messages({
+                                    'string.base': __('question.invalidRightColumn'),
+                                    'any.required': __('question.rightColumnRequired')
+                                })
+                        }))
+                    },
+                    { is: questionType.fillInTheBlank, then: Joi.array().items(Joi.string()) }
+                ],
+                otherwise: Joi.any().forbidden()
+            }).messages({
+                'any.forbidden': __('submit.invalidPlayerAnswer'),
+                'any.required': __('submit.playerAnswerRequired')
+            })
+        });
+
+        const baseSubmitSchema = Joi.object({
+            playerId: Joi.string()
+                .hex()
+                .length(24)
+                .required()
+                .messages({
+                    'string.hex': __('submit.invalidPlayerId'),
+                    'string.length': __('submit.invalidPlayerIdLength'),
+                    'any.required': __('submit.playerIdRequired')
+                }),
+            testId: Joi.string()
+                .hex()
+                .length(24)
+                .required()
+                .messages({
+                    'string.hex': __('submit.invalidTestId'),
+                    'string.length': __('submit.invalidTestIdLength'),
+                    'any.required': __('submit.testIdRequired')
+                }),
+            answers: Joi.array()
+                .items(answerSchema)
+                .required()
+                .messages({
+                    'array.base': __('submit.invalidAnswersArray'),
+                    'any.required': __('submit.answersRequired')
+                })
+        });
+
+        await baseSubmitSchema.validateAsync(answersData);
+
+        req.answers = answersData;
+
+        next();
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const saveTestResultValidator = async (req, res, next) => {
+    const __ = applyRequestContentLanguage(req);
+
+    try {
+        const resultData = req.body;
+
+        const answerSchema = Joi.object({
+            questionId: Joi.string()
+                .hex()
+                .length(24)
+                .required()
+                .messages({
+                    'string.hex': __('submit.invalidQuestionId'),
+                    'string.length': __('submit.invalidQuestionIdLength'),
+                    'any.required': __('submit.questionIdRequired')
+                }),
+            playerAnswer: Joi.any().required().messages({
+                'any.required': __('submit.playerAnswerRequired')
+            }),
+            isCorrect: Joi.boolean()
+                .required()
+                .messages({
+                    'any.required': __('submit.isCorrectRequired')
+                }),
+        });
+
+        const testResultSchema = Joi.object({
+            playerId: Joi.string()
+                .hex()
+                .length(24)
+                .required()
+                .messages({
+                    'string.hex': __('submit.invalidPlayerId'),
+                    'string.length': __('submit.invalidPlayerIdLength'),
+                    'any.required': __('submit.playerIdRequired')
+                }),
+            testId: Joi.string()
+                .hex()
+                .length(24)
+                .required()
+                .messages({
+                    'string.hex': __('submit.invalidTestId'),
+                    'string.length': __('submit.invalidTestIdLength'),
+                    'any.required': __('submit.testIdRequired')
+                }),
+            score: Joi.number()
+                .integer()
+                .min(0)
+                .required()
+                .messages({
+                    'number.base': __('submit.invalidScore'),
+                    'number.min': __('submit.invalidScoreMin'),
+                    'any.required': __('submit.scoreRequired')
+                }),
+            answers: Joi.array()
+                .items(answerSchema)
+                .required()
+                .messages({
+                    'array.base': __('submit.invalidAnswersArray'),
+                    'any.required': __('submit.answersRequired')
+                })
+        });
+
+        await testResultSchema.validateAsync(resultData);
+
+        req.resultData = resultData;
         next();
     } catch (error) {
         next(error);

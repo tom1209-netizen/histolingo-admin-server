@@ -67,22 +67,37 @@ export const getQuestionsController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
 
     try {
-        const { search = '' } = req.query;
-        const filters = search
-            ? {
-                ask: { $regex: search, $options: 'i' },
-                status: questionStatus.active
-            }
-            : { status: questionStatus.active };
+        const id = req.params.id;
+        const questions = await testService.getQuestions(id);
 
-
-        const questions = await testService.getQuestionsTest(filters);
-
-        return res.status(200).json({
-            success: true,
-            message: __("message.getSuccess", { field: __("model.topic.name") }),
-            data: questions
-        });
+        if (!questions) {
+            return res.status(404).json({
+                success: false,
+                message: __("validation.notFound", { field: __("model.questions.displayName") }),
+                status: 404,
+                data: null
+            });
+        } else {
+            return res.status(200).json({
+                success: true,
+                message: __("message.getSuccess", { field: __("model.questions.displayName") }),
+                status: 200,
+                data: {
+                    questions: {
+                        id: questions._id,
+                        source: questions.source,
+                        name: questions.name,
+                        topicId: questions.topicId,
+                        countryId: questions.countryId,
+                        content: questions.content,
+                        status: questions.status,
+                        localeData: questions.localeData,
+                        createdAt: questions.createdAt,
+                        updatedAt: questions.updatedAt
+                    }
+                }
+            });
+        }
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,
@@ -234,6 +249,60 @@ export const getTestController = async (req, res) => {
                 }
             });
         }
+    } catch (error) {
+        return res.status(error.status || 500).json({
+            success: false,
+            message: error.message || "Internal Server Error",
+            status: error.status || 500,
+            data: error.data || null
+        });
+    }
+};
+
+export const compareAnswersController = async (req, res) => {
+    const __ = applyRequestContentLanguage(req);
+    try {
+        const playerData = req.body;
+        const { answers } = req.body;
+        const { score, results } = await testService.compareAnswers(answers);
+
+        return res.status(200).json({
+            success: true,
+            message: __("message.getSuccess", { field: __("model.result.name") }),
+            data: {
+                results: {
+                    playerId: playerData.playerId,
+                    testId: playerData.testId,
+                    score,
+                    answers: results,
+                }
+            },
+        });
+    } catch (error) {
+        return res.status(error.status || 500).json({
+            success: false,
+            message: error.message || "Internal Server Error",
+            status: error.status || 500,
+            data: error.data || null
+        });
+    }
+};
+
+export const saveTestResultController = async (req, res) => {
+    const __ = applyRequestContentLanguage(req);
+    try {
+        const { playerId, testId, score, answers } = req.resultData;
+
+        // Tạo đối tượng kết quả kiểm tra mới
+        const newTestResult = await testService.saveResults(playerId, testId, score, answers);
+
+        console.log(newTestResult)
+
+        return res.status(201).json({
+            success: true,
+            message: __("message.saveSuccess", { field: __("model.testResult.name") }),
+            data: newTestResult,
+        });
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,
