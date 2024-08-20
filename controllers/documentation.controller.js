@@ -1,4 +1,3 @@
-import Documentation from "../models/documentation.model.js";
 import documentationService from "../services/documentation.service.js";
 import { applyRequestContentLanguage } from "../utils/localization.util.js";
 

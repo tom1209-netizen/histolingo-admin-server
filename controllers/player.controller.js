@@ -1,4 +1,3 @@
-import Player from "../models/player.model.js";
 import playerService from "../services/player.service.js";
 import { applyRequestContentLanguage } from "../utils/localization.util.js";
 

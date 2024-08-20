@@ -1,5 +1,4 @@
 import Joi from "joi";
-import { playerStatus } from "../constants/player.constant.js";
 import Player from "../models/player.model.js";
 import { applyRequestContentLanguage } from "../utils/localization.util.js";
 

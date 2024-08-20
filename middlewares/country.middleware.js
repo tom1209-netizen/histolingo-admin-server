@@ -1,6 +1,6 @@
 import Joi from "joi";
 import Country from "../models/country.model.js";
-import { applyRequestContentLanguage, t } from "../utils/localization.util.js";
+import { applyRequestContentLanguage } from "../utils/localization.util.js";
 import { countryStatus } from "../constants/country.constant.js";
 
 export const createCountryValidator = async (req, res, next) => {

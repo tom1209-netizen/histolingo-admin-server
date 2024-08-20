@@ -3,7 +3,7 @@ import Admin from "../models/admin.model.js";
 import Role from "../models/role.model.js";
 import encodeService from "../utils/encode.utils.js";
 import { adminStatus } from "../constants/admin.constant.js";
-import { applyRequestContentLanguage, t } from "../utils/localization.util.js";
+import { applyRequestContentLanguage } from "../utils/localization.util.js";
 
 export const createAdminValidator = async (req, res, next) => {
     const __ = applyRequestContentLanguage(req);

@@ -2,7 +2,6 @@ import Joi from 'joi';
 import Documentation from '../models/documentation.model.js';
 import { applyRequestContentLanguage } from '../utils/localization.util.js';
 import { BaseQuestion } from '../models/question.model.js';
-import mongoose from 'mongoose';
 import Test from '../models/test.model.js';
 import Topic from '../models/topic.model.js';
 import Country from '../models/country.model.js';

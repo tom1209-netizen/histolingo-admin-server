@@ -1,3 +1,4 @@
+import { countryStatus } from '../constants/country.constant.js';
 import { questionStatus } from '../constants/question.constant.js';
 import { topicStatus } from '../constants/topic.constant.js';
 import testService from '../services/test.service.js';
@@ -11,9 +12,9 @@ export const getCountriesController = async (req, res) => {
         const filters = search
             ? {
                 name: { $regex: search, $options: 'i' },
-                status: topicStatus.active
+                status: countryStatus.active
             }
-            : { status: topicStatus.active };
+            : { status: countryStatus.active };
 
         const countries = await testService.getCountriesTest(filters);
 
