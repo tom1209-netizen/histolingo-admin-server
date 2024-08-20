@@ -1,6 +1,4 @@
 import { adminStatus } from "../constants/admin.constant.js";
-import Admin from "../models/admin.model.js";
-import Role from "../models/role.model.js";
 import adminService from "../services/admin.service.js";
 import tokenService from "../services/token.service.js";
 import { applyRequestContentLanguage } from "../utils/localization.util.js";
