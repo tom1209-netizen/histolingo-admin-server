@@ -427,3 +427,24 @@ export const saveTestResultValidator = async (req, res, next) => {
         next(error);
     }
 };
+
+export const startDemoValidator = async (req, res, next) => {
+    const __ = applyRequestContentLanguage(req);
+    try {
+        const { testId } = req.body;
+        const existingTest = await Test.findById({ _id: testId });
+        if (!existingTest) {
+            return res.status(404).json({
+                success: false,
+                message: __("validation.notFound", { field: __("model.test.name") }),
+                status: 404,
+                data: null
+            });
+        }
+        req.test = existingTest;
+
+        next();
+    } catch (error) {
+        next(error);
+    }
+}

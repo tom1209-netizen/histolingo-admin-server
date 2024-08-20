@@ -1,7 +1,10 @@
 import { countryStatus } from '../constants/country.constant.js';
-import { questionStatus } from '../constants/question.constant.js';
+import { questionStatus, questionType } from '../constants/question.constant.js';
 import { topicStatus } from '../constants/topic.constant.js';
+import { BaseQuestion } from '../models/question.model.js';
+import TestResult from '../models/testResult.model.js';
 import testService from '../services/test.service.js';
+import { shuffle } from '../utils/array.utils.js';
 import { applyRequestContentLanguage } from '../utils/localization.util.js';
 
 export const getCountriesController = async (req, res) => {
@@ -312,3 +315,58 @@ export const saveTestResultController = async (req, res) => {
         });
     }
 };
+
+export const startDemoController = async (req, res) => {
+    const __ = applyRequestContentLanguage(req);
+    try {
+        const test = req.test;
+        const questions = await BaseQuestion.find({
+            _id: {
+                $in: test.questionsId
+            }
+        }).lean();
+
+        for (const question of questions) {
+            if (question.questionType === 0 || question.questionType === 1 || question.questionType === 3) {
+                delete question.answer;
+            } else {
+                const leftColumns = question.answer.map((pair) => pair.leftColumn);
+                const rightColumns = question.answer.map((pair) => pair.rightColumn);
+
+                shuffle(rightColumns);
+
+                const newAnswer = [];
+                for (let index = 0; index < leftColumns.length; index++) {
+                    newAnswer.push({
+                        leftColumn: leftColumns[index],
+                        rightColumn: rightColumns[index]
+                    });
+                }
+                question.answer = newAnswer;
+            }
+        }
+
+        const newResult = await TestResult.create({
+            playerId: req.admin._id,
+            testId: test._id,
+            answers: questions.map((question) => {
+                return { question, playerAnswer: null, isCorrect: false }
+            })
+        });
+
+        return res.status(201).json({
+            success: true,
+            message: __("message.getSuccess", { field: __("model.test.name") }),
+            data: { questions, test, testResultId: newResult._id }
+        });
+    } catch (error) {
+        return res.status(error.status || 500).json({
+            success: false,
+            message: error.message || "Internal Server Error",
+            status: error.status || 500,
+            data: error.data || null
+        });
+    }
+}
+
+//testResultId, questionId, playerAnswer -> post => return true/false

@@ -142,7 +142,7 @@ class TestService {
 
         for (const answer of answers) {
             console.log(answer)
-            const question = await BaseQuestion.findById(answer.questionId);
+            const question = await BaseQuestion.findById(answer.questionId).lean();
             if (!question) {
                 return res.status(404).json({
                     success: false,
@@ -154,11 +154,11 @@ class TestService {
 
 
             let isCorrect = false;
-
+            // console.log(question.ask);
             if (question.questionType === questionType.trueFalse || question.questionType === questionType.multipleChoice) {
-                isCorrect = answer.playerAnswer === question.answer;
+                // isCorrect = answer.playerAnswer === question.answer;
                 console.log("ques", question)
-                console.log("type", typeof(question.answer))
+                console.log("type",question.options)
                 console.log(answer.playerAnswer, "and", question.answer)
             } else if (question.questionType === questionType.matching) {
                 const sortedPlayerAnswer = _.sortBy(answer.playerAnswer, ['leftColumn', 'rightColumn']);

@@ -14,6 +14,7 @@ import {
     getDataValidator,
     getTestsValidator,
     saveTestResultValidator,
+    startDemoValidator,
     updateTestValidator
 
 } from "../middlewares/test.middleware.js";
@@ -26,7 +27,8 @@ import {
     updateTestController,
     getQuestionsController,
     compareAnswersController,
-    saveTestResultController
+    saveTestResultController,
+    startDemoController
 
 } from "../controllers/test.controller.js";
 
@@ -92,6 +94,14 @@ testRoute.get(
     authorization(rolePrivileges.test.create),
     getQuestionsController
 );
+
+testRoute.post(
+    "/startDemo",
+    authentication,
+    authorization(rolePrivileges.test.play),
+    startDemoValidator,
+    startDemoController
+)
 
 testRoute.get(
     "/:id",

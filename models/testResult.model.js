@@ -16,21 +16,24 @@ const testResultSchema = new Schema(
         score: {
             type: Number,
             required: true,
+            default: 0,
+        },
+        isFinish: {
+            type: Boolean,
+            default: false,
         },
         answers: [
             {
-                questionId: {
-                    type: Schema.Types.ObjectId,
-                    ref: "BaseQuestion",
-                    required: true,
+                question: {
+                    type: Schema.Types.Mixed,
                 },
                 playerAnswer: {
                     type: Schema.Types.Mixed,
-                    required: true,
+                    default: null,
                 },
                 isCorrect: {
                     type: Boolean,
-                    required: true,
+                    default: false,
                 },
             },
         ],
@@ -38,6 +41,9 @@ const testResultSchema = new Schema(
             type: Date,
             default: Date.now,
         },
+        finishAt: {
+            type: Date,
+        }
     },
     { timestamps: true }
 );
