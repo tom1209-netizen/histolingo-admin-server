@@ -372,7 +372,31 @@ export const saveTestResultValidator = async (req, res, next) => {
                     'string.length': __('submit.invalidQuestionIdLength'),
                     'any.required': __('submit.questionIdRequired')
                 }),
-            playerAnswer: Joi.any().required().messages({
+            playerAnswer: Joi.alternatives().conditional('questionType', {
+                switch: [
+                    { is: questionType.trueFalse, then: Joi.boolean() },
+                    { is: questionType.multipleChoice, then: Joi.number() },
+                    {
+                        is: questionType.matching, then: Joi.array().items(Joi.object({
+                            leftColumn: Joi.string()
+                                .required()
+                                .messages({
+                                    'string.base': __('question.invalidLeftColumn'),
+                                    'any.required': __('question.leftColumnRequired')
+                                }),
+                            rightColumn: Joi.string()
+                                .required()
+                                .messages({
+                                    'string.base': __('question.invalidRightColumn'),
+                                    'any.required': __('question.rightColumnRequired')
+                                })
+                        }))
+                    },
+                    { is: questionType.fillInTheBlank, then: Joi.array().items(Joi.string()) }
+                ],
+                otherwise: Joi.any().forbidden()
+            }).messages({
+                'any.forbidden': __('submit.invalidPlayerAnswer'),
                 'any.required': __('submit.playerAnswerRequired')
             }),
             isCorrect: Joi.boolean()
@@ -401,15 +425,7 @@ export const saveTestResultValidator = async (req, res, next) => {
                     'string.length': __('submit.invalidTestIdLength'),
                     'any.required': __('submit.testIdRequired')
                 }),
-            score: Joi.number()
-                .integer()
-                .min(0)
-                .required()
-                .messages({
-                    'number.base': __('submit.invalidScore'),
-                    'number.min': __('submit.invalidScoreMin'),
-                    'any.required': __('submit.scoreRequired')
-                }),
+            
             answers: Joi.array()
                 .items(answerSchema)
                 .required()
@@ -447,4 +463,57 @@ export const startDemoValidator = async (req, res, next) => {
     } catch (error) {
         next(error);
     }
-}
+};
+
+export const checkAnswerValidator = async (req, res, next) => {
+    const __ = applyRequestContentLanguage(req);
+
+    const schema = Joi.object({
+        testResultId: Joi.string()
+            .hex()
+            .length(24)
+            .required()
+            .messages({
+                'string.hex': __('validation.invalidTestResultId'),
+                'string.length': __('validation.invalidTestResultIdLength'),
+                'any.required': __('validation.testResultIdRequired')
+            }),
+        questionId: Joi.string()
+            .hex()
+            .length(24)
+            .required()
+            .messages({
+                'string.hex': __('validation.invalidQuestionId'),
+                'string.length': __('validation.invalidQuestionIdLength'),
+                'any.required': __('validation.questionIdRequired')
+            }),
+        playerAnswer: Joi.alternatives()
+            .try(
+                Joi.boolean(),
+                Joi.number(),
+                Joi.array().items(
+                    Joi.object({
+                        leftColumn: Joi.string().required(),
+                        rightColumn: Joi.string().required()
+                    })
+                ),
+                Joi.array().items(Joi.string())
+            )
+            .required()
+            .messages({
+                'any.required': __('validation.playerAnswerRequired')
+            })
+    });
+
+    try {
+        await schema.validateAsync(req.body);
+        next();
+    } catch (error) {
+        return res.status(400).json({
+            success: false,
+            message: error.message,
+            status: 400,
+            data: null
+        });
+    }
+};

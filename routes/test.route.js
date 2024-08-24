@@ -9,11 +9,11 @@ import {
 
 } from "../constants/role.constant.js";
 import {
+    checkAnswerValidator,
     compareAnswersValidator,
     createTestValidator,
     getDataValidator,
     getTestsValidator,
-    saveTestResultValidator,
     startDemoValidator,
     updateTestValidator
 
@@ -27,8 +27,8 @@ import {
     updateTestController,
     getQuestionsController,
     compareAnswersController,
-    saveTestResultController,
-    startDemoController
+    startDemoController,
+    checkAnswerController
 
 } from "../controllers/test.controller.js";
 
@@ -81,13 +81,6 @@ testRoute.post(
     compareAnswersController
 );
 
-testRoute.post(
-    "/save",
-    authentication,
-    saveTestResultValidator,
-    saveTestResultController
-)
-
 testRoute.get(
     "/getQuestions/:id",
     authentication,
@@ -101,7 +94,15 @@ testRoute.post(
     authorization(rolePrivileges.test.play),
     startDemoValidator,
     startDemoController
-)
+);
+
+testRoute.post(
+    "/checkAnswer",
+    authentication,
+    authorization(rolePrivileges.test.play),
+    checkAnswerValidator,
+    checkAnswerController
+);
 
 testRoute.get(
     "/:id",

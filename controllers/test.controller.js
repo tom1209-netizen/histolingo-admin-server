@@ -155,7 +155,7 @@ export const updateTestController = async (req, res) => {
         const test = req.test;
         const updateData = req.body;
 
-        const updatedTest = await testService.updateDocumentation(test, updateData);
+        const updatedTest = await testService.updateTest(test, updateData);
 
         return res.status(200).json({
             success: true,
@@ -291,31 +291,6 @@ export const compareAnswersController = async (req, res) => {
     }
 };
 
-export const saveTestResultController = async (req, res) => {
-    const __ = applyRequestContentLanguage(req);
-    try {
-        const { playerId, testId, score, answers } = req.resultData;
-
-        // Tạo đối tượng kết quả kiểm tra mới
-        const newTestResult = await testService.saveResults(playerId, testId, score, answers);
-
-        console.log(newTestResult)
-
-        return res.status(201).json({
-            success: true,
-            message: __("message.saveSuccess", { field: __("model.testResult.name") }),
-            data: newTestResult,
-        });
-    } catch (error) {
-        return res.status(error.status || 500).json({
-            success: false,
-            message: error.message || "Internal Server Error",
-            status: error.status || 500,
-            data: error.data || null
-        });
-    }
-};
-
 export const startDemoController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
     try {
@@ -369,4 +344,69 @@ export const startDemoController = async (req, res) => {
     }
 }
 
-//testResultId, questionId, playerAnswer -> post => return true/false
+
+export const checkAnswerController = async (req, res) => {
+    const __ = applyRequestContentLanguage(req);
+
+    try {
+        const { testResultId, questionId, playerAnswer } = req.body;
+
+        const testResult = await TestResult.findById(testResultId);
+        if (!testResult) {
+            return res.status(404).json({
+                success: false,
+                message: __("validation.notFound", { field: __("model.testResult.name") }),
+                status: 404,
+                data: null,
+            });
+        }
+
+        const answer = testResult.answers.find(ans => ans.question._id.toString() === questionId);
+
+        if (!answer) {
+            return res.status(404).json({
+                success: false,
+                message: __("validation.notFound", { field: __("model.question.name") }),
+                status: 404,
+                data: null,
+            });
+        }
+
+        if (answer.playerAnswer !== null) {
+            return res.status(400).json({
+                success: false,
+                message: __("validation.alreadyAnswered", { field: __("model.question.name") }),
+                status: 400,
+                data: null,
+            });
+        }
+
+        const question = await BaseQuestion.findById(questionId).lean();
+        if (!question) {
+            return res.status(404).json({
+                success: false,
+                message: __("validation.notFound", { field: __("model.question.name") }),
+                status: 404,
+                data: null,
+            });
+        }
+
+        const isCorrect = await testService.checkAnswer(testResult, answer, playerAnswer, question);
+
+        
+
+        return res.status(200).json({
+            success: true,
+            message: __("message.checkSuccess", { field: __("model.testResult.name") }),
+            data: { isCorrect }
+        });
+
+    } catch (error) {
+        return res.status(error.status || 500).json({
+            success: false,
+            message: error.message || "Internal Server Error",
+            status: error.status || 500,
+            data: error.data || null
+        });
+    }
+};

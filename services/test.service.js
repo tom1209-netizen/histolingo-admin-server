@@ -20,7 +20,7 @@ class TestService {
         return newTest;
     }
 
-    async updateDocumentation(test, updateData) {
+    async updateTest(test, updateData) {
         try {
             const updatedTest = Test.findOneAndUpdate(test, updateData, { new: true });
             return updatedTest;
@@ -141,7 +141,6 @@ class TestService {
         const results = [];
 
         for (const answer of answers) {
-            console.log(answer)
             const question = await BaseQuestion.findById(answer.questionId).lean();
             if (!question) {
                 return res.status(404).json({
@@ -154,12 +153,8 @@ class TestService {
 
 
             let isCorrect = false;
-            // console.log(question.ask);
             if (question.questionType === questionType.trueFalse || question.questionType === questionType.multipleChoice) {
-                // isCorrect = answer.playerAnswer === question.answer;
-                console.log("ques", question)
-                console.log("type",question.options)
-                console.log(answer.playerAnswer, "and", question.answer)
+                isCorrect = answer.playerAnswer === question.answer;
             } else if (question.questionType === questionType.matching) {
                 const sortedPlayerAnswer = _.sortBy(answer.playerAnswer, ['leftColumn', 'rightColumn']);
                 const sortedCorrectAnswer = _.sortBy(question.answer, ['leftColumn', 'rightColumn']);
@@ -190,6 +185,28 @@ class TestService {
             answers
         });
         return newTestResult;
+    }
+
+    async checkAnswer(testResult, answer, playerAnswer, question) {
+        let isCorrect = false;
+        if (question.questionType === questionType.trueFalse || question.questionType === questionType.multipleChoice) {
+            isCorrect = playerAnswer === question.answer;
+        } else if (question.questionType === questionType.matching) {
+            const sortedPlayerAnswer = _.sortBy(playerAnswer, ['leftColumn', 'rightColumn']);
+            const sortedCorrectAnswer = _.sortBy(question.answer, ['leftColumn', 'rightColumn']);
+            isCorrect = _.isEqual(sortedPlayerAnswer, sortedCorrectAnswer);
+        } else if (question.questionType === questionType.fillInTheBlank) {
+            const sortedPlayerAnswer = _.sortBy(playerAnswer);
+            const sortedCorrectAnswer = _.sortBy(question.answer);
+            isCorrect = _.isEqual(sortedPlayerAnswer, sortedCorrectAnswer);
+        }
+
+        testResult.score = testResult.answers.filter(ans => ans.isCorrect).length;
+        answer.playerAnswer = playerAnswer;
+        answer.isCorrect = isCorrect;
+
+        await testResult.save();
+        return isCorrect;
     }
 };
 
