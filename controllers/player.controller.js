@@ -47,8 +47,8 @@ export const updateStatusPlayerController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
     try {
         const id = req.params.id;
-        const player = req.player;
-        const newStatus = player.status === 1 ? 0 : 1;
+        // const player = req.player;
+        const newStatus = req.body.status;
         const updatedPlayer = await playerService.updateStatusPlayer(id, newStatus);
 
         if (!updatedPlayer) {

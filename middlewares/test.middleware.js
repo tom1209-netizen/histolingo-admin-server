@@ -6,6 +6,8 @@ import Test from '../models/test.model.js';
 import Topic from '../models/topic.model.js';
 import Country from '../models/country.model.js';
 import { testStatus } from '../constants/test.constant.js';
+import { questionType } from '../constants/question.constant.js';
+
 
 export const createTestValidator = async (req, res, next) => {
     const __ = applyRequestContentLanguage(req);
@@ -256,5 +258,262 @@ export const getTestsValidator = async (req, res, next) => {
         next();
     } catch (error) {
         next(error);
+    }
+};
+
+export const compareAnswersValidator = async (req, res, next) => {
+    const __ = applyRequestContentLanguage(req);
+
+    try {
+        const answersData = req.body;
+
+        const answerSchema = Joi.object({
+            questionId: Joi.string()
+                .hex()
+                .length(24)
+                .required()
+                .messages({
+                    'string.hex': __('submit.invalidQuestionId'),
+                    'string.length': __('submit.invalidQuestionIdLength'),
+                    'any.required': __('submit.questionIdRequired')
+                }),
+            questionType: Joi.number()
+                .valid(
+                    questionType.trueFalse,
+                    questionType.multipleChoice,
+                    questionType.matching,
+                    questionType.fillInTheBlank
+                )
+                .required()
+                .messages({
+                    'any.only': __('submit.invalidQuestionType'),
+                    'any.required': __('submit.questionTypeRequired')
+                }),
+            playerAnswer: Joi.alternatives().conditional('questionType', {
+                switch: [
+                    { is: questionType.trueFalse, then: Joi.boolean() },
+                    { is: questionType.multipleChoice, then: Joi.number() },
+                    {
+                        is: questionType.matching, then: Joi.array().items(Joi.object({
+                            leftColumn: Joi.string()
+                                .required()
+                                .messages({
+                                    'string.base': __('question.invalidLeftColumn'),
+                                    'any.required': __('question.leftColumnRequired')
+                                }),
+                            rightColumn: Joi.string()
+                                .required()
+                                .messages({
+                                    'string.base': __('question.invalidRightColumn'),
+                                    'any.required': __('question.rightColumnRequired')
+                                })
+                        }))
+                    },
+                    { is: questionType.fillInTheBlank, then: Joi.array().items(Joi.string()) }
+                ],
+                otherwise: Joi.any().forbidden()
+            }).messages({
+                'any.forbidden': __('submit.invalidPlayerAnswer'),
+                'any.required': __('submit.playerAnswerRequired')
+            })
+        });
+
+        const baseSubmitSchema = Joi.object({
+            playerId: Joi.string()
+                .hex()
+                .length(24)
+                .required()
+                .messages({
+                    'string.hex': __('submit.invalidPlayerId'),
+                    'string.length': __('submit.invalidPlayerIdLength'),
+                    'any.required': __('submit.playerIdRequired')
+                }),
+            testId: Joi.string()
+                .hex()
+                .length(24)
+                .required()
+                .messages({
+                    'string.hex': __('submit.invalidTestId'),
+                    'string.length': __('submit.invalidTestIdLength'),
+                    'any.required': __('submit.testIdRequired')
+                }),
+            answers: Joi.array()
+                .items(answerSchema)
+                .required()
+                .messages({
+                    'array.base': __('submit.invalidAnswersArray'),
+                    'any.required': __('submit.answersRequired')
+                })
+        });
+
+        await baseSubmitSchema.validateAsync(answersData);
+
+        req.answers = answersData;
+
+        next();
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const saveTestResultValidator = async (req, res, next) => {
+    const __ = applyRequestContentLanguage(req);
+
+    try {
+        const resultData = req.body;
+
+        const answerSchema = Joi.object({
+            questionId: Joi.string()
+                .hex()
+                .length(24)
+                .required()
+                .messages({
+                    'string.hex': __('submit.invalidQuestionId'),
+                    'string.length': __('submit.invalidQuestionIdLength'),
+                    'any.required': __('submit.questionIdRequired')
+                }),
+            playerAnswer: Joi.alternatives().conditional('questionType', {
+                switch: [
+                    { is: questionType.trueFalse, then: Joi.boolean() },
+                    { is: questionType.multipleChoice, then: Joi.number() },
+                    {
+                        is: questionType.matching, then: Joi.array().items(Joi.object({
+                            leftColumn: Joi.string()
+                                .required()
+                                .messages({
+                                    'string.base': __('question.invalidLeftColumn'),
+                                    'any.required': __('question.leftColumnRequired')
+                                }),
+                            rightColumn: Joi.string()
+                                .required()
+                                .messages({
+                                    'string.base': __('question.invalidRightColumn'),
+                                    'any.required': __('question.rightColumnRequired')
+                                })
+                        }))
+                    },
+                    { is: questionType.fillInTheBlank, then: Joi.array().items(Joi.string()) }
+                ],
+                otherwise: Joi.any().forbidden()
+            }).messages({
+                'any.forbidden': __('submit.invalidPlayerAnswer'),
+                'any.required': __('submit.playerAnswerRequired')
+            }),
+            isCorrect: Joi.boolean()
+                .required()
+                .messages({
+                    'any.required': __('submit.isCorrectRequired')
+                }),
+        });
+
+        const testResultSchema = Joi.object({
+            playerId: Joi.string()
+                .hex()
+                .length(24)
+                .required()
+                .messages({
+                    'string.hex': __('submit.invalidPlayerId'),
+                    'string.length': __('submit.invalidPlayerIdLength'),
+                    'any.required': __('submit.playerIdRequired')
+                }),
+            testId: Joi.string()
+                .hex()
+                .length(24)
+                .required()
+                .messages({
+                    'string.hex': __('submit.invalidTestId'),
+                    'string.length': __('submit.invalidTestIdLength'),
+                    'any.required': __('submit.testIdRequired')
+                }),
+            
+            answers: Joi.array()
+                .items(answerSchema)
+                .required()
+                .messages({
+                    'array.base': __('submit.invalidAnswersArray'),
+                    'any.required': __('submit.answersRequired')
+                })
+        });
+
+        await testResultSchema.validateAsync(resultData);
+
+        req.resultData = resultData;
+        next();
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const startDemoValidator = async (req, res, next) => {
+    const __ = applyRequestContentLanguage(req);
+    try {
+        const { testId } = req.body;
+        const existingTest = await Test.findById({ _id: testId });
+        if (!existingTest) {
+            return res.status(404).json({
+                success: false,
+                message: __("validation.notFound", { field: __("model.test.name") }),
+                status: 404,
+                data: null
+            });
+        }
+        req.test = existingTest;
+
+        next();
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const checkAnswerValidator = async (req, res, next) => {
+    const __ = applyRequestContentLanguage(req);
+
+    const schema = Joi.object({
+        testResultId: Joi.string()
+            .hex()
+            .length(24)
+            .required()
+            .messages({
+                'string.hex': __('validation.invalidTestResultId'),
+                'string.length': __('validation.invalidTestResultIdLength'),
+                'any.required': __('validation.testResultIdRequired')
+            }),
+        questionId: Joi.string()
+            .hex()
+            .length(24)
+            .required()
+            .messages({
+                'string.hex': __('validation.invalidQuestionId'),
+                'string.length': __('validation.invalidQuestionIdLength'),
+                'any.required': __('validation.questionIdRequired')
+            }),
+        playerAnswer: Joi.alternatives()
+            .try(
+                Joi.boolean(),
+                Joi.number(),
+                Joi.array().items(
+                    Joi.object({
+                        leftColumn: Joi.string().required(),
+                        rightColumn: Joi.string().required()
+                    })
+                ),
+                Joi.array().items(Joi.string())
+            )
+            .required()
+            .messages({
+                'any.required': __('validation.playerAnswerRequired')
+            })
+    });
+
+    try {
+        await schema.validateAsync(req.body);
+        next();
+    } catch (error) {
+        return res.status(400).json({
+            success: false,
+            message: error.message,
+            status: 400,
+            data: null
+        });
     }
 };

@@ -38,7 +38,8 @@ export const rolePrivileges = {
         read: 21,
         create: 22,
         update: 23,
-        delete: 24
+        delete: 24,
+        play: 33
     },
     question: {
         read: 25,

@@ -1,7 +1,10 @@
 import { countryStatus } from '../constants/country.constant.js';
-import { questionStatus } from '../constants/question.constant.js';
+import { questionStatus, questionType } from '../constants/question.constant.js';
 import { topicStatus } from '../constants/topic.constant.js';
+import { BaseQuestion } from '../models/question.model.js';
+import TestResult from '../models/testResult.model.js';
 import testService from '../services/test.service.js';
+import { shuffle } from '../utils/array.utils.js';
 import { applyRequestContentLanguage } from '../utils/localization.util.js';
 
 export const getCountriesController = async (req, res) => {
@@ -67,22 +70,37 @@ export const getQuestionsController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
 
     try {
-        const { search = '' } = req.query;
-        const filters = search
-            ? {
-                ask: { $regex: search, $options: 'i' },
-                status: questionStatus.active
-            }
-            : { status: questionStatus.active };
+        const id = req.params.id;
+        const questions = await testService.getQuestions(id);
 
-
-        const questions = await testService.getQuestionsTest(filters);
-
-        return res.status(200).json({
-            success: true,
-            message: __("message.getSuccess", { field: __("model.topic.name") }),
-            data: questions
-        });
+        if (!questions) {
+            return res.status(404).json({
+                success: false,
+                message: __("validation.notFound", { field: __("model.questions.displayName") }),
+                status: 404,
+                data: null
+            });
+        } else {
+            return res.status(200).json({
+                success: true,
+                message: __("message.getSuccess", { field: __("model.questions.displayName") }),
+                status: 200,
+                data: {
+                    questions: {
+                        id: questions._id,
+                        source: questions.source,
+                        name: questions.name,
+                        topicId: questions.topicId,
+                        countryId: questions.countryId,
+                        content: questions.content,
+                        status: questions.status,
+                        localeData: questions.localeData,
+                        createdAt: questions.createdAt,
+                        updatedAt: questions.updatedAt
+                    }
+                }
+            });
+        }
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,
@@ -137,7 +155,7 @@ export const updateTestController = async (req, res) => {
         const test = req.test;
         const updateData = req.body;
 
-        const updatedTest = await testService.updateDocumentation(test, updateData);
+        const updatedTest = await testService.updateTest(test, updateData);
 
         return res.status(200).json({
             success: true,
@@ -234,6 +252,155 @@ export const getTestController = async (req, res) => {
                 }
             });
         }
+    } catch (error) {
+        return res.status(error.status || 500).json({
+            success: false,
+            message: error.message || "Internal Server Error",
+            status: error.status || 500,
+            data: error.data || null
+        });
+    }
+};
+
+export const compareAnswersController = async (req, res) => {
+    const __ = applyRequestContentLanguage(req);
+    try {
+        const playerData = req.body;
+        const { answers } = req.body;
+        const { score, results } = await testService.compareAnswers(answers);
+
+        return res.status(200).json({
+            success: true,
+            message: __("message.getSuccess", { field: __("model.result.name") }),
+            data: {
+                results: {
+                    playerId: playerData.playerId,
+                    testId: playerData.testId,
+                    score,
+                    answers: results,
+                }
+            },
+        });
+    } catch (error) {
+        return res.status(error.status || 500).json({
+            success: false,
+            message: error.message || "Internal Server Error",
+            status: error.status || 500,
+            data: error.data || null
+        });
+    }
+};
+
+export const startDemoController = async (req, res) => {
+    const __ = applyRequestContentLanguage(req);
+    try {
+        const test = req.test;
+        const questions = await BaseQuestion.find({
+            _id: {
+                $in: test.questionsId
+            }
+        }).lean();
+
+        for (const question of questions) {
+            if (question.questionType === 0 || question.questionType === 1 || question.questionType === 3) {
+                delete question.answer;
+            } else {
+                const leftColumns = question.answer.map((pair) => pair.leftColumn);
+                const rightColumns = question.answer.map((pair) => pair.rightColumn);
+
+                shuffle(rightColumns);
+
+                const newAnswer = [];
+                for (let index = 0; index < leftColumns.length; index++) {
+                    newAnswer.push({
+                        leftColumn: leftColumns[index],
+                        rightColumn: rightColumns[index]
+                    });
+                }
+                question.answer = newAnswer;
+            }
+        }
+
+        const newResult = await TestResult.create({
+            playerId: req.admin._id,
+            testId: test._id,
+            answers: questions.map((question) => {
+                return { question, playerAnswer: null, isCorrect: false }
+            })
+        });
+
+        return res.status(201).json({
+            success: true,
+            message: __("message.getSuccess", { field: __("model.test.name") }),
+            data: { questions, test, testResultId: newResult._id }
+        });
+    } catch (error) {
+        return res.status(error.status || 500).json({
+            success: false,
+            message: error.message || "Internal Server Error",
+            status: error.status || 500,
+            data: error.data || null
+        });
+    }
+}
+
+
+export const checkAnswerController = async (req, res) => {
+    const __ = applyRequestContentLanguage(req);
+
+    try {
+        const { testResultId, questionId, playerAnswer } = req.body;
+
+        const testResult = await TestResult.findById(testResultId);
+        if (!testResult) {
+            return res.status(404).json({
+                success: false,
+                message: __("validation.notFound", { field: __("model.testResult.name") }),
+                status: 404,
+                data: null,
+            });
+        }
+
+        const answer = testResult.answers.find(ans => ans.question._id.toString() === questionId);
+
+        if (!answer) {
+            return res.status(404).json({
+                success: false,
+                message: __("validation.notFound", { field: __("model.question.name") }),
+                status: 404,
+                data: null,
+            });
+        }
+
+        if (answer.playerAnswer !== null) {
+            return res.status(400).json({
+                success: false,
+                message: __("validation.alreadyAnswered", { field: __("model.question.name") }),
+                status: 400,
+                data: null,
+            });
+        }
+
+        const question = await BaseQuestion.findById(questionId).lean();
+        if (!question) {
+            return res.status(404).json({
+                success: false,
+                message: __("validation.notFound", { field: __("model.question.name") }),
+                status: 404,
+                data: null,
+            });
+        }
+
+        const isCorrect = await testService.checkAnswer(testResult, answer, playerAnswer, question);
+
+        
+
+        return res.status(200).json({
+            success: true,
+            message: __("message.checkSuccess", { field: __("model.testResult.name") }),
+            data: { isCorrect }
+        });
+
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,

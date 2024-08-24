@@ -9,9 +9,12 @@ import {
 
 } from "../constants/role.constant.js";
 import {
+    checkAnswerValidator,
+    compareAnswersValidator,
     createTestValidator,
     getDataValidator,
     getTestsValidator,
+    startDemoValidator,
     updateTestValidator
 
 } from "../middlewares/test.middleware.js";
@@ -22,7 +25,10 @@ import {
     getTestController,
     getTopicsController,
     updateTestController,
-    getQuestionsController
+    getQuestionsController,
+    compareAnswersController,
+    startDemoController,
+    checkAnswerController
 
 } from "../controllers/test.controller.js";
 
@@ -52,14 +58,6 @@ testRoute.get(
     getTopicsController
 );
 
-testRoute.get(
-    "/getQuestionTest",
-    authentication,
-    authorization(rolePrivileges.test.create),
-    getDataValidator,
-    getQuestionsController
-);
-
 testRoute.patch(
     "/:id",
     authentication,
@@ -76,13 +74,42 @@ testRoute.get(
     getTestsController
 );
 
+testRoute.post(
+    "/demo",
+    authentication,
+    compareAnswersValidator,
+    compareAnswersController
+);
+
+testRoute.get(
+    "/getQuestions/:id",
+    authentication,
+    authorization(rolePrivileges.test.create),
+    getQuestionsController
+);
+
+testRoute.post(
+    "/startDemo",
+    authentication,
+    authorization(rolePrivileges.test.play),
+    startDemoValidator,
+    startDemoController
+);
+
+testRoute.post(
+    "/checkAnswer",
+    authentication,
+    authorization(rolePrivileges.test.play),
+    checkAnswerValidator,
+    checkAnswerController
+);
+
 testRoute.get(
     "/:id",
     authentication,
     authorization(rolePrivileges.test.read),
     getTestController
 );
-
 
 
 export default testRoute;
