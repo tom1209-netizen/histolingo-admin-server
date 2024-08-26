@@ -49,11 +49,12 @@ export const rolePrivileges = {
     },
     feedback: {
         read: 29,
-        update: 30
+        update: 30,
+        reply: 31
     },
     player: {
-        read: 31,
-        delete: 32
+        read: 32,
+        delete: 33
     }
 };
 

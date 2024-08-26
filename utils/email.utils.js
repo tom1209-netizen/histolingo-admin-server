@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-export const sendResetEmail = async (email, resetLink) => {
+export const sendEmail = async (content ,email) => {
     const transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST,
         port: process.env.SMTP_PORT,
@@ -18,7 +18,7 @@ export const sendResetEmail = async (email, resetLink) => {
         from: process.env.SMTP_USER,
         to: email,
         subject: 'Password Reset',
-        text: `Click the following link to reset your password: ${resetLink}`
+        text: content
     };
 
     await transporter.sendMail(mailOptions);
