@@ -4,3 +4,5 @@
 # Code editor files
 /.idea
 /.vscode
+
+**/.DS_Store

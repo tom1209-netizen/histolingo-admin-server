@@ -1,4 +1,6 @@
 import Feedback from "../models/feedback.model.js";
+import Player from "../models/player.model.js";
+import { sendEmail } from "../utils/email.utils.js";
 
 class FeedbackService {
     async getFeedbacks(filters, page, pageSize, sortOrder) {
@@ -29,6 +31,14 @@ class FeedbackService {
     async getFeedback(id) {
         const feedback = await Feedback.findById(id);
         return feedback;
+    }
+
+    async replyFeedback(id, subject, reply) {
+        const feedback = await Feedback.findById(id);
+        const feedbackOwner = await Player.findById(feedback.createdBy);
+        const email = feedbackOwner.email;
+
+        await sendEmail(subject, reply, email);
     }
 }
 

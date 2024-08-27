@@ -68,3 +68,27 @@ export const getFeedbackController = async (req, res) => {
         });
     }
 }
+
+export const replyFeedbackController = async (req, res) => {
+    const __ = applyRequestContentLanguage(req);
+    const { id } = req.params;
+    const { subject, reply } = req.body;
+
+    try {
+        await feedbackService.replyFeedback(id, subject, reply);
+
+        return res.status(200).json({
+            success: true,
+            message: __("feedback.replyFeedbackSuccess"),
+            status: 200,
+            data: null
+        });
+    } catch (error) {
+        return res.status(error.status || 500).json({
+            success: false,
+            message: error.message || __("error.internalServerError"),
+            status: error.status || 500,
+            data: error.data || null
+        });
+    }
+}

@@ -2,7 +2,7 @@ import crypto from 'crypto';
 import PasswordResetToken from '../models/PasswordResetToken.model.js';
 import Admin from '../models/admin.model.js';
 import { config } from 'dotenv';
-import { sendResetEmail } from '../utils/email.utils.js';
+import { sendEmail } from '../utils/email.utils.js';
 import { hashPassword } from "../utils/password.utils.js";
 import { TOKEN_EXPIRY_TIME } from '../constants/auth.constants.js';
 
@@ -22,7 +22,9 @@ export const forgotPassword = async (req, res) => {
         await PasswordResetToken.create({ userId: admin._id, token, expiry });
 
         const resetLink = `http://${process.env.DOMAIN}/auth/reset-password?token=${token}&id=${admin._id}`;
-        sendResetEmail(email, resetLink);
+        const subject = 'Password Reset';
+        const emailContent = `Click on the link to reset your password: ${resetLink}`;
+        await sendEmail(subject, emailContent, email);
         res.send('Password reset link sent to your email.');
     } catch (error) {
         res.status(500).send('An error occurred while processing your request.');
