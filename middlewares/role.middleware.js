@@ -2,6 +2,7 @@ import Joi from "joi";
 import Role from "../models/role.model.js";
 import { roleService } from "../services/role.service.js";
 import { applyRequestContentLanguage } from "../utils/localization.util.js";
+import { roleStatus } from "../constants/role.constant.js";
 
 export const createRoleValidator = async (req, res, next) => {
     const __ = applyRequestContentLanguage(req);
@@ -13,10 +14,10 @@ export const createRoleValidator = async (req, res, next) => {
             .max(250)
             .required()
             .messages({
-                'string.base': __('validation.name.string', { field: 'name' }),
-                'string.min': __('validation.name.min', { field: 'name', min: 1 }),
-                'string.max': __('validation.name.max', { field: 'name', max: 250 }),
-                'any.required': __('validation.name.required', { field: 'name' })
+                'string.base': __('validation.string', { field: 'field.name' }),
+                'string.min': __('validation.min', { field: 'field.name', min: 1 }),
+                'string.max': __('validation.max', { field: 'field.name', max: 250 }),
+                'any.required': __('validation.required', { field: 'field.name' })
             }),
         permissions: Joi.array()
             .items(
@@ -25,15 +26,15 @@ export const createRoleValidator = async (req, res, next) => {
                     .min(1)
                     .max(32)
                     .messages({
-                        'number.base': __('validation.permissions.number'),
-                        'number.min': __('validation.permissions.min', { min: 1 }),
-                        'number.max': __('validation.permissions.max', { max: 26 })
+                        'number.base': __('validation.number', { field: 'model.role.permission' }),
+                        'number.min': __('validation.min', { field: 'model.role.permission', min: 1 }),
+                        'number.max': __('validation.max', { field: 'model.role.permission', max: 26 })
                     })
             )
             .required()
             .messages({
-                'array.base': __('validation.permissions.array'),
-                'any.required': __('validation.permissions.required')
+                'array.base': __('validation.array', { field: 'model.role.permission' }),
+                'any.required': __('validation.required', { field: 'model.role.permission' })
             })
     });
 
@@ -44,7 +45,7 @@ export const createRoleValidator = async (req, res, next) => {
         if (existedRole) {
             return res.status(404).json({
                 success: false,
-                message: __('role.roleExists'),
+                message: __('role.roleExists', { field: 'model.role.name' }),
                 status: 404,
                 data: null
             });
@@ -72,35 +73,35 @@ export const updateRoleValidator = async (req, res, next) => {
             .length(24)
             .required()
             .messages({
-                'string.base': __('validation.id.string', { field: 'id' }),
-                'string.hex': __('validation.id.hex', { field: 'id' }),
-                'string.length': __('validation.id.length', { field: 'id', length: 24 }),
-                'any.required': __('validation.id.required', { field: 'id' })
+                'string.base': __('validation.string', { field: 'id' }),
+                'string.hex': __('validation.hex', { field: 'id' }),
+                'string.length': __('validation.length', { field: 'id', length: 24 }),
+                'any.required': __('validation.required', { field: 'id' })
             }),
         name: Joi.string()
             .min(1)
             .max(250)
             .messages({
-                'string.base': __('validation.name.string', { field: 'name' }),
-                'string.min': __('validation.name.min', { field: 'name', min: 1 }),
-                'string.max': __('validation.name.max', { field: 'name', max: 250 })
+                'string.base': __('validation.string', { field: 'field.name' }),
+                'string.min': __('validation.min', { field: 'field.name', min: 1 }),
+                'string.max': __('validation.max', { field: 'field.name', max: 250 })
             }),
         status: Joi.number()
-            .valid(0, 1)
+            .valid(roleStatus.active, roleStatus.inactive)
             .messages({
-                'any.only': __('validation.status.invalid')
+                'any.only': __('validation.invalid', { field: 'field.status' })
             }),
         permissions: Joi.array()
             .items(
                 Joi.number()
                     .min(1)
                     .max(32)
-                .messages({
-                    'number.base': __('validation.permissions.number')
-                })
+                    .messages({
+                        'number.base': __('validation.number', { field: 'model.role.permission' })
+                    })
             )
             .messages({
-                'array.base': __('validation.permissions.array')
+                'array.base': __('validation.array', { field: 'model.role.permission' })
             })
     });
 
@@ -111,7 +112,7 @@ export const updateRoleValidator = async (req, res, next) => {
         if (!roleExists) {
             return res.status(404).json({
                 success: false,
-                message: __('role.roleNotFound'),
+                message: __('validation.notFound', { field: __('model.role.name') }),
                 status: 404,
                 data: null
             });
@@ -138,10 +139,10 @@ export const getRoleValidator = async (req, res, next) => {
             .length(24)
             .required()
             .messages({
-                'string.base': __('validation.id.string', { field: 'id' }),
-                'string.hex': __('validation.id.hex', { field: 'id' }),
-                'string.length': __('validation.id.length', { field: 'id', length: 24 }),
-                'any.required': __('validation.id.required', { field: 'id' })
+                'string.base': __('validation.string', { field: 'id' }),
+                'string.hex': __('validation.hex', { field: 'id' }),
+                'string.length': __('validation.length', { field: 'id', length: 24 }),
+                'any.required': __('validation.required', { field: 'id' })
             })
     });
 
@@ -168,34 +169,34 @@ export const getRolesValidator = async (req, res, next) => {
             .min(1)
             .optional()
             .messages({
-                'number.base': __('question.invalidPage'),
-                'number.min': __('question.pageMin')
+                'number.base': __('validation.invalid', { field: 'field.page' }),
+                'number.min': __('validation.min', { field: 'field.page', min: 1 })
             }),
         pageSize: Joi.number()
             .integer()
             .min(1)
             .optional()
             .messages({
-                'number.base': __('question.invalidPageSize'),
-                'number.min': __('question.pageSizeMin')
+                'number.base': __('validation.invalid', { field: 'field.pageSize' }),
+                'number.min': __('validation.min', { field: 'field.pageSize', min: 1 })
             }),
         search: Joi.string()
             .optional()
             .allow('')
             .messages({
-                'string.base': __('question.invalidSearch')
+                'string.base': __('validation.invalid', { field: 'field.search' })
             }),
         sortOrder: Joi.number()
             .valid(1, -1)
             .optional()
             .messages({
-                'any.only': __('question.invalidSortOrder')
+                'any.only': __('validation.invalid', { field: 'field.sortOrder' })
             }),
         status: Joi.number()
             .valid(0, 1)
             .optional()
             .messages({
-                'any.only': __('question.invalidStatus')
+                'any.only': __('validation.invalid', { field: 'field.status' })
             }),
     });
 

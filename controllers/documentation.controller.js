@@ -4,8 +4,8 @@ import { applyRequestContentLanguage } from "../utils/localization.util.js";
 export const createDocumentationController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
     try {
-        const { source, name, content, topicId, countryId, localeData } = req.body;
-        const newDocumentation = await documentationService.createDocumentation(source, name, content, topicId, countryId, localeData);
+        const { source, name, content, topicId, countryId, image, localeData } = req.body;
+        const newDocumentation = await documentationService.createDocumentation(source, name, content, topicId, countryId, image, localeData);
 
         return res.status(201).json({
             success: true,
@@ -17,6 +17,7 @@ export const createDocumentationController = async (req, res) => {
                     source: newDocumentation.source,
                     name: newDocumentation.name,
                     content: newDocumentation.content,
+                    image: newDocumentation.image,
                     localeData: newDocumentation.localeData
                 }
             }
@@ -50,6 +51,7 @@ export const updateDocumentationController = async (req, res) => {
                     source: updatedDocumentation.source,
                     name: updatedDocumentation.name,
                     content: updatedDocumentation.content,
+                    image: updatedDocumentation.image,
                     status: updatedDocumentation.status,
                     localeData: updatedDocumentation.localeData
                 }

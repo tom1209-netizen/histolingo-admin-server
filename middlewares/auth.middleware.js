@@ -8,20 +8,20 @@ export const authentication = async (req, res, next) => {
     try {
         if (!req.headers.authorization) {
             return res.status(403).json({
-                message: __("auth.noToken"),
+                message: __("error.noToken"),
                 status: 403,
                 error: "Unauthorized"
             });
         }
 
-        const token = req.headers.authorization.split(' ')[1];
+        const token = req.headers.authorization.split(" ")[1];
         tokenService.verifyToken(token);
         req.admin = await tokenService.infoToken(token);
 
         next();
     } catch (error) {
         return res.status(403).json({
-            message: __("auth.tokenInvalid"),
+            message: __("error.tokenInvalid"),
             status: 403,
             error: "Unauthorized",
             details: error.message
@@ -35,7 +35,7 @@ export const authorization = (requiredPermission) => async (req, res, next) => {
     try {
         if (!req.admin) {
             return res.status(403).json({
-                message: __("admin.notFound"),
+                message: __("validation.notFound", { field: __("model.admin.name") }),
                 status: 403,
                 error: "Forbidden"
             });
@@ -45,7 +45,7 @@ export const authorization = (requiredPermission) => async (req, res, next) => {
 
         if (!roles || roles.length === 0) {
             return res.status(403).json({
-                message: __("role.notFound"),
+                message: __("validation.notFound", { field: __("model.role.name") }),
                 status: 403,
                 error: "Forbidden"
             });
@@ -54,7 +54,7 @@ export const authorization = (requiredPermission) => async (req, res, next) => {
         const hasPermission = roles.some(role => role.permissions.includes(requiredPermission));
         if (!hasPermission) {
             return res.status(403).json({
-                message: __("auth.permissionDenied"),
+                message: __("error.permissionDenied"),
                 status: 403,
                 error: "Forbidden"
             });
@@ -63,7 +63,7 @@ export const authorization = (requiredPermission) => async (req, res, next) => {
         next();
     } catch (error) {
         return res.status(403).json({
-            message: __("auth.authorizationError"),
+            message: __("error.authorizationError"),
             status: 403,
             error: "Forbidden",
             details: error.message

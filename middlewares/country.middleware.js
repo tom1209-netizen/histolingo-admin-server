@@ -11,18 +11,42 @@ export const createCountryValidator = async (req, res, next) => {
         const createSchema = Joi.object({
             name: Joi.string()
                 .max(250)
-                .required(),
+                .required()
+                .messages({
+                    "string.base": __("validation.string", { field: "field.name" }),
+                    "string.max": __("validation.max", { field: "field.name", max: 250 }),
+                    "any.required": __("validation.required", { field: "field.name" })
+                }),
             description: Joi.string()
                 .max(1000)
-                .required(),
+                .required()
+                .messages({
+                    "string.base": __("validation.string", { field: "field.description" }),
+                    "string.max": __("validation.max", { field: "field.description", max: 1000 }),
+                    "any.required": __("validation.required", { field: "field.description" })
+                }),
             image: Joi.string()
-                .max(1000),
-            localeData: Joi.object().pattern(/^[a-z]{2}-[A-Z]{2}$/,
+                .max(1000)
+                .messages({
+                    "string.base": __("validation.string", { field: "field.image" }),
+                    "string.max": __("validation.max", { field: "field.image", max: 1000 }),
+                }),
+            localeData: Joi.object().pattern(
+                new RegExp("^[a-z]{2}-[A-Z]{2}$"),
                 Joi.object({
-                    name: Joi.string().max(250).required(),
-                    description: Joi.string().max(1000).required()
+                    name: Joi.string().max(250).messages({
+                        "string.base": __("validation.string", { field: "field.name" }),
+                        "string.max": __("validation.max", { field: "field.name", max: 250 }),
+                    }),
+                    description: Joi.string().max(1000).messages({
+                        "string.base": __("validation.string", { field: "field.description" }),
+                        "string.max": __("validation.max", { field: "field.description", max: 1000 }),
+                    })
                 })
             ).default({})
+                .messages({
+                    "object.pattern.match": __("validation.localeData.pattern", { pattern: "^[a-z]{2}-[A-Z]{2}$" })
+                })
         });
 
         await createSchema.validateAsync({
@@ -55,19 +79,52 @@ export const updateCountryValidator = async (req, res, next) => {
 
         const createSchema = Joi.object({
             name: Joi.string()
-                .max(250),
+                .max(250)
+                .required()
+                .messages({
+                    "string.base": __("validation.string", { field: "field.name" }),
+                    "string.max": __("validation.max", { field: "field.name", max: 250 }),
+                    "any.required": __("validation.required", { field: "field.name" })
+                }),
             description: Joi.string()
-                .max(1000),
+                .max(1000)
+                .required()
+                .messages({
+                    "string.base": __("validation.string", { field: "field.description" }),
+                    "string.max": __("validation.max", { field: "field.description", max: 1000 }),
+                    "any.required": __("validation.required", { field: "field.description" })
+                }),
             image: Joi.string()
-                .max(1000),
+                .max(1000)
+                .uri()
+                .messages({
+                    "string.base": __("validation.string", { field: "field.image" }),
+                    "string.max": __("validation.max", { field: "field.image", max: 1000 }),
+                    "string.uri": __("validation.image.uri", { field: "field.image" }),
+                    "any.required": __("validation.image.required", { field: "field.image" })
+                }),
             status: Joi.number()
-                .valid(countryStatus.active, countryStatus.inactive),
-            localeData: Joi.object().pattern(/^[a-z]{2}-[A-Z]{2}$/,
+                .valid(countryStatus.active, countryStatus.inactive)
+                .optional()
+                .messages({
+                    "any.only": __("validation.invalid", { field: "field.status" })
+                }),
+            localeData: Joi.object().pattern(
+                new RegExp("^[a-z]{2}-[A-Z]{2}$"),
                 Joi.object({
-                    name: Joi.string().max(250).required(),
-                    description: Joi.string().max(1000).required()
+                    name: Joi.string().max(250).messages({
+                        "string.base": __("validation.string", { field: "field.name" }),
+                        "string.max": __("validation.max", { field: "field.name", max: 250 }),
+                    }),
+                    description: Joi.string().max(1000).messages({
+                        "string.base": __("validation.string", { field: "field.description" }),
+                        "string.max": __("validation.max", { field: "field.description", max: 1000 }),
+                    })
                 })
             ).default({})
+                .messages({
+                    "object.pattern.match": __("validation.pattern", { pattern: "^[a-z]{2}-[A-Z]{2}$" })
+                }),
         });
 
         await createSchema.validateAsync({
@@ -116,34 +173,34 @@ export const getCountriesValidator = async (req, res, next) => {
             .min(1)
             .optional()
             .messages({
-                'number.base': __('question.invalidPage'),
-                'number.min': __('question.pageMin')
+                "number.base": __("validation.invalid", { field: "field.page" }),
+                "number.min": __("validation.min", { field: "field.page", min: 1 })
             }),
         pageSize: Joi.number()
             .integer()
             .min(1)
             .optional()
             .messages({
-                'number.base': __('question.invalidPageSize'),
-                'number.min': __('question.pageSizeMin')
+                "number.base": __("validation.invalid", { field: "field.pageSize" }),
+                "number.min": __("validation.min", { field: "field.pageSize", min: 1 })
             }),
         search: Joi.string()
             .optional()
-            .allow('')
+            .allow("")
             .messages({
-                'string.base': __('question.invalidSearch')
+                "string.base": __("validation.invalid", { field: "field.search" })
             }),
         sortOrder: Joi.number()
             .valid(1, -1)
             .optional()
             .messages({
-                'any.only': __('question.invalidSortOrder')
+                "any.only": __("validation.invalid", { field: "field.sortOrder" })
             }),
         status: Joi.number()
-            .valid(0, 1)
+            .valid(countryStatus.active, countryStatus.inactive)
             .optional()
             .messages({
-                'any.only': __('question.invalidStatus')
+                "any.only": __("validation.invalid", { field: "field.status" })
             }),
     });
 

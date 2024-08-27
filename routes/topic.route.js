@@ -8,7 +8,7 @@ import {
     updateTopicValidator,
     getTopicValidator,
     getTopicsValidator
-} from "../middlewares/Topic.middleware.js";
+} from "../middlewares/topic.middleware.js";
 import {
     createTopicController,
     getTopicsController,
