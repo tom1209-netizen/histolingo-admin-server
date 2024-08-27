@@ -29,8 +29,8 @@ class DocumentationService {
     async getDocumentation(id) {
         const documentation = await Documentation.findById({ _id: id })
         .populate([
-            { path: 'topicId', select: 'name' },
-            { path: 'countryId', select: 'name' },  
+            { path: "topicId", select: "name" },
+            { path: "countryId", select: "name" },  
         ]);
         return documentation;
     }

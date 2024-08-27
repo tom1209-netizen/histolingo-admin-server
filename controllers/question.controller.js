@@ -11,7 +11,7 @@ export const createQuestionController = async (req, res) => {
 
         return res.status(201).json({
             success: true,
-            message: __("question.createQuestionSuccess"),
+            message: __("question.createdSuccess", { field: __("model.question.name") }),
             status: 201,
             data: {
                 newQuestion
@@ -42,24 +42,24 @@ export const getQuestionsController = async (req, res) => {
     }
 
     if (search) {
-        filters.ask = { $regex: new RegExp(search, 'i') };
+        filters.ask = { $regex: new RegExp(search, "i") };
     }
 
     if (countryName) {
-        filters['country.name'] = countryName;
+        filters["country.name"] = countryName;
     }
 
     if (topicName) {
-        filters['topic.name'] = topicName;
+        filters["topic.name"] = topicName;
     }
 
 
     try {
-        const { questions, totalQuestionsCount} = await questionService.getQuestions(filters, page, limitedPageSize, sortOrder);
+        const { questions, totalQuestionsCount } = await questionService.getQuestions(filters, page, limitedPageSize, sortOrder);
 
         return res.status(200).json({
             success: true,
-            message: __("question.getQuestionsSuccess"),
+            message: __("question.getSuccess", { field: __("model.question.name") }),
             status: 200,
             data: {
                 questions,
@@ -88,7 +88,7 @@ export const getQuestionController = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: __("question.getQuestionSuccess"),
+            message: __("question.getSuccess", { field: __("model.question.name") }),
             status: 200,
             data: {
                 question
@@ -115,7 +115,7 @@ export const updateQuestionController = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: __("question.updateQuestionSuccess"),
+            message: __("question.updatedSuccess", { field: __("model.question.name") }),
             status: 200,
             data: {
                 updatedQuestion
@@ -141,7 +141,7 @@ export const deleteQuestionController = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: __("question.deleteQuestionSuccess"),
+            message: __("question.deletedSuccess", { field: __("model.question.name") }),
             status: 200,
             data: {
                 deletedQuestion

@@ -1,4 +1,4 @@
-import bucket from '../config/firebase.config.js';
+import bucket from "../config/firebase.config.js";
 
 export const uploadImageToFirebase = (file) => {
   return new Promise((resolve, reject) => {
@@ -10,11 +10,11 @@ export const uploadImageToFirebase = (file) => {
       },
     });
 
-    blobStream.on('error', (err) => {
+    blobStream.on("error", (err) => {
       reject(err);
     });
 
-    blobStream.on('finish', () => {
+    blobStream.on("finish", () => {
       const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
       resolve(publicUrl);
     });

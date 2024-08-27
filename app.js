@@ -38,7 +38,7 @@ app.get("/", (req, res) => {
 app.use("/roles", roleRoute);
 app.use("/admins", adminRoute);
 app.use("/countries", countryRoute);
-app.use('/topics', topicRoute);
+app.use("/topics", topicRoute);
 app.use("/documentations", documentationRoute);
 app.use("/players", playerRoute);
 app.use("/tests", testRoute);

@@ -3,7 +3,7 @@ import { localeData } from "../localization.js";
 export const t = (language, path, values = {}) => {
     let currentLocaleData = localeData[language];
 
-    const parts = path.split('.');
+    const parts = path.split(".");
     let target = currentLocaleData;
     for (const key of parts) {
         if (target[key]) {
@@ -13,9 +13,9 @@ export const t = (language, path, values = {}) => {
             break;
         }
     }
-    if (typeof target === 'string') {
+    if (typeof target === "string") {
         for (const key in values) {
-            target = target.replace(new RegExp(`{{${key}}}`, 'g'), values[key]);
+            target = target.replace(new RegExp(`{{${key}}}`, "g"), values[key]);
         }
     }
     return target;

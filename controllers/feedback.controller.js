@@ -17,7 +17,7 @@ export const getFeedbacksController = async (req, res) => {
     }
 
     if (search) {
-        filters.content = { $regex: new RegExp(search, 'i') };
+        filters.content = { $regex: new RegExp(search, "i") };
     }
 
     try {
@@ -25,7 +25,7 @@ export const getFeedbacksController = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: __("feedback.getFeedbacksSuccess"),
+            message: __("feedback.getSuccess", { field: __("field.feedback") }),
             status: 200,
             data: {
                 feedbacks,
@@ -53,7 +53,7 @@ export const getFeedbackController = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: __("feedback.getFeedbackSuccess"),
+            message: __("feedback.getSuccess", { field: __("field.feedback") }),
             status: 200,
             data: {
                 feedback
@@ -79,7 +79,7 @@ export const replyFeedbackController = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: __("feedback.replyFeedbackSuccess"),
+            message: __("feedback.replySuccess"),
             status: 200,
             data: null
         });

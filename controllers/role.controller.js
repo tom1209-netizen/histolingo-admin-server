@@ -12,7 +12,7 @@ export const createRoleController = async (req, res) => {
 
         return res.status(201).json({
             success: true,
-            message: __("role.createRoleSuccess"),
+            message: __("role.createdSuccess", { field: __("model.role.name") }),
             status: 201,
             data: {
                 newRole
@@ -39,7 +39,7 @@ export const getRolesController = async (req, res) => {
     const filters = {};
 
     if (search) {
-        filters.name = { $regex: new RegExp(search, 'i') };
+        filters.name = { $regex: new RegExp(search, "i") };
     }
 
     if (isValidStatus(status)) {
@@ -51,7 +51,7 @@ export const getRolesController = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: __("role.getRolesSuccess"),
+            message: __("role.getSuccess", { field: __("model.role.name") }),
             status: 200,
             data: {
                 roles,
@@ -81,7 +81,7 @@ export const getRoleController = async (req, res) => {
         if (!role) {
             return res.status(404).json({
                 success: false,
-                message: __("role.notFound"),
+                message: __("validation.notFound", { field: __("model.role.name") }),
                 status: 404,
                 data: null
             });
@@ -89,7 +89,7 @@ export const getRoleController = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: __("role.getRoleSuccess"),
+            message: __("role.getSuccess", { field: __("model.role.name") }),
             status: 200,
             data: {
                 role
@@ -111,7 +111,7 @@ export const getAllPermissionController = async (req, res) => {
     try {
         return res.status(200).json({
             success: true,
-            message: __("role.getAllPermissionSuccess"),
+            message: __("role.getSuccess", { field: __("model.role.permission") }),
             status: 200,
             data: {
                 rolePrivileges
@@ -139,7 +139,7 @@ export const updateRoleController = async (req, res) => {
         if (!updatedRole) {
             return res.status(404).json({
                 success: false,
-                message: __("role.notFound"),
+                message: __("validation.notFound", { field: __("model.role.name") }),
                 status: 404,
                 data: null
             });
@@ -147,7 +147,7 @@ export const updateRoleController = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: __("role.updateRoleSuccess"),
+            message: __("role.updatedSuccess", { field: __("model.role.name") }),
             status: 200,
             data: {
                 updatedRole

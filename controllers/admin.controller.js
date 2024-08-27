@@ -31,7 +31,7 @@ export const createAdminController = async (req, res) => {
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,
-            message: error.message || "Internal Server Error",
+            message: error.message || __("error.internalServerError"),
             status: error.status || 500,
             data: error.data || null
         });
@@ -63,7 +63,7 @@ export const loginAdminController = async (req, res) => {
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,
-            message: error.message || "Internal Server Error",
+            message: error.message || __("error.internalServerError"),
             status: error.status || 500,
             data: error.data || null
         });
@@ -109,7 +109,7 @@ export const updateAdminController = async (req, res) => {
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,
-            message: error.message || "Internal Server Error",
+            message: error.message || __("error.internalServerError"),
             status: error.status || 500,
             data: error.data || null
         });
@@ -119,20 +119,19 @@ export const updateAdminController = async (req, res) => {
 export const getAdmins = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
     try {
-        const { page = 1, pageSize = 10, search = '', status, sortOrder = -1 } = req.query;
+        const { page = 1, pageSize = 10, search = "", status, sortOrder = -1 } = req.query;
 
         const maxPageSize = 100;
         const limitedPageSize = Math.min(pageSize, maxPageSize);
 
 
-        // Tạo điều kiện tìm kiếm
         const filters = search
             ? {
                 $or: [
-                    { firstName: { $regex: search, $options: 'i' } },
-                    { lastName: { $regex: search, $options: 'i' } },
-                    { adminName: { $regex: search, $options: 'i' } },
-                    { email: { $regex: search, $options: 'i' } },
+                    { firstName: { $regex: search, $options: "i" } },
+                    { lastName: { $regex: search, $options: "i" } },
+                    { adminName: { $regex: search, $options: "i" } },
+                    { email: { $regex: search, $options: "i" } },
                 ]
             }
             : {};
@@ -155,7 +154,7 @@ export const getAdmins = async (req, res) => {
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,
-            message: error.message || "Internal Server Error",
+            message: error.message || __("error.internalServerError"),
             status: error.status || 500,
             data: error.data || null
         });
@@ -165,11 +164,11 @@ export const getAdmins = async (req, res) => {
 export const getRolesToAdminController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
     try {
-        const { search = '' } = req.query;
+        const { search = "" } = req.query;
 
         const filters = search
             ? {
-                name: { $regex: search, $options: 'i' },
+                name: { $regex: search, $options: "i" },
                 status: adminStatus.active
             }
             : { status: adminStatus.active };
@@ -187,7 +186,7 @@ export const getRolesToAdminController = async (req, res) => {
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,
-            message: error.message || "Internal Server Error",
+            message: error.message || __("error.internalServerError"),
             status: error.status || 500,
             data: error.data || null
         });
@@ -218,7 +217,7 @@ export const getAdminController = async (req, res) => {
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,
-            message: error.message || "Internal Server Error",
+            message: error.message || __("error.internalServerError"),
             status: error.status || 500,
             data: error.data || null
         });
@@ -244,7 +243,7 @@ export const generateRefreshTokenController = async (req, res) => {
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,
-            message: error.message || "Internal Server Error",
+            message: error.message || __("error.internalServerError"),
             status: error.status || 500,
             data: error.data || null
         });

@@ -119,8 +119,8 @@ class AdminService {
     async getAdmin(id) {
         const admin = await Admin.findOne({ _id: id }, { password: 0, salt: 0 })
         .populate([
-            { path: 'roles', select: 'name' },
-            { path: 'supervisorId', select: 'adminName' }
+            { path: "roles", select: "name" },
+            { path: "supervisorId", select: "adminName" }
         ]);
         return admin;
     }

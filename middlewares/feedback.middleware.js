@@ -1,6 +1,6 @@
-import Joi from 'joi';
-import { applyRequestContentLanguage } from '../utils/localization.util.js';
-import { feedbackStatus } from '../constants/feedback.constant.js';
+import Joi from "joi";
+import { applyRequestContentLanguage } from "../utils/localization.util.js";
+import { feedbackStatus } from "../constants/feedback.constant.js";
 
 export const getFeedbackValidator = async (req, res, next) => {
     const __ = applyRequestContentLanguage(req);
@@ -24,7 +24,7 @@ export const getFeedbackValidator = async (req, res, next) => {
     } catch (error) {
         return res.status(400).json({
             success: false,
-            message: error.message || __('error.internalServerError'),
+            message: error.message || __("error.internalServerError"),
             status: 400,
             data: null
         });
@@ -79,7 +79,7 @@ export const getFeedbacksValidator = async (req, res, next) => {
     } catch (error) {
         return res.status(400).json({
             success: false,
-            message: error.message || __('error.internalServerError'),
+            message: error.message || __("error.internalServerError"),
             status: 400,
             data: null
         });
@@ -97,21 +97,21 @@ export const replyFeedbackValidator = async (req, res, next) => {
             .length(24)
             .required()
             .messages({
-                'string.hex': __('question.invalidId'),
-                'string.length': __('question.invalidIdLength'),
-                'any.required': __('question.idRequired')
+                "string.hex": __("question.invalidId"),
+                "string.length": __("question.invalidIdLength"),
+                "any.required": __("question.idRequired")
             }),
         subject: Joi.string()
             .required()
             .messages({
-                'string.base': __('question.invalidSubject'),
-                'any.required': __('question.subjectRequired'),
+                "string.base": __("question.invalidSubject"),
+                "any.required": __("question.subjectRequired"),
             }),
         reply: Joi.string()
             .required()
             .messages({
-                'string.base': __('question.invalidReply'),
-                'any.required': __('question.replyRequired'),
+                "string.base": __("question.invalidReply"),
+                "any.required": __("question.replyRequired"),
             })
     });
 
@@ -123,7 +123,7 @@ export const replyFeedbackValidator = async (req, res, next) => {
     } catch (error) {
         return res.status(400).json({
             success: false,
-            message: error.message || __('error.internalServerError'),
+            message: error.message || __("error.internalServerError"),
             status: 400,
             data: null
         });

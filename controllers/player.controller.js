@@ -4,7 +4,7 @@ import { applyRequestContentLanguage } from "../utils/localization.util.js";
 export const getPlayersController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
     try {
-        const { page = 1, pageSize = 10, search = '', status, sortOrder = -1 } = req.query;
+        const { page = 1, pageSize = 10, search = "", status, sortOrder = -1 } = req.query;
 
         const maxPageSize = 100;
         const limitedPageSize = Math.min(pageSize, maxPageSize);
@@ -12,8 +12,8 @@ export const getPlayersController = async (req, res) => {
         const filters = search
             ? {
                 $or: [
-                    { userName: { $regex: search, $options: 'i' } },
-                    { fullName: { $regex: search, $options: 'i' } },
+                    { userName: { $regex: search, $options: "i" } },
+                    { fullName: { $regex: search, $options: "i" } },
                 ]
             }
             : {};
@@ -36,7 +36,7 @@ export const getPlayersController = async (req, res) => {
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,
-            message: error.message || "Internal Server Error",
+            message: error.message || __("error.internalServerError"),
             status: error.status || 500,
             data: error.data || null
         });
@@ -47,7 +47,6 @@ export const updateStatusPlayerController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
     try {
         const id = req.params.id;
-        // const player = req.player;
         const newStatus = req.body.status;
         const updatedPlayer = await playerService.updateStatusPlayer(id, newStatus);
 
@@ -81,7 +80,7 @@ export const updateStatusPlayerController = async (req, res) => {
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,
-            message: error.message || "Internal Server Error",
+            message: error.message || __("error.internalServerError"),
             status: error.status || 500,
             data: error.data || null
         });

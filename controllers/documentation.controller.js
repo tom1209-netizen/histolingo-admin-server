@@ -60,7 +60,7 @@ export const updateDocumentationController = async (req, res) => {
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,
-            message: error.message || "Internal Server Error",
+            message: error.message || __("error.internalServerError"),
             status: error.status || 500,
             data: error.data || null
         });
@@ -105,7 +105,7 @@ export const getDocumentationController = async (req, res) => {
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,
-            message: error.message || "Internal Server Error",
+            message: error.message || __("error.internalServerError"),
             status: error.status || 500,
             data: error.data || null
         });
@@ -115,13 +115,13 @@ export const getDocumentationController = async (req, res) => {
 export const getDocumentationsController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
     try {
-        const { page = 1, pageSize = 10, search = '', status, sortOrder = -1 } = req.query;
+        const { page = 1, pageSize = 10, search = "", status, sortOrder = -1 } = req.query;
 
         const maxPageSize = 100;
         const limitedPageSize = Math.min(pageSize, maxPageSize);
 
         const filters = search
-            ? { name: { $regex: search, $options: 'i' } } : {};
+            ? { name: { $regex: search, $options: "i" } } : {};
         if (status !== null && status !== undefined && status !== "") {
             filters.status = status;
         }
@@ -141,7 +141,7 @@ export const getDocumentationsController = async (req, res) => {
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,
-            message: error.message || "Internal Server Error",
+            message: error.message || __("error.internalServerError"),
             status: error.status || 500,
             data: error.data || null
         });
