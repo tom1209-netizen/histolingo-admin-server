@@ -33,12 +33,12 @@ class FeedbackService {
         return feedback;
     }
 
-    async replyFeedback(id, reply) {
+    async replyFeedback(id, subject, reply) {
         const feedback = await Feedback.findById(id);
         const feedbackOwner = await Player.findById(feedback.createdBy);
         const email = feedbackOwner.email;
 
-        await sendEmail(reply, email);
+        await sendEmail(subject, reply, email);
     }
 }
 

@@ -72,10 +72,10 @@ export const getFeedbackController = async (req, res) => {
 export const replyFeedbackController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
     const { id } = req.params;
-    const { reply } = req.body;
+    const { subject, reply } = req.body;
 
     try {
-        await feedbackService.replyFeedback(id, reply);
+        await feedbackService.replyFeedback(id, subject, reply);
 
         return res.status(200).json({
             success: true,

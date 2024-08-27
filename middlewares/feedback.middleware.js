@@ -87,7 +87,7 @@ export const getFeedbacksValidator = async (req, res, next) => {
 export const replyFeedbackValidator = async (req, res, next) => {
     const __ = applyRequestContentLanguage(req);
     const { id } = req.params;
-    const { reply } = req.body;
+    const { subject, reply } = req.body;
 
     const replyFeedbackSchema = Joi.object({
         id: Joi.string()
@@ -99,16 +99,22 @@ export const replyFeedbackValidator = async (req, res, next) => {
                 'string.length': __('question.invalidIdLength'),
                 'any.required': __('question.idRequired')
             }),
+        subject: Joi.string()
+            .required()
+            .messages({
+                'string.base': __('question.invalidSubject'),
+                'any.required': __('question.subjectRequired'),
+            }),
         reply: Joi.string()
             .required()
             .messages({
                 'string.base': __('question.invalidReply'),
-                'any.required': __('question.replyRequired')
+                'any.required': __('question.replyRequired'),
             })
     });
 
     try {
-        const data = { id, reply };
+        const data = { id, subject, reply };
         await replyFeedbackSchema.validateAsync(data);
 
         next();

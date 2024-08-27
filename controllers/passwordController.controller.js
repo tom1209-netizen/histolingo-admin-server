@@ -22,8 +22,9 @@ export const forgotPassword = async (req, res) => {
         await PasswordResetToken.create({ userId: admin._id, token, expiry });
 
         const resetLink = `http://${process.env.DOMAIN}/auth/reset-password?token=${token}&id=${admin._id}`;
+        const subject = 'Password Reset';
         const emailContent = `Click on the link to reset your password: ${resetLink}`;
-        await sendEmail(emailContent, email);
+        await sendEmail(subject, emailContent, email);
         res.send('Password reset link sent to your email.');
     } catch (error) {
         res.status(500).send('An error occurred while processing your request.');
