@@ -1,4 +1,4 @@
-import Joi from 'joi';
+import Joi from "joi";
 
 const emailSchema = Joi.object({
     email: Joi.string().email().required()

@@ -1,20 +1,19 @@
-import { countryStatus } from '../constants/country.constant.js';
-import { questionStatus, questionType } from '../constants/question.constant.js';
-import { topicStatus } from '../constants/topic.constant.js';
-import { BaseQuestion } from '../models/question.model.js';
-import TestResult from '../models/testResult.model.js';
-import testService from '../services/test.service.js';
-import { shuffle } from '../utils/array.utils.js';
-import { applyRequestContentLanguage } from '../utils/localization.util.js';
+import { countryStatus } from "../constants/country.constant.js";
+import { topicStatus } from "../constants/topic.constant.js";
+import { BaseQuestion } from "../models/question.model.js";
+import TestResult from "../models/testResult.model.js";
+import testService from "../services/test.service.js";
+import { shuffle } from "../utils/array.utils.js";
+import { applyRequestContentLanguage } from "../utils/localization.util.js";
 
 export const getCountriesController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
 
     try {
-        const { search = '' } = req.query;
+        const { search = "" } = req.query;
         const filters = search
             ? {
-                name: { $regex: search, $options: 'i' },
+                name: { $regex: search, $options: "i" },
                 status: countryStatus.active
             }
             : { status: countryStatus.active };
@@ -29,7 +28,7 @@ export const getCountriesController = async (req, res) => {
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,
-            message: error.message || "Internal Server Error",
+            message: error.message || __("error.internalServerError"),
             status: error.status || 500,
             data: error.data || null
         });
@@ -40,10 +39,10 @@ export const getTopicsController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
 
     try {
-        const { search = '' } = req.query;
+        const { search = "" } = req.query;
         const filters = search
             ? {
-                name: { $regex: search, $options: 'i' },
+                name: { $regex: search, $options: "i" },
                 status: topicStatus.active
             }
             : { status: topicStatus.active };
@@ -59,7 +58,7 @@ export const getTopicsController = async (req, res) => {
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,
-            message: error.message || "Internal Server Error",
+            message: error.message || __("error.internalServerError"),
             status: error.status || 500,
             data: error.data || null
         });
@@ -76,14 +75,14 @@ export const getQuestionsController = async (req, res) => {
         if (!questions) {
             return res.status(404).json({
                 success: false,
-                message: __("validation.notFound", { field: __("model.questions.displayName") }),
+                message: __("validation.notFound", { field: __("model.question.name") }),
                 status: 404,
                 data: null
             });
         } else {
             return res.status(200).json({
                 success: true,
-                message: __("message.getSuccess", { field: __("model.questions.displayName") }),
+                message: __("message.getSuccess", { field: __("model.question.name") }),
                 status: 200,
                 data: {
                     questions: {
@@ -104,7 +103,7 @@ export const getQuestionsController = async (req, res) => {
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,
-            message: error.message || "Internal Server Error",
+            message: error.message || __("error.internalServerError"),
             status: error.status || 500,
             data: error.data || null
         });
@@ -141,7 +140,7 @@ export const createTestController = async (req, res) => {
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,
-            message: error.message || "Internal Server Error",
+            message: error.message || __("error.internalServerError"),
             status: error.status || 500,
             data: error.data || null
         });
@@ -178,7 +177,7 @@ export const updateTestController = async (req, res) => {
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,
-            message: error.message || "Internal Server Error",
+            message: error.message || __("error.internalServerError"),
             status: error.status || 500,
             data: error.data || null
         });
@@ -188,7 +187,7 @@ export const updateTestController = async (req, res) => {
 export const getTestsController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
     try {
-        const { page = 1, pageSize = 10, search = '', status, sortOrder = -1 } = req.query;
+        const { page = 1, pageSize = 10, search = "", status, sortOrder = -1 } = req.query;
 
         const maxPageSize = 100;
         const limitedPageSize = Math.min(pageSize, maxPageSize);
@@ -196,9 +195,9 @@ export const getTestsController = async (req, res) => {
         const filters = search
             ? {
                 $or: [
-                    { name: { $regex: search, $options: 'i' } },
-                    { countryName: { $regex: search, $options: 'i' } },
-                    { topicName: { $regex: search, $options: 'i' } },
+                    { name: { $regex: search, $options: "i" } },
+                    { countryName: { $regex: search, $options: "i" } },
+                    { topicName: { $regex: search, $options: "i" } },
                 ]
             }
             : {};
@@ -221,7 +220,7 @@ export const getTestsController = async (req, res) => {
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,
-            message: error.message || "Internal Server Error",
+            message: error.message || __("error.internalServerError"),
             status: error.status || 500,
             data: error.data || null
         });
@@ -255,7 +254,7 @@ export const getTestController = async (req, res) => {
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,
-            message: error.message || "Internal Server Error",
+            message: error.message || __("error.internalServerError"),
             status: error.status || 500,
             data: error.data || null
         });
@@ -271,7 +270,7 @@ export const compareAnswersController = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: __("message.getSuccess", { field: __("model.result.name") }),
+            message: __("message.getSuccess", { field: __("model.testResult.name") }),
             data: {
                 results: {
                     playerId: playerData.playerId,
@@ -284,7 +283,7 @@ export const compareAnswersController = async (req, res) => {
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,
-            message: error.message || "Internal Server Error",
+            message: error.message || __("error.internalServerError"),
             status: error.status || 500,
             data: error.data || null
         });
@@ -337,7 +336,7 @@ export const startDemoController = async (req, res) => {
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,
-            message: error.message || "Internal Server Error",
+            message: error.message || __("error.internalServerError"),
             status: error.status || 500,
             data: error.data || null
         });
@@ -404,7 +403,7 @@ export const checkAnswerController = async (req, res) => {
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,
-            message: error.message || "Internal Server Error",
+            message: error.message || __("error.internalServerError"),
             status: error.status || 500,
             data: error.data || null
         });

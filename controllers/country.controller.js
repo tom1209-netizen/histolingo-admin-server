@@ -24,7 +24,7 @@ export const createCountryController = async (req, res) => {
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,
-            message: error.message || "Internal Server Error",
+            message: error.message || __("error.internalServerError"),
             status: error.status || 500,
             data: error.data || null
         });
@@ -57,7 +57,7 @@ export const updateCountryController = async (req, res) => {
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,
-            message: error.message || "Internal Server Error",
+            message: error.message || __("error.internalServerError"),
             status: error.status || 500,
             data: error.data || null
         });
@@ -99,7 +99,7 @@ export const getCountryController = async (req, res) => {
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,
-            message: error.message || "Internal Server Error",
+            message: error.message || __("error.internalServerError"),
             status: error.status || 500,
             data: error.data || null
         });
@@ -109,13 +109,13 @@ export const getCountryController = async (req, res) => {
 export const getCountriesController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
     try {
-        const { search = '', page = 1, pageSize = 10, status, sortOrder = -1  } = req.query;
+        const { search = "", page = 1, pageSize = 10, status, sortOrder = -1  } = req.query;
 
         const maxPageSize = 100;
         const limitedPageSize = Math.min(pageSize, maxPageSize);
 
         const filters = search
-            ? { name: { $regex: search, $options: 'i' } } : {};
+            ? { name: { $regex: search, $options: "i" } } : {};
         if (status !== null && status !== undefined && status !== "") {
             filters.status = status;
         }
@@ -135,7 +135,7 @@ export const getCountriesController = async (req, res) => {
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,
-            message: error.message || "Internal Server Error",
+            message: error.message || __("error.internalServerError"),
             status: error.status || 500,
             data: error.data || null
         });

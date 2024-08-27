@@ -11,7 +11,7 @@ export const createTopicController = async (req, res) => {
 
         return res.status(201).json({
             success: true,
-            message: __("topic.createTopicSuccess"),
+            message: __("message.createdSuccess", { field: __("model.topic.name") }),
             status: 201,
             data: {
                 newTopic
@@ -38,7 +38,7 @@ export const getTopicsController = async (req, res) => {
     const filters = {};
 
     if (search) {
-        filters.name = { $regex: new RegExp(search, 'i') };
+        filters.name = { $regex: new RegExp(search, "i") };
     }
 
     if (isValidStatus(status)) {
@@ -46,7 +46,7 @@ export const getTopicsController = async (req, res) => {
     }
 
     if (countryName) {
-        filters['country.name'] = countryName;
+        filters["country.name"] = countryName;
     }
 
     try {
@@ -54,7 +54,7 @@ export const getTopicsController = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: __("topic.getTopicsSuccess"),
+            message: __("message.getSuccess", { field: __("model.topic.name") }),
             status: 200,
             data: {
                 topics,
@@ -82,7 +82,7 @@ export const getTopicController = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: __("topic.getTopicSuccess"),
+            message: __("message.getSuccess", { field: __("model.topic.name") }),
             status: 200,
             data: {
                 topic
@@ -110,7 +110,7 @@ export const updateTopicController = async (req, res) => {
         if (!updatedTopic) {
             return res.status(404).json({
                 success: false,
-                message: __("topic.notFound"),
+                message: __("validation.notFound", { field: __("model.topic.name") }),
                 status: 404,
                 data: null,
             });
@@ -118,7 +118,7 @@ export const updateTopicController = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: __("topic.updateTopicSuccess"),
+            message: __("message.updatedSuccess", { field: __("model.topic.name") }),
             status: 200,
             data: {
                 updatedTopic

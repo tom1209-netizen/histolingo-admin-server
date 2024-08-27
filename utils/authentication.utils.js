@@ -9,7 +9,7 @@ export const authenticationToken = (req) => {
             throw error;
         }
 
-        const token = req.headers.authorization.split(' ')[1];
+        const token = req.headers.authorization.split(" ")[1];
         tokenService.verifyToken(token);
         return token;
     } catch (e) {
