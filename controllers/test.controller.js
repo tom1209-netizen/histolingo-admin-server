@@ -397,7 +397,7 @@ export const checkAnswerController = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: __("message.checkSuccess", { field: __("model.testResult.name") }),
+            message: __("message.checkSuccess", { field: __("model.question.name") }),
             data: { isCorrect }
         });
 

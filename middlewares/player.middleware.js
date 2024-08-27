@@ -1,6 +1,7 @@
 import Joi from "joi";
 import Player from "../models/player.model.js";
 import { applyRequestContentLanguage } from "../utils/localization.util.js";
+import { playerStatus } from "../constants/player.constant.js";
 
 export const getListPlayerValidator = async (req, res, next) => {
     const __ = applyRequestContentLanguage(req);
@@ -10,34 +11,34 @@ export const getListPlayerValidator = async (req, res, next) => {
             .min(1)
             .optional()
             .messages({
-                'number.base': __('question.invalidPage'),
-                'number.min': __('question.pageMin')
+                "number.base": __("validation.invalid", { field: "field.page" }),
+                "number.min": __("validation.min", { field: "field.page", min: 1 })
             }),
         pageSize: Joi.number()
             .integer()
             .min(1)
             .optional()
             .messages({
-                'number.base': __('question.invalidPageSize'),
-                'number.min': __('question.pageSizeMin')
+                "number.base": __("validation.invalid", { field: "field.pageSize" }),
+                "number.min": __("validation.min", { field: "field.pageSize", min: 1 })
             }),
         search: Joi.string()
             .optional()
-            .allow('')
+            .allow("")
             .messages({
-                'string.base': __('question.invalidSearch')
+                "string.base": __("validation.invalid", { field: "field.search" })
             }),
         sortOrder: Joi.number()
             .valid(1, -1)
             .optional()
             .messages({
-                'any.only': __('question.invalidSortOrder')
+                "any.only": __("validation.invalid", { field: "field.sortOrder" })
             }),
         status: Joi.number()
-            .valid(0, 1)
+            .valid(playerStatus.active, playerStatus.inactive)
             .optional()
             .messages({
-                'any.only': __('question.invalidStatus')
+                "any.only": __("validation.invalid", { field: "field.status" })
             }),
     });
 
@@ -58,7 +59,13 @@ export const getPlayerById = async (req, res, next) => {
             id: Joi.string()
                 .hex()
                 .length(24)
-                .required(),
+                .required()
+                .messages({
+                    "string.base": __("validation.string", { field: "model.player.name" }),
+                    "string.hex": __("validation.hex", { field: "model.player.name" }),
+                    "string.length": __("validation.length", { field: "model.player.name", length: 24 }),
+                    "any.required": __("validation.required", { field: "model.player.name" })
+                }),
         });
 
         await schema.validateAsync({ id });

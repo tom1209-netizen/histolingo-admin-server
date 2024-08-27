@@ -29,6 +29,11 @@ const documentationSchema = new Schema(
             ref: "Country",
             required: true,
         },
+        image: {
+            type: String,
+            require: true,
+            maxLength: 1000,
+        },
         status: {
             type: Number,
             enum: [documentationStatus.inactive, documentationStatus.active],

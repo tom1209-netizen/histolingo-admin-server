@@ -1,13 +1,14 @@
 import Documentation from "../models/documentation.model.js";
 
 class DocumentationService {
-    async createDocumentation(source, name, content, topicId, countryId, localeData) {
+    async createDocumentation(source, name, content, topicId, countryId, image, localeData) {
         const newDocumentation = await Documentation.create({
             source,
             name,
             content,
             topicId,
             countryId,
+            image,
             localeData
         });
         return newDocumentation

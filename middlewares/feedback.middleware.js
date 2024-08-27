@@ -1,5 +1,6 @@
 import Joi from 'joi';
 import { applyRequestContentLanguage } from '../utils/localization.util.js';
+import { feedbackStatus } from '../constants/feedback.constant.js';
 
 export const getFeedbackValidator = async (req, res, next) => {
     const __ = applyRequestContentLanguage(req);
@@ -10,9 +11,10 @@ export const getFeedbackValidator = async (req, res, next) => {
         .length(24)
         .required()
         .messages({
-            'string.hex': __('question.invalidId'),
-            'string.length': __('question.invalidIdLength'),
-            'any.required': __('question.idRequired')
+            "string.base": __("validation.string", { field: "field.feedback" }),
+            "string.hex": __("validation.hex", { field: "field.feedback" }),
+            "string.length": __("validation.length", { field: "field.feedback", length: 24 }),
+            "any.required": __("validation.required", { field: "field.feedback" })
         });
 
     try {
@@ -38,34 +40,34 @@ export const getFeedbacksValidator = async (req, res, next) => {
             .min(1)
             .optional()
             .messages({
-                'number.base': __('question.invalidPage'),
-                'number.min': __('question.pageMin')
+                "number.base": __("validation.invalid", { field: "field.page" }),
+                "number.min": __("validation.min", { field: "field.page", min: 1 })
             }),
         pageSize: Joi.number()
             .integer()
             .min(1)
             .optional()
             .messages({
-                'number.base': __('question.invalidPageSize'),
-                'number.min': __('question.pageSizeMin')
+                "number.base": __("validation.invalid", { field: "field.pageSize" }),
+                "number.min": __("validation.min", { field: "field.pageSize", min: 1 })
             }),
         search: Joi.string()
             .optional()
-            .allow('')
+            .allow("")
             .messages({
-                'string.base': __('question.invalidSearch')
+                "string.base": __("validation.invalid", { field: "field.search" })
             }),
         sortOrder: Joi.number()
             .valid(1, -1)
             .optional()
             .messages({
-                'any.only': __('question.invalidSortOrder')
+                "any.only": __("validation.invalid", { field: "field.sortOrder" })
             }),
         status: Joi.number()
-            .valid(0, 1)
+            .valid(feedbackStatus.active, feedbackStatus.inactive)
             .optional()
             .messages({
-                'any.only': __('question.invalidStatus')
+                "any.only": __("validation.invalid", { field: "field.status" })
             }),
     });
 
