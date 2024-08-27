@@ -1,6 +1,7 @@
-import Joi from 'joi';
-import Topic from '../models/topic.model.js';
-import { applyRequestContentLanguage } from '../utils/localization.util.js';
+import Joi from "joi";
+import Topic from "../models/topic.model.js";
+import { applyRequestContentLanguage } from "../utils/localization.util.js";
+import { topicStatus } from "../constants/topic.constant.js";
 
 export const createTopicValidator = async (req, res, next) => {
     const { name, description, image, countryId, localeData } = req.body;
@@ -11,54 +12,52 @@ export const createTopicValidator = async (req, res, next) => {
             .max(250)
             .required()
             .messages({
-                'string.base': __('validation.name.string', { field: 'name' }),
-                'string.max': __('validation.name.max', { field: 'name', max: 250 }),
-                'any.required': __('validation.name.required', { field: 'name' })
+                "string.base": __("validation.string", { field: "field.name" }),
+                "string.max": __("validation.max", { field: "field.name", max: 250 }),
+                "any.required": __("validation.required", { field: "field.name" })
             }),
         description: Joi.string()
             .max(1000)
             .required()
             .messages({
-                'string.base': __('validation.description.string', { field: 'description' }),
-                'string.max': __('validation.description.max', { field: 'description', max: 1000 }),
-                'any.required': __('validation.description.required', { field: 'description' })
+                "string.base": __("validation.string", { field: "field.description" }),
+                "string.max": __("validation.max", { field: "field.description", max: 1000 }),
+                "any.required": __("validation.required", { field: "field.description" })
             }),
         image: Joi.string()
             .uri()
             .required()
             .messages({
-                'string.base': __('validation.image.string', { field: 'image' }),
-                'string.uri': __('validation.image.uri', { field: 'image' }),
-                'any.required': __('validation.image.required', { field: 'image' })
+                "string.base": __("validation.string", { field: "field.image" }),
+                "string.uri": __("validation.image.uri", { field: "field.image" }),
+                "any.required": __("validation.image.required", { field: "field.image" })
             }),
         countryId: Joi.string()
             .hex()
             .length(24)
             .required()
             .messages({
-                'string.base': __('validation.countryId.string', { field: 'countryId' }),
-                'string.hex': __('validation.countryId.hex', { field: 'countryId' }),
-                'string.length': __('validation.countryId.length', { field: 'countryId', length: 24 }),
-                'any.required': __('validation.countryId.required', { field: 'countryId' })
+                "string.base": __("validation.string", { field: "field.countryId" }),
+                "string.hex": __("validation.hex", { field: "field.countryId" }),
+                "string.length": __("validation.length", { field: "field.countryId", length: 24 }),
+                "any.required": __("validation.required", { field: "field.countryId" })
             }),
         localeData: Joi.object().pattern(
-            new RegExp('^[a-z]{2}-[A-Z]{2}$'),
+            new RegExp("^[a-z]{2}-[A-Z]{2}$"),
             Joi.object({
-                name: Joi.string().max(250).required().messages({
-                    'string.base': __('validation.localeData.name.string', { field: 'localeData.name' }),
-                    'string.max': __('validation.localeData.name.max', { field: 'localeData.name', max: 250 }),
-                    'any.required': __('validation.localeData.name.required', { field: 'localeData.name' })
+                name: Joi.string().max(250).messages({
+                    "string.base": __("validation.string", { field: "field.name" }),
+                    "string.max": __("validation.max", { field: "field.name", max: 250 }),
                 }),
-                description: Joi.string().max(1000).required().messages({
-                    'string.base': __('validation.localeData.description.string', { field: 'localeData.description' }),
-                    'string.max': __('validation.localeData.description.max', { field: 'localeData.description', max: 1000 }),
-                    'any.required': __('validation.localeData.description.required', { field: 'localeData.description' })
+                description: Joi.string().max(1000).messages({
+                    "string.base": __("validation.string", { field: "field.description" }),
+                    "string.max": __("validation.max", { field: "field.description", max: 1000 }),
                 })
             })
         ).default({})
-        .messages({
-            'object.pattern.match': __('validation.localeData.pattern', { pattern: '^[a-z]{2}-[A-Z]{2}$' })
-        })
+            .messages({
+                "object.pattern.match": __("validation.pattern", { pattern: "^[a-z]{2}-[A-Z]{2}$" })
+            })
     });
 
     try {
@@ -68,7 +67,7 @@ export const createTopicValidator = async (req, res, next) => {
         if (existedTopic) {
             return res.status(404).json({
                 success: false,
-                message: __('topic.topicExists'),
+                message: __("validation.exist", { field: __("model.topic.name") }),
                 status: 404,
                 data: null
             });
@@ -78,7 +77,7 @@ export const createTopicValidator = async (req, res, next) => {
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,
-            message: error.message || __('error.internalServerError'),
+            message: error.message || __("error.internalServerError"),
             status: error.status || 500,
             data: error.data || null
         });
@@ -96,58 +95,67 @@ export const updateTopicValidator = async (req, res, next) => {
             .length(24)
             .required()
             .messages({
-                'string.base': __('validation.id.string', { field: 'id' }),
-                'string.hex': __('validation.id.hex', { field: 'id' }),
-                'string.length': __('validation.id.length', { field: 'id', length: 24 }),
-                'any.required': __('validation.id.required', { field: 'id' })
+                "string.base": __("validation.string", { field: "field.topicId" }),
+                "string.hex": __("validation.hex", { field: "field.topicId" }),
+                "string.length": __("validation.length", { field: "field.topicId", length: 24 }),
+                "any.required": __("validation.required", { field: "field.topicId" })
             }),
         name: Joi.string()
             .max(250)
+            .required()
             .messages({
-                'string.base': __('validation.name.string', { field: 'name' }),
-                'string.max': __('validation.name.max', { field: 'name', max: 250 })
+                "string.base": __("validation.string", { field: "field.name" }),
+                "string.max": __("validation.max", { field: "field.name", max: 250 }),
+                "any.required": __("validation.required", { field: "field.name" })
             }),
         description: Joi.string()
             .max(1000)
+            .required()
             .messages({
-                'string.base': __('validation.description.string', { field: 'description' }),
-                'string.max': __('validation.description.max', { field: 'description', max: 1000 })
-            }),
-        status: Joi.number()
-            .valid(0, 1)
-            .messages({
-                'any.only': __('validation.status.invalid')
+                "string.base": __("validation.string", { field: "field.description" }),
+                "string.max": __("validation.max", { field: "field.description", max: 1000 }),
+                "any.required": __("validation.required", { field: "field.description" })
             }),
         image: Joi.string()
             .uri()
+            .required()
             .messages({
-                'string.base': __('validation.image.string', { field: 'image' }),
-                'string.uri': __('validation.image.uri', { field: 'image' })
+                "string.base": __("validation.string", { field: "field.image" }),
+                "string.uri": __("validation.image.uri", { field: "field.image" }),
+                "any.required": __("validation.image.required", { field: "field.image" })
+            }),
+        status: Joi.number()
+            .valid(topicStatus.active, topicStatus.inactive)
+            .optional()
+            .messages({
+                "any.only": __("validation.invalid", { field: "field.status" })
             }),
         countryId: Joi.string()
             .hex()
             .length(24)
+            .required()
             .messages({
-                'string.base': __('validation.countryId.string', { field: 'countryId' }),
-                'string.hex': __('validation.countryId.hex', { field: 'countryId' }),
-                'string.length': __('validation.countryId.length', { field: 'countryId', length: 24 })
+                "string.base": __("validation.string", { field: "field.countryId" }),
+                "string.hex": __("validation.hex", { field: "field.countryId" }),
+                "string.length": __("validation.length", { field: "field.countryId", length: 24 }),
+                "any.required": __("validation.required", { field: "field.countryId" })
             }),
         localeData: Joi.object().pattern(
-            new RegExp('^[a-z]{2}-[A-Z]{2}$'),
+            new RegExp("^[a-z]{2}-[A-Z]{2}$"),
             Joi.object({
                 name: Joi.string().max(250).messages({
-                    'string.base': __('validation.localeData.name.string', { field: 'localeData.name' }),
-                    'string.max': __('validation.localeData.name.max', { field: 'localeData.name', max: 250 }),
+                    "string.base": __("validation.string", { field: "field.name" }),
+                    "string.max": __("validation.max", { field: "field.name", max: 250 }),
                 }),
                 description: Joi.string().max(1000).messages({
-                    'string.base': __('validation.localeData.description.string', { field: 'localeData.description' }),
-                    'string.max': __('validation.localeData.description.max', { field: 'localeData.description', max: 1000 }),
+                    "string.base": __("validation.string", { field: "field.description" }),
+                    "string.max": __("validation.max", { field: "field.description", max: 1000 }),
                 })
             })
         ).default({})
-        .messages({
-            'object.pattern.match': __('validation.localeData.pattern', { pattern: '^[a-z]{2}-[A-Z]{2}$' })
-        })
+            .messages({
+                "object.pattern.match": __("validation.pattern", { pattern: "^[a-z]{2}-[A-Z]{2}$" })
+            })
     });
 
     try {
@@ -157,7 +165,7 @@ export const updateTopicValidator = async (req, res, next) => {
         if (!existedTopic) {
             return res.status(404).json({
                 success: false,
-                message: __('topic.topicNotFound'),
+                message: __("validation.notFound", { field: __("model.topic.name") }),
                 status: 404,
                 data: null
             });
@@ -167,7 +175,7 @@ export const updateTopicValidator = async (req, res, next) => {
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,
-            message: error.message || __('error.internalServerError'),
+            message: error.message || __("error.internalServerError"),
             status: error.status || 500,
             data: error.data || null
         });
@@ -184,10 +192,10 @@ export const getTopicValidator = async (req, res, next) => {
             .length(24)
             .required()
             .messages({
-                'string.base': __('validation.id.string', { field: 'id' }),
-                'string.hex': __('validation.id.hex', { field: 'id' }),
-                'string.length': __('validation.id.length', { field: 'id', length: 24 }),
-                'any.required': __('validation.id.required', { field: 'id' })
+                "string.base": __("validation.string", { field: "field.topicId" }),
+                "string.hex": __("validation.hex", { field: "field.topicId" }),
+                "string.length": __("validation.length", { field: "field.topicId", length: 24 }),
+                "any.required": __("validation.required", { field: "field.topicId" })
             })
     });
 
@@ -198,7 +206,7 @@ export const getTopicValidator = async (req, res, next) => {
         if (!existedTopic) {
             return res.status(404).json({
                 success: false,
-                message: __('topic.topicNotFound'),
+                message: __("topic.topicNotFound"),
                 status: 404,
                 data: null
             });
@@ -208,7 +216,7 @@ export const getTopicValidator = async (req, res, next) => {
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,
-            message: error.message || __('error.internalServerError'),
+            message: error.message || __("error.internalServerError"),
             status: error.status || 500,
             data: error.data || null
         });
@@ -224,39 +232,39 @@ export const getTopicsValidator = async (req, res, next) => {
             .min(1)
             .optional()
             .messages({
-                'number.base': __('question.invalidPage'),
-                'number.min': __('question.pageMin')
+                "number.base": __("question.invalidPage"),
+                "number.min": __("question.pageMin")
             }),
         pageSize: Joi.number()
             .integer()
             .min(1)
             .optional()
             .messages({
-                'number.base': __('question.invalidPageSize'),
-                'number.min': __('question.pageSizeMin')
+                "number.base": __("question.invalidPageSize"),
+                "number.min": __("question.pageSizeMin")
             }),
         search: Joi.string()
             .optional()
-            .allow('')
+            .allow("")
             .messages({
-                'string.base': __('question.invalidSearch')
+                "string.base": __("question.invalidSearch")
             }),
         countryName: Joi.string()
             .optional()
             .messages({
-                'string.base': __('question.invalidSearch')
+                "string.base": __("question.invalidSearch")
             }),
         sortOrder: Joi.number()
             .valid(1, -1)
             .optional()
             .messages({
-                'any.only': __('question.invalidSortOrder')
+                "any.only": __("question.invalidSortOrder")
             }),
         status: Joi.number()
             .valid(0, 1)
             .optional()
             .messages({
-                'any.only': __('question.invalidStatus')
+                "any.only": __("question.invalidStatus")
             }),
     });
 
@@ -268,7 +276,7 @@ export const getTopicsValidator = async (req, res, next) => {
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,
-            message: error.message || __('error.internalServerError'),
+            message: error.message || __("error.internalServerError"),
             status: error.status || 500,
             data: error.data || null
         });

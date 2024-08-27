@@ -69,7 +69,7 @@ export const createDocumentationValidator = async (req, res, next) => {
                         "string.base": __("validation.string", { field: "field.name" }),
                         "string.max": __("validation.max", { field: "field.name", max: 250 }),
                     }),
-                    description: Joi.string().max(1000).messages({
+                    content: Joi.string().max(1000).messages({
                         "string.base": __("validation.string", { field: "field.description" }),
                         "string.max": __("validation.max", { field: "field.description", max: 1000 }),
                     })
@@ -179,7 +179,7 @@ export const updateDocumentationValidator = async (req, res, next) => {
                         "string.base": __("validation.string", { field: "field.name" }),
                         "string.max": __("validation.max", { field: "field.name", max: 250 }),
                     }),
-                    description: Joi.string().max(1000).messages({
+                    content: Joi.string().max(1000).messages({
                         "string.base": __("validation.string", { field: "field.description" }),
                         "string.max": __("validation.max", { field: "field.description", max: 1000 }),
                     })
