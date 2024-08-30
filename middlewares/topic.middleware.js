@@ -12,46 +12,46 @@ export const createTopicValidator = async (req, res, next) => {
             .max(250)
             .required()
             .messages({
-                "string.base": __("validation.string", { field: "field.name" }),
-                "string.max": __("validation.max", { field: "field.name", max: 250 }),
-                "any.required": __("validation.required", { field: "field.name" })
+                "string.base": __("validation.string", { field: __("field.name") }),
+                "string.max": __("validation.max", { field: __("field.name"), max: 250 }),
+                "any.required": __("validation.required", { field: __("field.name") })
             }),
         description: Joi.string()
             .max(1000)
             .required()
             .messages({
-                "string.base": __("validation.string", { field: "field.description" }),
-                "string.max": __("validation.max", { field: "field.description", max: 1000 }),
-                "any.required": __("validation.required", { field: "field.description" })
+                "string.base": __("validation.string", { field: __("field.description") }),
+                "string.max": __("validation.max", { field: __("field.description"), max: 1000 }),
+                "any.required": __("validation.required", { field: __("field.description") })
             }),
         image: Joi.string()
             .uri()
             .required()
             .messages({
-                "string.base": __("validation.string", { field: "field.image" }),
-                "string.uri": __("validation.image.uri", { field: "field.image" }),
-                "any.required": __("validation.image.required", { field: "field.image" })
+                "string.base": __("validation.string", { field: __("field.image") }),
+                "string.uri": __("validation.image.uri", { field: __("field.image") }),
+                "any.required": __("validation.image.required", { field: __("field.image") })
             }),
         countryId: Joi.string()
             .hex()
             .length(24)
             .required()
             .messages({
-                "string.base": __("validation.string", { field: "field.countryId" }),
-                "string.hex": __("validation.hex", { field: "field.countryId" }),
-                "string.length": __("validation.length", { field: "field.countryId", length: 24 }),
-                "any.required": __("validation.required", { field: "field.countryId" })
+                "string.base": __("validation.string", { field: __("field.countryId") }),
+                "string.hex": __("validation.hex", { field: __("field.countryId") }),
+                "string.length": __("validation.length", { field: __("field.countryId"), length: 24 }),
+                "any.required": __("validation.required", { field: __("field.countryId") })
             }),
         localeData: Joi.object().pattern(
             new RegExp("^[a-z]{2}-[A-Z]{2}$"),
             Joi.object({
                 name: Joi.string().max(250).messages({
-                    "string.base": __("validation.string", { field: "field.name" }),
-                    "string.max": __("validation.max", { field: "field.name", max: 250 }),
+                    "string.base": __("validation.string", { field: __("field.name") }),
+                    "string.max": __("validation.max", { field: __("field.name"), max: 250 }),
                 }),
                 description: Joi.string().max(1000).messages({
-                    "string.base": __("validation.string", { field: "field.description" }),
-                    "string.max": __("validation.max", { field: "field.description", max: 1000 }),
+                    "string.base": __("validation.string", { field: __("field.description") }),
+                    "string.max": __("validation.max", { field: __("field.description"), max: 1000 }),
                 })
             })
         ).default({})
@@ -95,61 +95,53 @@ export const updateTopicValidator = async (req, res, next) => {
             .length(24)
             .required()
             .messages({
-                "string.base": __("validation.string", { field: "field.topicId" }),
-                "string.hex": __("validation.hex", { field: "field.topicId" }),
-                "string.length": __("validation.length", { field: "field.topicId", length: 24 }),
-                "any.required": __("validation.required", { field: "field.topicId" })
+                "string.base": __("validation.string", { field: __("field.topicId") }),
+                "string.hex": __("validation.hex", { field: __("field.topicId") }),
+                "string.length": __("validation.length", { field: __("field.topicId"), length: 24 }),
+                "any.required": __("validation.required", { field: __("field.topicId") })
             }),
         name: Joi.string()
             .max(250)
-            .required()
             .messages({
-                "string.base": __("validation.string", { field: "field.name" }),
-                "string.max": __("validation.max", { field: "field.name", max: 250 }),
-                "any.required": __("validation.required", { field: "field.name" })
+                "string.base": __("validation.string", { field: __("field.name") }),
+                "string.max": __("validation.max", { field: __("field.name"), max: 250 }),
             }),
         description: Joi.string()
             .max(1000)
-            .required()
             .messages({
-                "string.base": __("validation.string", { field: "field.description" }),
-                "string.max": __("validation.max", { field: "field.description", max: 1000 }),
-                "any.required": __("validation.required", { field: "field.description" })
+                "string.base": __("validation.string", { field: __("field.description") }),
+                "string.max": __("validation.max", { field: __("field.description"), max: 1000 }),
             }),
         image: Joi.string()
             .uri()
-            .required()
             .messages({
-                "string.base": __("validation.string", { field: "field.image" }),
-                "string.uri": __("validation.image.uri", { field: "field.image" }),
-                "any.required": __("validation.image.required", { field: "field.image" })
+                "string.base": __("validation.string", { field: __("field.image") }),
+                "string.uri": __("validation.image.uri", { field: __("field.image") }),
             }),
         status: Joi.number()
             .valid(topicStatus.active, topicStatus.inactive)
             .optional()
             .messages({
-                "any.only": __("validation.invalid", { field: "field.status" })
+                "any.only": __("validation.invalid", { field: __("field.status") })
             }),
         countryId: Joi.string()
             .hex()
             .length(24)
-            .required()
             .messages({
-                "string.base": __("validation.string", { field: "field.countryId" }),
-                "string.hex": __("validation.hex", { field: "field.countryId" }),
-                "string.length": __("validation.length", { field: "field.countryId", length: 24 }),
-                "any.required": __("validation.required", { field: "field.countryId" })
+                "string.base": __("validation.string", { field: __("field.countryId") }),
+                "string.hex": __("validation.hex", { field: __("field.countryId") }),
+                "string.length": __("validation.length", { field: __("field.countryId"), length: 24 }),
             }),
         localeData: Joi.object().pattern(
             new RegExp("^[a-z]{2}-[A-Z]{2}$"),
             Joi.object({
                 name: Joi.string().max(250).messages({
-                    "string.base": __("validation.string", { field: "field.name" }),
-                    "string.max": __("validation.max", { field: "field.name", max: 250 }),
+                    "string.base": __("validation.string", { field: __("field.name") }),
+                    "string.max": __("validation.max", { field: __("field.name"), max: 250 }),
                 }),
                 description: Joi.string().max(1000).messages({
-                    "string.base": __("validation.string", { field: "field.description" }),
-                    "string.max": __("validation.max", { field: "field.description", max: 1000 }),
+                    "string.base": __("validation.string", { field: __("field.description") }),
+                    "string.max": __("validation.max", { field: __("field.description"), max: 1000 }),
                 })
             })
         ).default({})
@@ -192,10 +184,10 @@ export const getTopicValidator = async (req, res, next) => {
             .length(24)
             .required()
             .messages({
-                "string.base": __("validation.string", { field: "field.topicId" }),
-                "string.hex": __("validation.hex", { field: "field.topicId" }),
-                "string.length": __("validation.length", { field: "field.topicId", length: 24 }),
-                "any.required": __("validation.required", { field: "field.topicId" })
+                "string.base": __("validation.string", { field: __("field.topicId") }),
+                "string.hex": __("validation.hex", { field: __("field.topicId") }),
+                "string.length": __("validation.length", { field: __("field.topicId"), length: 24 }),
+                "any.required": __("validation.required", { field: __("field.topicId") })
             })
     });
 
@@ -232,39 +224,39 @@ export const getTopicsValidator = async (req, res, next) => {
             .min(1)
             .optional()
             .messages({
-                "number.base": __("validation.invalid", { field: "field.page" }),
-                "number.min": __("validation.min", { field: "field.page", min: 1 })
+                "number.base": __("validation.invalid", { field: __("field.page") }),
+                "number.min": __("validation.min", { field: __("field.page"), min: 1 })
             }),
         pageSize: Joi.number()
             .integer()
             .min(1)
             .optional()
             .messages({
-                "number.base": __("validation.invalid", { field: "field.pageSize" }),
-                "number.min": __("validation.min", { field: "field.pageSize", min: 1 })
+                "number.base": __("validation.invalid", { field: __("field.pageSize") }),
+                "number.min": __("validation.min", { field: __("field.pageSize"), min: 1 })
             }),
         search: Joi.string()
             .optional()
             .allow("")
             .messages({
-                "string.base": __("validation.invalid", { field: "field.search" })
+                "string.base": __("validation.invalid", { field: __("field.search") })
             }),
         sortOrder: Joi.number()
             .valid(1, -1)
             .optional()
             .messages({
-                "any.only": __("validation.invalid", { field: "field.sortOrder" })
+                "any.only": __("validation.invalid", { field: __("field.sortOrder") })
             }),
         status: Joi.number()
             .valid(topicStatus.active, topicStatus.inactive)
             .optional()
             .messages({
-                "any.only": __("validation.invalid", { field: "field.status" })
+                "any.only": __("validation.invalid", { field: __("field.status") })
             }),
         countryName: Joi.string()
             .optional()
             .messages({
-                "string.base": __("validation.invalid", { field: "field.search" })
+                "string.base": __("validation.invalid", { field: __("field.search") })
             })
     });
 

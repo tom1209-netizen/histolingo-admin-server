@@ -18,54 +18,54 @@ export const createTestValidator = async (req, res, next) => {
                 .max(250)
                 .required()
                 .messages({
-                    "string.base": __("validation.string", { field: "field.name" }),
-                    "string.max": __("validation.max", { field: "field.name", max: 250 }),
-                    "any.required": __("validation.required", { field: "field.name" })
+                    "string.base": __("validation.string", { field: __("field.name") }),
+                    "string.max": __("validation.max", { field: __("field.name"), max: 250 }),
+                    "any.required": __("validation.required", { field: __("field.name") })
                 }),
             documentationsId: Joi.array()
                 .items(Joi.string().hex().length(24))
                 .required()
                 .messages({
-                    "string.base": __("validation.string", { field: "field.documentationId" }),
-                    "string.hex": __("validation.hex", { field: "field.documentationId" }),
-                    "string.length": __("validation.length", { field: "field.documentationId", length: 24 }),
-                    "any.required": __("validation.required", { field: "field.documentationId" })
+                    "string.base": __("validation.string", { field: __("field.documentationId") }),
+                    "string.hex": __("validation.hex", { field: __("field.documentationId") }),
+                    "string.length": __("validation.length", { field: __("field.documentationId"), length: 24 }),
+                    "any.required": __("validation.required", { field: __("field.documentationId") })
                 }),
             questionsId: Joi.array()
                 .items(Joi.string().hex().length(24))
                 .required()
                 .messages({
-                    "string.base": __("validation.string", { field: "field.questionId" }),
-                    "string.hex": __("validation.hex", { field: "field.questionId" }),
-                    "string.length": __("validation.length", { field: "field.questionId", length: 24 }),
-                    "any.required": __("validation.required", { field: "field.questionId" })
+                    "string.base": __("validation.string", { field: __("field.questionId") }),
+                    "string.hex": __("validation.hex", { field: __("field.questionId") }),
+                    "string.length": __("validation.length", { field: __("field.questionId"), length: 24 }),
+                    "any.required": __("validation.required", { field: __("field.questionId") })
                 }),
             topicId: Joi.string()
                 .hex()
                 .length(24)
                 .required()
                 .messages({
-                    "string.base": __("validation.string", { field: "field.topicId" }),
-                    "string.hex": __("validation.hex", { field: "field.topicId" }),
-                    "string.length": __("validation.length", { field: "field.topicId", length: 24 }),
-                    "any.required": __("validation.required", { field: "field.topicId" })
+                    "string.base": __("validation.string", { field: __("field.topicId") }),
+                    "string.hex": __("validation.hex", { field: __("field.topicId") }),
+                    "string.length": __("validation.length", { field: __("field.topicId"), length: 24 }),
+                    "any.required": __("validation.required", { field: __("field.topicId") })
                 }),
             countryId: Joi.string()
                 .hex()
                 .length(24)
                 .required()
                 .messages({
-                    "string.base": __("validation.string", { field: "field.countryId" }),
-                    "string.hex": __("validation.hex", { field: "field.countryId" }),
-                    "string.length": __("validation.length", { field: "field.countryId", length: 24 }),
-                    "any.required": __("validation.required", { field: "field.countryId" })
+                    "string.base": __("validation.string", { field: __("field.countryId") }),
+                    "string.hex": __("validation.hex", { field: __("field.countryId") }),
+                    "string.length": __("validation.length", { field: __("field.countryId"), length: 24 }),
+                    "any.required": __("validation.required", { field: __("field.countryId") })
                 }),
             localeData: Joi.object().pattern(
                 new RegExp("^[a-z]{2}-[A-Z]{2}$"),
                 Joi.object({
                     name: Joi.string().max(250).messages({
-                        "string.base": __("validation.string", { field: "field.name" }),
-                        "string.max": __("validation.max", { field: "field.name", max: 250 }),
+                        "string.base": __("validation.string", { field: __("field.name") }),
+                        "string.max": __("validation.max", { field: __("field.name"), max: 250 }),
                     })
                 })
             ).default({}),
@@ -94,7 +94,7 @@ export const createTestValidator = async (req, res, next) => {
         if (!topic) {
             return res.status(400).json({
                 success: false,
-                message: __("validation.notFound", { field: "model.topic.name" }),
+                message: __("validation.notFound", { field: __("model.topic.name") }),
                 status: 400,
                 data: null
             })
@@ -104,7 +104,7 @@ export const createTestValidator = async (req, res, next) => {
         if (!country) {
             return res.status(400).json({
                 success: false,
-                message: __("validation.notFound", { field: "model.country.name" }),
+                message: __("validation.notFound", { field: __("model.country.name") }),
                 status: 400,
                 data: null
             })
@@ -136,62 +136,52 @@ export const updateTestValidator = async (req, res, next) => {
         const schema = Joi.object({
             name: Joi.string()
                 .max(250)
-                .required()
                 .messages({
-                    "string.base": __("validation.string", { field: "field.name" }),
-                    "string.max": __("validation.max", { field: "field.name", max: 250 }),
-                    "any.required": __("validation.required", { field: "field.name" })
+                    "string.base": __("validation.string", { field: __("field.name") }),
+                    "string.max": __("validation.max", { field: __("field.name"), max: 250 }),
                 }),
             documentationsId: Joi.array()
                 .items(Joi.string().hex().length(24))
-                .required()
                 .messages({
-                    "string.base": __("validation.string", { field: "field.documentationId" }),
-                    "string.hex": __("validation.hex", { field: "field.documentationId" }),
-                    "string.length": __("validation.length", { field: "field.documentationId", length: 24 }),
-                    "any.required": __("validation.required", { field: "field.documentationId" })
+                    "string.base": __("validation.string", { field: __("field.documentationId") }),
+                    "string.hex": __("validation.hex", { field: __("field.documentationId") }),
+                    "string.length": __("validation.length", { field: __("field.documentationId"), length: 24 }),
                 }),
             questionsId: Joi.array()
                 .items(Joi.string().hex().length(24))
-                .required()
                 .messages({
-                    "string.base": __("validation.string", { field: "field.questionId" }),
-                    "string.hex": __("validation.hex", { field: "field.questionId" }),
-                    "string.length": __("validation.length", { field: "field.questionId", length: 24 }),
-                    "any.required": __("validation.required", { field: "field.questionId" })
+                    "string.base": __("validation.string", { field: __("field.questionId") }),
+                    "string.hex": __("validation.hex", { field: __("field.questionId") }),
+                    "string.length": __("validation.length", { field: __("field.questionId"), length: 24 }),
                 }),
             topicId: Joi.string()
                 .hex()
                 .length(24)
-                .required()
                 .messages({
-                    "string.base": __("validation.string", { field: "field.topicId" }),
-                    "string.hex": __("validation.hex", { field: "field.topicId" }),
-                    "string.length": __("validation.length", { field: "field.topicId", length: 24 }),
-                    "any.required": __("validation.required", { field: "field.topicId" })
+                    "string.base": __("validation.string", { field: __("field.topicId") }),
+                    "string.hex": __("validation.hex", { field: __("field.topicId") }),
+                    "string.length": __("validation.length", { field: __("field.topicId"), length: 24 }),
                 }),
             countryId: Joi.string()
                 .hex()
                 .length(24)
-                .required()
                 .messages({
-                    "string.base": __("validation.string", { field: "field.countryId" }),
-                    "string.hex": __("validation.hex", { field: "field.countryId" }),
-                    "string.length": __("validation.length", { field: "field.countryId", length: 24 }),
-                    "any.required": __("validation.required", { field: "field.countryId" })
+                    "string.base": __("validation.string", { field: __("field.countryId") }),
+                    "string.hex": __("validation.hex", { field: __("field.countryId") }),
+                    "string.length": __("validation.length", { field: __("field.countryId"), length: 24 }),
                 }),
             status: Joi.number()
                 .valid(testStatus.active, testStatus.inactive)
                 .optional()
                 .messages({
-                    "any.only": __("validation.invalid", { field: "field.status" })
+                    "any.only": __("validation.invalid", { field: __("field.status") })
                 }),
             localeData: Joi.object().pattern(
                 new RegExp("^[a-z]{2}-[A-Z]{2}$"),
                 Joi.object({
                     name: Joi.string().max(250).messages({
-                        "string.base": __("validation.string", { field: "field.name" }),
-                        "string.max": __("validation.max", { field: "field.name", max: 250 }),
+                        "string.base": __("validation.string", { field: __("field.name") }),
+                        "string.max": __("validation.max", { field: __("field.name"), max: 250 }),
                     })
                 })
             ).default({}),
@@ -212,7 +202,7 @@ export const updateTestValidator = async (req, res, next) => {
         if (!test) {
             return res.status(400).json({
                 success: false,
-                message: __("validation.notFound", { field: "model.test.name" }),
+                message: __("validation.notFound", { field: __("model.test.name") }),
                 status: 400,
                 data: null
             })
@@ -235,7 +225,7 @@ export const updateTestValidator = async (req, res, next) => {
             if (!topic) {
                 return res.status(400).json({
                     success: false,
-                    message: __("validation.notFound", { field: "model.topic.name" }),
+                    message: __("validation.notFound", { field: __("model.topic.name") }),
                     status: 400,
                     data: null
                 })
@@ -247,7 +237,7 @@ export const updateTestValidator = async (req, res, next) => {
             if (!country) {
                 return res.status(400).json({
                     success: false,
-                    message: __("validation.notFound", { field: "model.country.name" }),
+                    message: __("validation.notFound", { field: __("model.country.name") }),
                     status: 400,
                     data: null
                 })
@@ -279,7 +269,7 @@ export const getDataValidator = async (req, res, next) => {
             .optional()
             .allow("")
             .messages({
-                "string.base": __("validation.invalid", { field: "field.search" })
+                "string.base": __("validation.invalid", { field: __("field.search") })
             })
     });
 
@@ -301,34 +291,34 @@ export const getTestsValidator = async (req, res, next) => {
             .min(1)
             .optional()
             .messages({
-                "number.base": __("validation.invalid", { field: "field.page" }),
-                "number.min": __("validation.min", { field: "field.page", min: 1 })
+                "number.base": __("validation.invalid", { field: __("field.page") }),
+                "number.min": __("validation.min", { field: __("field.page"), min: 1 })
             }),
         pageSize: Joi.number()
             .integer()
             .min(1)
             .optional()
             .messages({
-                "number.base": __("validation.invalid", { field: "field.pageSize" }),
-                "number.min": __("validation.min", { field: "field.pageSize", min: 1 })
+                "number.base": __("validation.invalid", { field: __("field.pageSize") }),
+                "number.min": __("validation.min", { field: __("field.pageSize"), min: 1 })
             }),
         search: Joi.string()
             .optional()
             .allow("")
             .messages({
-                "string.base": __("validation.invalid", { field: "field.search" })
+                "string.base": __("validation.invalid", { field: __("field.search") })
             }),
         sortOrder: Joi.number()
             .valid(1, -1)
             .optional()
             .messages({
-                "any.only": __("validation.invalid", { field: "field.sortOrder" })
+                "any.only": __("validation.invalid", { field: __("field.sortOrder") })
             }),
         status: Joi.number()
             .valid(testStatus.active, testStatus.inactive)
             .optional()
             .messages({
-                "any.only": __("validation.invalid", { field: "field.status" })
+                "any.only": __("validation.invalid", { field: __("field.status") })
             }),
     });
 
@@ -353,10 +343,10 @@ export const compareAnswersValidator = async (req, res, next) => {
                 .length(24)
                 .required()
                 .messages({
-                    "string.base": __("validation.string", { field: "field.questionId" }),
-                    "string.hex": __("validation.hex", { field: "field.questionId" }),
-                    "string.length": __("validation.length", { field: "field.questionId", length: 24 }),
-                    "any.required": __("validation.required", { field: "field.questionId" })
+                    "string.base": __("validation.string", { field: __("field.questionId") }),
+                    "string.hex": __("validation.hex", { field: __("field.questionId") }),
+                    "string.length": __("validation.length", { field: __("field.questionId"), length: 24 }),
+                    "any.required": __("validation.required", { field: __("field.questionId") })
                 }),
             questionType: Joi.number()
                 .valid(
@@ -367,23 +357,23 @@ export const compareAnswersValidator = async (req, res, next) => {
                 )
                 .required()
                 .messages({
-                    "any.only": __("validation.invalid", { field: "model.question.questionType" }),
-                    "any.required": __("validation.required", { field: "model.question.questionType" })
+                    "any.only": __("validation.invalid", { field: __("model.question.questionType") }),
+                    "any.required": __("validation.required", { field: __("model.question.questionType") })
                 }),
             playerAnswer: Joi.alternatives().conditional("questionType", {
                 switch: [
                     {
                         is: questionType.trueFalse, then: Joi.boolean()
                             .messages({
-                                "boolean.base": __("validation.invalid", { field: "model.question.trueFalseAnswer" }),
-                                "any.required": __("validation.required", { field: "model.question.trueFalseAnswer" })
+                                "boolean.base": __("validation.invalid", { field: __("model.question.trueFalseAnswer") }),
+                                "any.required": __("validation.required", { field: __("model.question.trueFalseAnswer") })
                             })
                     },
                     {
                         is: questionType.multipleChoice, then: Joi.number()
                             .messages({
-                                "any.only": __("validation.invalid", { field: "model.question.multipleChoiceAnswer" }),
-                                "any.required": __("validation.required", { field: "model.question.multipleChoiceAnswer" })
+                                "any.only": __("validation.invalid", { field: __("model.question.multipleChoiceAnswer") }),
+                                "any.required": __("validation.required", { field: __("model.question.multipleChoiceAnswer") })
                             })
                     },
                     {
@@ -391,14 +381,14 @@ export const compareAnswersValidator = async (req, res, next) => {
                             leftColumn: Joi.string()
                                 .required()
                                 .messages({
-                                    "string.base": __("validation.invalid", { field: "model.question.leftColumn" }),
-                                    "any.required": __("validation.required", { field: "model.question.leftColumn" })
+                                    "string.base": __("validation.invalid", { field: __("model.question.leftColumn") }),
+                                    "any.required": __("validation.required", { field: __("model.question.leftColumn") })
                                 }),
                             rightColumn: Joi.string()
                                 .required()
                                 .messages({
-                                    "string.base": __("validation.invalid", { field: "model.question.rightColumn" }),
-                                    "any.required": __("validation.required", { field: "model.question.rightColumn" })
+                                    "string.base": __("validation.invalid", { field: __("model.question.rightColumn") }),
+                                    "any.required": __("validation.required", { field: __("model.question.rightColumn") })
                                 })
                         }))
                     },
@@ -407,18 +397,18 @@ export const compareAnswersValidator = async (req, res, next) => {
                             .items(
                                 Joi.string()
                                     .messages({
-                                        "string.base": __("validation.invalid", { field: "model.question.fillInTheBlankAnswer" })
+                                        "string.base": __("validation.invalid", { field: __("model.question.fillInTheBlankAnswer") })
                                     })
                             )
                             .messages({
-                                "array.base": __("validation.invalid", { field: "model.question.fillInTheBlankAnswers" }),
-                                "any.required": __("validation.required", { field: "model.question.fillInTheBlankAnswers" })
+                                "array.base": __("validation.invalid", { field: __("model.question.fillInTheBlankAnswers") }),
+                                "any.required": __("validation.required", { field: __("model.question.fillInTheBlankAnswers") })
                             })
                     }
                 ],
                 otherwise: Joi.any().forbidden()
             }).messages({
-                "any.required": __("validation.required", { field: "field.playerAnswer" })
+                "any.required": __("validation.required", { field: __("field.playerAnswer") })
             })
         });
 
@@ -428,27 +418,27 @@ export const compareAnswersValidator = async (req, res, next) => {
                 .length(24)
                 .required()
                 .messages({
-                    "string.base": __("validation.string", { field: "field.playerId" }),
-                    "string.hex": __("validation.hex", { field: "field.playerId" }),
-                    "string.length": __("validation.length", { field: "field.playerId", length: 24 }),
-                    "any.required": __("validation.required", { field: "field.playerId" })
+                    "string.base": __("validation.string", { field: __("field.playerId") }),
+                    "string.hex": __("validation.hex", { field: __("field.playerId") }),
+                    "string.length": __("validation.length", { field: __("field.playerId"), length: 24 }),
+                    "any.required": __("validation.required", { field: __("field.playerId") })
                 }),
             testId: Joi.string()
                 .hex()
                 .length(24)
                 .required()
                 .messages({
-                    "string.base": __("validation.string", { field: "field.testId" }),
-                    "string.hex": __("validation.hex", { field: "field.testId" }),
-                    "string.length": __("validation.length", { field: "field.testId", length: 24 }),
-                    "any.required": __("validation.required", { field: "field.testId" })
+                    "string.base": __("validation.string", { field: __("field.testId") }),
+                    "string.hex": __("validation.hex", { field: __("field.testId") }),
+                    "string.length": __("validation.length", { field: __("field.testId"), length: 24 }),
+                    "any.required": __("validation.required", { field: __("field.testId") })
                 }),
             answers: Joi.array()
                 .items(answerSchema)
                 .required()
                 .messages({
-                    "array.base": __("validation.invalid", { field: "field.answers" }),
-                    "any.required": __("validation.required", { field: "field.answers" })
+                    "array.base": __("validation.invalid", { field: __("field.answers") }),
+                    "any.required": __("validation.required", { field: __("field.answers") })
                 })
         });
 
@@ -474,25 +464,25 @@ export const saveTestResultValidator = async (req, res, next) => {
                 .length(24)
                 .required()
                 .messages({
-                    "string.base": __("validation.string", { field: "field.questionId" }),
-                    "string.hex": __("validation.hex", { field: "field.questionId" }),
-                    "string.length": __("validation.length", { field: "field.questionId", length: 24 }),
-                    "any.required": __("validation.required", { field: "field.questionId" })
+                    "string.base": __("validation.string", { field: __("field.questionId") }),
+                    "string.hex": __("validation.hex", { field: __("field.questionId") }),
+                    "string.length": __("validation.length", { field: __("field.questionId"), length: 24 }),
+                    "any.required": __("validation.required", { field: __("field.questionId") })
                 }),
             playerAnswer: Joi.alternatives().conditional("questionType", {
                 switch: [
                     {
                         is: questionType.trueFalse, then: Joi.boolean()
                             .messages({
-                                "boolean.base": __("validation.invalid", { field: "model.question.trueFalseAnswer" }),
-                                "any.required": __("validation.required", { field: "model.question.trueFalseAnswer" })
+                                "boolean.base": __("validation.invalid", { field: __("model.question.trueFalseAnswer") }),
+                                "any.required": __("validation.required", { field: __("model.question.trueFalseAnswer") })
                             })
                     },
                     {
                         is: questionType.multipleChoice, then: Joi.number()
                             .messages({
-                                "any.only": __("validation.invalid", { field: "model.question.multipleChoiceAnswer" }),
-                                "any.required": __("validation.required", { field: "model.question.multipleChoiceAnswer" })
+                                "any.only": __("validation.invalid", { field: __("model.question.multipleChoiceAnswer") }),
+                                "any.required": __("validation.required", { field: __("model.question.multipleChoiceAnswer") })
                             })
                     },
                     {
@@ -500,14 +490,14 @@ export const saveTestResultValidator = async (req, res, next) => {
                             leftColumn: Joi.string()
                                 .required()
                                 .messages({
-                                    "string.base": __("validation.invalid", { field: "model.question.leftColumn" }),
-                                    "any.required": __("validation.required", { field: "model.question.leftColumn" })
+                                    "string.base": __("validation.invalid", { field: __("model.question.leftColumn") }),
+                                    "any.required": __("validation.required", { field: __("model.question.leftColumn") })
                                 }),
                             rightColumn: Joi.string()
                                 .required()
                                 .messages({
-                                    "string.base": __("validation.invalid", { field: "model.question.rightColumn" }),
-                                    "any.required": __("validation.required", { field: "model.question.rightColumn" })
+                                    "string.base": __("validation.invalid", { field: __("model.question.rightColumn") }),
+                                    "any.required": __("validation.required", { field: __("model.question.rightColumn") })
                                 })
                         }))
                     },
@@ -516,23 +506,23 @@ export const saveTestResultValidator = async (req, res, next) => {
                             .items(
                                 Joi.string()
                                     .messages({
-                                        "string.base": __("validation.invalid", { field: "model.question.fillInTheBlankAnswer" })
+                                        "string.base": __("validation.invalid", { field: __("model.question.fillInTheBlankAnswer") })
                                     })
                             )
                             .messages({
-                                "array.base": __("validation.invalid", { field: "model.question.fillInTheBlankAnswers" }),
-                                "any.required": __("validation.required", { field: "model.question.fillInTheBlankAnswers" })
+                                "array.base": __("validation.invalid", { field: __("model.question.fillInTheBlankAnswers") }),
+                                "any.required": __("validation.required", { field: __("model.question.fillInTheBlankAnswers") })
                             })
                     }
                 ],
                 otherwise: Joi.any().forbidden()
             }).messages({
-                "any.required": __("validation.required", { field: "field.playerAnswer" })
+                "any.required": __("validation.required", { field: __("field.playerAnswer") })
             }),
             isCorrect: Joi.boolean()
                 .required()
                 .messages({
-                    "any.required": __("validation.required", { field: "field.isCorrect" })
+                    "any.required": __("validation.required", { field: __("field.isCorrect") })
                 }),
         });
 
@@ -542,27 +532,27 @@ export const saveTestResultValidator = async (req, res, next) => {
                 .length(24)
                 .required()
                 .messages({
-                    "string.base": __("validation.string", { field: "field.playerId" }),
-                    "string.hex": __("validation.hex", { field: "field.playerId" }),
-                    "string.length": __("validation.length", { field: "field.playerId", length: 24 }),
-                    "any.required": __("validation.required", { field: "field.playerId" })
+                    "string.base": __("validation.string", { field: __("field.playerId") }),
+                    "string.hex": __("validation.hex", { field: __("field.playerId") }),
+                    "string.length": __("validation.length", { field: __("field.playerId"), length: 24 }),
+                    "any.required": __("validation.required", { field: __("field.playerId") })
                 }),
             testId: Joi.string()
                 .hex()
                 .length(24)
                 .required()
                 .messages({
-                    "string.base": __("validation.string", { field: "field.testId" }),
-                    "string.hex": __("validation.hex", { field: "field.testId" }),
-                    "string.length": __("validation.length", { field: "field.testId", length: 24 }),
-                    "any.required": __("validation.required", { field: "field.testId" })
+                    "string.base": __("validation.string", { field: __("field.testId") }),
+                    "string.hex": __("validation.hex", { field: __("field.testId") }),
+                    "string.length": __("validation.length", { field: __("field.testId"), length: 24 }),
+                    "any.required": __("validation.required", { field: __("field.testId") })
                 }),
             answers: Joi.array()
                 .items(answerSchema)
                 .required()
                 .messages({
-                    "array.base": __("validation.invalid", { field: "field.answers" }),
-                    "any.required": __("validation.required", { field: "field.answers" })
+                    "array.base": __("validation.invalid", { field: __("field.answers") }),
+                    "any.required": __("validation.required", { field: __("field.answers") })
                 })
         });
 
@@ -605,20 +595,20 @@ export const checkAnswerValidator = async (req, res, next) => {
             .length(24)
             .required()
             .messages({
-                "string.base": __("validation.string", { field: "field.testResultId" }),
-                "string.hex": __("validation.hex", { field: "field.testResultId" }),
-                "string.length": __("validation.length", { field: "field.testResultId", length: 24 }),
-                "any.required": __("validation.required", { field: "field.testResultId" })
+                "string.base": __("validation.string", { field: __("field.testResultId") }),
+                "string.hex": __("validation.hex", { field: __("field.testResultId") }),
+                "string.length": __("validation.length", { field: __("field.testResultId"), length: 24 }),
+                "any.required": __("validation.required", { field: __("field.testResultId") })
             }),
         questionId: Joi.string()
             .hex()
             .length(24)
             .required()
             .messages({
-                "string.base": __("validation.string", { field: "field.questionId" }),
-                "string.hex": __("validation.hex", { field: "field.questionId" }),
-                "string.length": __("validation.length", { field: "field.questionId", length: 24 }),
-                "any.required": __("validation.required", { field: "field.questionId" })
+                "string.base": __("validation.string", { field: __("field.questionId") }),
+                "string.hex": __("validation.hex", { field: __("field.questionId") }),
+                "string.length": __("validation.length", { field: __("field.questionId"), length: 24 }),
+                "any.required": __("validation.required", { field: __("field.questionId") })
             }),
         playerAnswer: Joi.alternatives()
             .try(
@@ -634,7 +624,7 @@ export const checkAnswerValidator = async (req, res, next) => {
             )
             .required()
             .messages({
-                "any.required": __("validation.required", { field: "field.playerAnswer" })
+                "any.required": __("validation.required", { field: __("field.playerAnswer") })
             })
     });
 

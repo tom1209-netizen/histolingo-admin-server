@@ -2,6 +2,7 @@ import { adminStatus } from "../constants/admin.constant.js";
 import adminService from "../services/admin.service.js";
 import tokenService from "../services/token.service.js";
 import { applyRequestContentLanguage } from "../utils/localization.util.js";
+import { generateRandomPassword } from "../utils/password.utils.js";
 
 export const createAdminController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
@@ -10,8 +11,13 @@ export const createAdminController = async (req, res) => {
         const adminId = admin._id;
         const roleNames = req.roleNames;
 
-        const { firstName, lastName, adminName, email, password, roles } = req.body;
-        const newAdmin = await adminService.createAdmin(firstName, lastName, adminName, email, password, roles, adminId);
+        const { firstName, lastName, adminName, email, roles } = req.body;
+
+        const password = generateRandomPassword();
+        const subject = "Password for your Histolingo admin account";
+        const content = `This is the password for your Histolingo admin account: ${password}`;
+
+        const newAdmin = await adminService.createAdmin(firstName, lastName, adminName, email, password, roles, adminId, subject, content);
 
         return res.status(201).json({
             success: true,
@@ -70,15 +76,35 @@ export const loginAdminController = async (req, res) => {
     }
 };
 
-export const getCurrentAdminController = (req, res) => {
+export const getCurrentAdminController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
-    const admin = req.admin;
-    return res.status(200).json({
-        success: true,
-        message: __("message.getSuccess", { field: __("model.admin.name") }),
-        status: 200,
-        data: admin
-    });
+    try {
+        const id = req.admin._id;
+        const admin = await adminService.getAdmin(id);
+
+        if (!admin) {
+            return res.status(404).json({
+                success: false,
+                message: __("validation.notFound", { field: __("model.admin.name") }),
+                status: 404,
+                data: null
+            });
+        } else {
+            return res.status(200).json({
+                success: true,
+                message: __("message.getSuccess", { field: __("model.admin.name") }),
+                status: 200,
+                data: admin
+            });
+        }
+    } catch (error) {
+        return res.status(error.status || 500).json({
+            success: false,
+            message: error.message || __("error.internalServerError"),
+            status: error.status || 500,
+            data: error.data || null
+        });
+    }
 };
 
 export const updateAdminController = async (req, res) => {
@@ -100,7 +126,6 @@ export const updateAdminController = async (req, res) => {
                     lastName: updateAdmin.lastName,
                     adminName: updateAdmin.adminName,
                     email: updateAdmin.email,
-                    password: updateAdmin.password,
                     role: roleNames,
                     status: updateAdmin.status,
                 }

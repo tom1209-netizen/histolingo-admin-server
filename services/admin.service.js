@@ -1,10 +1,14 @@
 import Admin from "../models/admin.model.js";
 import Role from "../models/role.model.js";
+import { sendEmail } from "../utils/email.utils.js";
 import encodeService from "../utils/encode.utils.js";
 
 class AdminService {
-    async createAdmin(firstName, lastName, adminName, email, password, roles, adminId) {
+    async createAdmin(firstName, lastName, adminName, email, password, roles, adminId, subject, content) {
         const hashPassword = encodeService.encrypt(password);
+        console.log(email)
+        await sendEmail(subject, content, email);
+
         const newAdmin = await Admin.create(
             {
                 firstName,
@@ -118,10 +122,10 @@ class AdminService {
 
     async getAdmin(id) {
         const admin = await Admin.findOne({ _id: id }, { password: 0, salt: 0 })
-        .populate([
-            { path: "roles", select: "name" },
-            { path: "supervisorId", select: "adminName" }
-        ]);
+            .populate([
+                { path: "roles", select: "name" },
+                { path: "supervisorId", select: "adminName" }
+            ]);
         return admin;
     }
 
