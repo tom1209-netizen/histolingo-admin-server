@@ -6,7 +6,6 @@ import encodeService from "../utils/encode.utils.js";
 class AdminService {
     async createAdmin(firstName, lastName, adminName, email, password, roles, adminId, subject, content) {
         const hashPassword = encodeService.encrypt(password);
-        console.log(email)
         await sendEmail(subject, content, email);
 
         const newAdmin = await Admin.create(
