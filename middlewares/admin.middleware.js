@@ -8,52 +8,42 @@ import { applyRequestContentLanguage } from "../utils/localization.util.js";
 export const createAdminValidator = async (req, res, next) => {
     const __ = applyRequestContentLanguage(req);
     try {
-        const { firstName, lastName, adminName, email, password, roles } = req.body;
+        const { firstName, lastName, adminName, email, roles } = req.body;
 
         const createSchema = Joi.object({
             firstName: Joi.string()
                 .max(100)
                 .required()
                 .messages({
-                    "string.base": __("validation.string", { field: "field.name" }),
-                    "string.max": __("validation.max", { field: "field.name", max: 100 }),
-                    "any.required": __("validation.required", { field: "field.name" })
+                    "string.base": __("validation.string", { field: __("field.name") }),
+                    "string.max": __("validation.max", { field: __("field.name"), max: 100 }),
+                    "any.required": __("validation.required", { field: __("field.name") })
                 }),
             lastName: Joi.string()
                 .max(100)
                 .required()
                 .messages({
-                    "string.base": __("validation.string", { field: "field.name" }),
-                    "string.max": __("validation.max", { field: "field.name", max: 100 }),
-                    "any.required": __("validation.required", { field: "field.name" })
+                    "string.base": __("validation.string", { field: __("field.name") }),
+                    "string.max": __("validation.max", { field: __("field.name"), max: 100 }),
+                    "any.required": __("validation.required", { field: __("field.name") })
                 }),
             adminName: Joi.string()
                 .min(1)
                 .max(100)
                 .required()
                 .messages({
-                    "string.base": __("validation.string", { field: "field.name" }),
-                    "string.min": __("validation.min", { field: "field.name", min: 1 }),
-                    "string.max": __("validation.max", { field: "field.name", max: 100 }),
-                    "any.required": __("validation.required", { field: "field.name" })
+                    "string.base": __("validation.string", { field: __("field.name") }),
+                    "string.min": __("validation.min", { field: __("field.name"), min: 1 }),
+                    "string.max": __("validation.max", { field: __("field.name"), max: 100 }),
+                    "any.required": __("validation.required", { field: __("field.name") })
                 }),
             email: Joi.string()
                 .email()
                 .max(250)
                 .required()
                 .messages({
-                    "string.email": __("validation.email", { field: "field.name", max: 100 }),
-                    "any.required": __("validation.required", { field: "field.name" })
-                }),
-            password: Joi.string()
-                .min(8)
-                .max(250)
-                .required()
-                .messages({
-                    "string.base": __("validation.string", { field: "field.password" }),
-                    "string.min": __("validation.min", { field: "field.password", min: 8 }),
-                    "string.max": __("validation.max", { field: "field.password", max: 250 }),
-                    "any.required": __("validation.required", { field: "field.password" })
+                    "string.email": __("validation.email", { field: __("field.name"), max: 100 }),
+                    "any.required": __("validation.required", { field: __("field.name") })
                 }),
             roles: Joi.array()
                 .items(
@@ -61,15 +51,15 @@ export const createAdminValidator = async (req, res, next) => {
                         .hex()
                         .length(24)
                         .messages({
-                            "string.base": __("validation.string", { field: "model.role.name" }),
-                            "string.hex": __("validation.hex", { field: "model.role.name" }),
-                            "string.length": __("validation.length", { field: "model.role.name", length: 24 }),
-                            "any.required": __("validation.required", { field: "model.role.name" })
+                            "string.base": __("validation.string", { field: __("model.role.name") }),
+                            "string.hex": __("validation.hex", { field: __("model.role.name") }),
+                            "string.length": __("validation.length", { field: __("model.role.name"), length: 24 }),
+                            "any.required": __("validation.required", { field: __("model.role.name") })
                         })
                 )
                 .required()
                 .messages({
-                    "array.base": __("validation.array", { field: "model.role.name" })
+                    "array.base": __("validation.array", { field: __("model.role.name") })
                 }),
         });
 
@@ -78,7 +68,6 @@ export const createAdminValidator = async (req, res, next) => {
             lastName,
             adminName,
             email,
-            password,
             roles
         });
 
@@ -132,18 +121,18 @@ export const loginAdminValidator = async (req, res, next) => {
                 .max(250)
                 .required()
                 .messages({
-                    "string.email": __("validation.email", { field: "field.name", max: 100 }),
-                    "any.required": __("validation.required", { field: "field.name" })
+                    "string.email": __("validation.email", { field: __("field.name"), max: 100 }),
+                    "any.required": __("validation.required", { field: __("field.name") })
                 }),
             password: Joi.string()
                 .min(8)
                 .max(250)
                 .required()
                 .messages({
-                    "string.base": __("validation.string", { field: "field.password" }),
-                    "string.min": __("validation.min", { field: "field.password", min: 8 }),
-                    "string.max": __("validation.max", { field: "field.password", max: 250 }),
-                    "any.required": __("validation.required", { field: "field.password" })
+                    "string.base": __("validation.string", { field: __("field.password") }),
+                    "string.min": __("validation.min", { field: __("field.password"), min: 8 }),
+                    "string.max": __("validation.max", { field: __("field.password"), max: 250 }),
+                    "any.required": __("validation.required", { field: __("field.password") })
                 })
         })
 
@@ -180,34 +169,34 @@ export const getAdminsValidator = async (req, res, next) => {
             .min(1)
             .optional()
             .messages({
-                "number.base": __("validation.invalid", { field: "field.page" }),
-                "number.min": __("validation.min", { field: "field.page", min: 1 })
+                "number.base": __("validation.invalid", { field: __("field.page") }),
+                "number.min": __("validation.min", { field: __("field.page"), min: 1 })
             }),
         pageSize: Joi.number()
             .integer()
             .min(1)
             .optional()
             .messages({
-                "number.base": __("validation.invalid", { field: "field.pageSize" }),
-                "number.min": __("validation.min", { field: "field.pageSize", min: 1 })
+                "number.base": __("validation.invalid", { field: __("field.pageSize") }),
+                "number.min": __("validation.min", { field: __("field.pageSize"), min: 1 })
             }),
         search: Joi.string()
             .optional()
             .allow("")
             .messages({
-                "string.base": __("validation.invalid", { field: "field.search" })
+                "string.base": __("validation.invalid", { field: __("field.search") })
             }),
         sortOrder: Joi.number()
             .valid(1, -1)
             .optional()
             .messages({
-                "any.only": __("validation.invalid", { field: "field.sortOrder" })
+                "any.only": __("validation.invalid", { field: __("field.sortOrder") })
             }),
         status: Joi.number()
             .valid(adminStatus.active, adminStatus.inactive)
             .optional()
             .messages({
-                "any.only": __("validation.invalid", { field: "field.status" })
+                "any.only": __("validation.invalid", { field: __("field.status") })
             }),
     });
 
@@ -226,7 +215,7 @@ export const getRolesToAdminValidator = async (req, res, next) => {
             .allow("")
             .optional()
             .messages({
-                "string.base": __("validation.invalid", { field: "field.search" })
+                "string.base": __("validation.invalid", { field: __("field.search") })
             })
     });
     try {
@@ -244,68 +233,57 @@ export const updateAdminValidator = async (req, res, next) => {
         const updateSchema = Joi.object({
             firstName: Joi.string()
                 .max(100)
-                .required()
                 .messages({
-                    "string.base": __("validation.string", { field: "field.name" }),
-                    "string.max": __("validation.max", { field: "field.name", max: 100 }),
-                    "any.required": __("validation.required", { field: "field.name" })
+                    "string.base": __("validation.string", { field: __("field.name") }),
+                    "string.max": __("validation.max", { field: __("field.name"), max: 100 }),
                 }),
             lastName: Joi.string()
                 .max(100)
-                .required()
                 .messages({
-                    "string.base": __("validation.string", { field: "field.name" }),
-                    "string.max": __("validation.max", { field: "field.name", max: 100 }),
-                    "any.required": __("validation.required", { field: "field.name" })
+                    "string.base": __("validation.string", { field: __("field.name") }),
+                    "string.max": __("validation.max", { field: __("field.name"), max: 100 }),
                 }),
             adminName: Joi.string()
                 .min(1)
                 .max(100)
-                .required()
                 .messages({
-                    "string.base": __("validation.string", { field: "field.name" }),
-                    "string.min": __("validation.min", { field: "field.name", min: 1 }),
-                    "string.max": __("validation.max", { field: "field.name", max: 100 }),
-                    "any.required": __("validation.required", { field: "field.name" })
+                    "string.base": __("validation.string", { field: __("field.name") }),
+                    "string.min": __("validation.min", { field: __("field.name"), min: 1 }),
+                    "string.max": __("validation.max", { field: __("field.name"), max: 100 }),
                 }),
             email: Joi.string()
                 .email()
                 .max(250)
-                .required()
                 .messages({
-                    "string.email": __("validation.email", { field: "field.name", max: 100 }),
-                    "any.required": __("validation.required", { field: "field.name" })
+                    "string.email": __("validation.email", { field: __("field.email"), max: 100 }),
                 }),
-            password: Joi.string()
-                .min(8)
-                .max(250)
-                .required()
-                .messages({
-                    "string.base": __("validation.string", { field: "field.password" }),
-                    "string.min": __("validation.min", { field: "field.password", min: 8 }),
-                    "string.max": __("validation.max", { field: "field.password", max: 250 }),
-                    "any.required": __("validation.required", { field: "field.password" })
-                }),
+            // password: Joi.string()
+            //     .min(8)
+            //     .max(250)
+            //     .messages({
+            //         "string.base": __("validation.string", { field: __("field.password") }),
+            //         "string.min": __("validation.min", { field: __("field.password"), min: 8 }),
+            //         "string.max": __("validation.max", { field: __("field.password"), max: 250 }),
+            //     }),
             roles: Joi.array()
                 .items(
                     Joi.string()
                         .hex()
                         .length(24)
                         .messages({
-                            "string.base": __("validation.string", { field: "model.role.name" }),
-                            "string.hex": __("validation.hex", { field: "model.role.name" }),
-                            "string.length": __("validation.length", { field: "model.role.name", length: 24 }),
-                            "any.required": __("validation.required", { field: "model.role.name" })
+                            "string.base": __("validation.string", { field: __("model.role.name") }),
+                            "string.hex": __("validation.hex", { field: __("model.role.name") }),
+                            "string.length": __("validation.length", { field: __("model.role.name"), length: 24 }),
                         })
                 )
                 .required()
                 .messages({
-                    "array.base": __("validation.array", { field: "model.role.name" })
+                    "array.base": __("validation.array", { field: __("model.role.name") })
                 }),
             status: Joi.number()
                 .valid(adminStatus.active, adminStatus.inactive)
                 .messages({
-                    "any.only": __("validation.invalid", { field: "field.status" })
+                    "any.only": __("validation.invalid", { field: __("field.status") })
                 }),
         });
 
@@ -315,7 +293,7 @@ export const updateAdminValidator = async (req, res, next) => {
             lastName,
             adminName,
             email,
-            password,
+            // password,
             roles,
             status
         });

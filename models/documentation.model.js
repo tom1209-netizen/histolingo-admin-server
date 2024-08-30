@@ -7,7 +7,7 @@ const documentationSchema = new Schema(
         source: {
             type: String,
             required: true,
-            maxLength: 250,
+            // maxLength: 250,
         },
         name: {
             type: String,
@@ -17,7 +17,7 @@ const documentationSchema = new Schema(
         content: {
             type: String,
             required: true,
-            maxLength: 1000,
+            // maxLength: 1000,
         },
         topicId: {
             type: Schema.Types.ObjectId,
@@ -32,7 +32,7 @@ const documentationSchema = new Schema(
         image: {
             type: String,
             require: true,
-            maxLength: 1000,
+            // maxLength: 1000,
         },
         status: {
             type: Number,

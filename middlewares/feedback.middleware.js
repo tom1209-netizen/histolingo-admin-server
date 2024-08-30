@@ -11,10 +11,10 @@ export const getFeedbackValidator = async (req, res, next) => {
         .length(24)
         .required()
         .messages({
-            "string.base": __("validation.string", { field: "field.feedback" }),
-            "string.hex": __("validation.hex", { field: "field.feedback" }),
-            "string.length": __("validation.length", { field: "field.feedback", length: 24 }),
-            "any.required": __("validation.required", { field: "field.feedback" })
+            "string.base": __("validation.string", { field: __("field.feedback") }),
+            "string.hex": __("validation.hex", { field: __("field.feedback") }),
+            "string.length": __("validation.length", { field: __("field.feedback"), length: 24 }),
+            "any.required": __("validation.required", { field: __("field.feedback") })
         });
 
     try {
@@ -40,34 +40,34 @@ export const getFeedbacksValidator = async (req, res, next) => {
             .min(1)
             .optional()
             .messages({
-                "number.base": __("validation.invalid", { field: "field.page" }),
-                "number.min": __("validation.min", { field: "field.page", min: 1 })
+                "number.base": __("validation.invalid", { field: __("field.page") }),
+                "number.min": __("validation.min", { field: __("field.page"), min: 1 })
             }),
         pageSize: Joi.number()
             .integer()
             .min(1)
             .optional()
             .messages({
-                "number.base": __("validation.invalid", { field: "field.pageSize" }),
-                "number.min": __("validation.min", { field: "field.pageSize", min: 1 })
+                "number.base": __("validation.invalid", { field: __("field.pageSize") }),
+                "number.min": __("validation.min", { field: __("field.pageSize"), min: 1 })
             }),
         search: Joi.string()
             .optional()
             .allow("")
             .messages({
-                "string.base": __("validation.invalid", { field: "field.search" })
+                "string.base": __("validation.invalid", { field: __("field.search") })
             }),
         sortOrder: Joi.number()
             .valid(1, -1)
             .optional()
             .messages({
-                "any.only": __("validation.invalid", { field: "field.sortOrder" })
+                "any.only": __("validation.invalid", { field: __("field.sortOrder") })
             }),
         status: Joi.number()
             .valid(feedbackStatus.active, feedbackStatus.inactive)
             .optional()
             .messages({
-                "any.only": __("validation.invalid", { field: "field.status" })
+                "any.only": __("validation.invalid", { field: __("field.status") })
             }),
     });
 
