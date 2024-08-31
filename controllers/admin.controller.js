@@ -3,6 +3,7 @@ import adminService from "../services/admin.service.js";
 import tokenService from "../services/token.service.js";
 import { applyRequestContentLanguage } from "../utils/localization.util.js";
 import { generateRandomPassword } from "../utils/password.utils.js";
+import { isValidStatus } from "../utils/validation.utils.js";
 
 export const createAdminController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
@@ -160,9 +161,9 @@ export const getAdmins = async (req, res) => {
                 ]
             }
             : {};
-        if (status !== null && status !== undefined && status !== "") {
-            filters.status = status;
-        }
+            if (isValidStatus(status)) {
+                filters.status = Number(status);
+            }
 
         const { admins, totalAdminsCount } = await adminService.getAdmins(filters, page, limitedPageSize, sortOrder);
 

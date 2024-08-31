@@ -35,7 +35,7 @@ export const getListPlayerValidator = async (req, res, next) => {
                 "any.only": __("validation.invalid", { field: __("field.sortOrder") })
             }),
         status: Joi.number()
-            .valid(playerStatus.active, playerStatus.inactive)
+            .valid(playerStatus.active, playerStatus.inactive, "")
             .optional()
             .messages({
                 "any.only": __("validation.invalid", { field: __("field.status") })

@@ -1,5 +1,6 @@
 import playerService from "../services/player.service.js";
 import { applyRequestContentLanguage } from "../utils/localization.util.js";
+import { isValidStatus } from "../utils/validation.utils.js";
 
 export const getPlayersController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
@@ -17,8 +18,8 @@ export const getPlayersController = async (req, res) => {
                 ]
             }
             : {};
-        if (status !== null && status !== undefined && status !== "") {
-            filters.status = status;
+        if (isValidStatus(status)) {
+            filters.status = Number(status);
         }
 
         const { players, totalPlayersCount } = await playerService.getPlayers(filters, page, limitedPageSize, sortOrder);

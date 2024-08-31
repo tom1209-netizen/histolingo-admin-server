@@ -192,7 +192,7 @@ export const getCountriesValidator = async (req, res, next) => {
                 "any.only": __("validation.invalid", { field: __("field.sortOrder") })
             }),
         status: Joi.number()
-            .valid(countryStatus.active, countryStatus.inactive)
+            .valid(countryStatus.active, countryStatus.inactive, "")
             .optional()
             .messages({
                 "any.only": __("validation.invalid", { field: __("field.status") })

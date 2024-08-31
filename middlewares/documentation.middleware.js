@@ -235,7 +235,7 @@ export const getDocumentationsValidator = async (req, res, next) => {
                 "any.only": __("validation.invalid", { field: __("field.sortOrder") })
             }),
         status: Joi.number()
-            .valid(documentationStatus.active, documentationStatus.inactive)
+            .valid(documentationStatus.active, documentationStatus.inactive, "")
             .optional()
             .messages({
                 "any.only": __("validation.invalid", { field: __("field.status") })

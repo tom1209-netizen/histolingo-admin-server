@@ -193,7 +193,7 @@ export const getRolesValidator = async (req, res, next) => {
                 "any.only": __("validation.invalid", { field: __("field.sortOrder") })
             }),
         status: Joi.number()
-            .valid(0, 1)
+            .valid(roleStatus.active, roleStatus.inactive, "")
             .optional()
             .messages({
                 "any.only": __("validation.invalid", { field: __("field.status") })

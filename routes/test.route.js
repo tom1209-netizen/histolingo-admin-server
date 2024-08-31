@@ -58,14 +58,6 @@ testRoute.get(
     getTopicsController
 );
 
-testRoute.patch(
-    "/:id",
-    authentication,
-    authorization(rolePrivileges.test.update),
-    updateTestValidator,
-    updateTestController
-);
-
 testRoute.get(
     "/",
     authentication,
@@ -111,5 +103,13 @@ testRoute.get(
     getTestController
 );
 
+
+testRoute.patch(
+    "/:id",
+    authentication,
+    authorization(rolePrivileges.test.update),
+    updateTestValidator,
+    updateTestController
+);
 
 export default testRoute;
