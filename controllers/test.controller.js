@@ -5,6 +5,7 @@ import TestResult from "../models/testResult.model.js";
 import testService from "../services/test.service.js";
 import { shuffle } from "../utils/array.utils.js";
 import { applyRequestContentLanguage } from "../utils/localization.util.js";
+import { isValidStatus } from "../utils/validation.utils.js";
 
 export const getCountriesController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
@@ -201,8 +202,8 @@ export const getTestsController = async (req, res) => {
                 ]
             }
             : {};
-        if (status !== null && status !== undefined && status !== "") {
-            filters.status = status;
+        if (isValidStatus(status)) {
+            filters.status = Number(status);
         }
 
         const { tests, totalTestsCount } = await testService.getTests(filters, page, limitedPageSize, sortOrder);
@@ -392,7 +393,7 @@ export const checkAnswerController = async (req, res) => {
 
         const isCorrect = await testService.checkAnswer(testResult, answer, playerAnswer, question);
 
-        
+
 
         return res.status(200).json({
             success: true,

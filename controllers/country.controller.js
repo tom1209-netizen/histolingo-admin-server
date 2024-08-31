@@ -1,5 +1,6 @@
 import countryService from "../services/country.service.js";
 import { applyRequestContentLanguage, t } from "../utils/localization.util.js";
+import { isValidStatus } from "../utils/validation.utils.js";
 
 export const createCountryController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
@@ -109,15 +110,15 @@ export const getCountryController = async (req, res) => {
 export const getCountriesController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
     try {
-        const { search = "", page = 1, pageSize = 10, status, sortOrder = -1  } = req.query;
+        const { search = "", page = 1, pageSize = 10, status, sortOrder = -1 } = req.query;
 
         const maxPageSize = 100;
         const limitedPageSize = Math.min(pageSize, maxPageSize);
 
         const filters = search
             ? { name: { $regex: search, $options: "i" } } : {};
-        if (status !== null && status !== undefined && status !== "") {
-            filters.status = status;
+        if (isValidStatus(status)) {
+            filters.status = Number(status);
         }
 
         const { countries, totalCountriesCount } = await countryService.getCountries(filters, page, limitedPageSize, sortOrder);

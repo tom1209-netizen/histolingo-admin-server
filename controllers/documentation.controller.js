@@ -1,5 +1,6 @@
 import documentationService from "../services/documentation.service.js";
 import { applyRequestContentLanguage } from "../utils/localization.util.js";
+import { isValidStatus } from "../utils/validation.utils.js";
 
 export const createDocumentationController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
@@ -122,8 +123,8 @@ export const getDocumentationsController = async (req, res) => {
 
         const filters = search
             ? { name: { $regex: search, $options: "i" } } : {};
-        if (status !== null && status !== undefined && status !== "") {
-            filters.status = status;
+        if (isValidStatus(status)) {
+            filters.status = Number(status);
         }
 
         const { documentations, totalDocumentationsCount } = await documentationService.getDocumentations(filters, page, limitedPageSize, sortOrder);

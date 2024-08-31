@@ -193,7 +193,7 @@ export const getAdminsValidator = async (req, res, next) => {
                 "any.only": __("validation.invalid", { field: __("field.sortOrder") })
             }),
         status: Joi.number()
-            .valid(adminStatus.active, adminStatus.inactive)
+            .valid(adminStatus.active, adminStatus.inactive, "")
             .optional()
             .messages({
                 "any.only": __("validation.invalid", { field: __("field.status") })

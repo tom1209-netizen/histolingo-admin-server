@@ -248,7 +248,7 @@ export const getTopicsValidator = async (req, res, next) => {
                 "any.only": __("validation.invalid", { field: __("field.sortOrder") })
             }),
         status: Joi.number()
-            .valid(topicStatus.active, topicStatus.inactive)
+            .valid(topicStatus.active, topicStatus.inactive, "")
             .optional()
             .messages({
                 "any.only": __("validation.invalid", { field: __("field.status") })
