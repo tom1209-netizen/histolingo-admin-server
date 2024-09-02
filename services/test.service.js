@@ -136,47 +136,6 @@ class TestService {
         return questions;
     }
 
-    async compareAnswers(answers) {
-        let score = 0;
-        const results = [];
-
-        for (const answer of answers) {
-            const question = await BaseQuestion.findById(answer.questionId).lean();
-            if (!question) {
-                return res.status(404).json({
-                    success: false,
-                    message: "Question not found",
-                    status: 404,
-                    data: null,
-                });
-            }
-
-
-            let isCorrect = false;
-            if (question.questionType === questionType.trueFalse || question.questionType === questionType.multipleChoice) {
-                isCorrect = answer.playerAnswer === question.answer;
-            } else if (question.questionType === questionType.matching) {
-                const sortedPlayerAnswer = _.sortBy(answer.playerAnswer, ["leftColumn", "rightColumn"]);
-                const sortedCorrectAnswer = _.sortBy(question.answer, ["leftColumn", "rightColumn"]);
-                isCorrect = _.isEqual(sortedPlayerAnswer, sortedCorrectAnswer);
-            } else if (question.questionType === questionType.fillInTheBlank) {
-                const sortedPlayerAnswer = _.sortBy(answer.playerAnswer);
-                const sortedCorrectAnswer = _.sortBy(question.answer);
-                isCorrect = _.isEqual(sortedPlayerAnswer, sortedCorrectAnswer);
-            }
-
-            results.push({
-                questionId: question._id,
-                playerAnswer: answer.playerAnswer,
-                isCorrect,
-            });
-
-            if (isCorrect) score += 1;
-        }
-
-        return { score, results }
-    }
-
     async saveResults(playerId, testId, score, answers) {
         const newTestResult = await TestResult.create({
             playerId,
@@ -190,7 +149,7 @@ class TestService {
     async checkAnswer(testResult, answer, playerAnswer, question) {
         let isCorrect = false;
         if (question.questionType === questionType.trueFalse || question.questionType === questionType.multipleChoice) {
-            isCorrect = playerAnswer === question.answer;
+            isCorrect = playerAnswer === Number(question.answer);
         } else if (question.questionType === questionType.matching) {
             const sortedPlayerAnswer = _.sortBy(playerAnswer, ["leftColumn", "rightColumn"]);
             const sortedCorrectAnswer = _.sortBy(question.answer, ["leftColumn", "rightColumn"]);
@@ -205,7 +164,7 @@ class TestService {
         answer.playerAnswer = playerAnswer;
         answer.isCorrect = isCorrect;
 
-        await testResult.save();
+        // await testResult.save();
         return isCorrect;
     }
 };

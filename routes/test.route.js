@@ -10,7 +10,6 @@ import {
 } from "../constants/role.constant.js";
 import {
     checkAnswerValidator,
-    compareAnswersValidator,
     createTestValidator,
     getDataValidator,
     getTestsValidator,
@@ -26,7 +25,6 @@ import {
     getTopicsController,
     updateTestController,
     getQuestionsController,
-    compareAnswersController,
     startDemoController,
     checkAnswerController
 
@@ -64,13 +62,6 @@ testRoute.get(
     authorization(rolePrivileges.test.read),
     getTestsValidator,
     getTestsController
-);
-
-testRoute.post(
-    "/demo",
-    authentication,
-    compareAnswersValidator,
-    compareAnswersController
 );
 
 testRoute.get(

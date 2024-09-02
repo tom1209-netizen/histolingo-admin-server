@@ -262,35 +262,6 @@ export const getTestController = async (req, res) => {
     }
 };
 
-export const compareAnswersController = async (req, res) => {
-    const __ = applyRequestContentLanguage(req);
-    try {
-        const playerData = req.body;
-        const { answers } = req.body;
-        const { score, results } = await testService.compareAnswers(answers);
-
-        return res.status(200).json({
-            success: true,
-            message: __("message.getSuccess", { field: __("model.testResult.name") }),
-            data: {
-                results: {
-                    playerId: playerData.playerId,
-                    testId: playerData.testId,
-                    score,
-                    answers: results,
-                }
-            },
-        });
-    } catch (error) {
-        return res.status(error.status || 500).json({
-            success: false,
-            message: error.message || __("error.internalServerError"),
-            status: error.status || 500,
-            data: error.data || null
-        });
-    }
-};
-
 export const startDemoController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
     try {

@@ -210,6 +210,7 @@ export const getAdminsValidator = async (req, res, next) => {
 };
 
 export const getRolesToAdminValidator = async (req, res, next) => {
+    const __ = applyRequestContentLanguage(req);
     const schema = Joi.object({
         search: Joi.string()
             .allow("")
