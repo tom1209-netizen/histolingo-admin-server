@@ -277,7 +277,6 @@ export const updateAdminValidator = async (req, res, next) => {
                             "string.length": __("validation.length", { field: __("model.role.name"), length: 24 }),
                         })
                 )
-                .required()
                 .messages({
                     "array.base": __("validation.array", { field: __("model.role.name") })
                 }),
