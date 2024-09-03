@@ -6,7 +6,6 @@ import Test from "../models/test.model.js";
 import Topic from "../models/topic.model.js";
 import Country from "../models/country.model.js";
 import { testStatus } from "../constants/test.constant.js";
-import { questionType } from "../constants/question.constant.js";
 
 
 export const createTestValidator = async (req, res, next) => {
@@ -264,6 +263,7 @@ export const updateTestValidator = async (req, res, next) => {
 };
 
 export const getDataValidator = async (req, res, next) => {
+    const __ = applyRequestContentLanguage(req);
     const schema = Joi.object({
         search: Joi.string()
             .optional()
