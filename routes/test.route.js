@@ -49,7 +49,7 @@ testRoute.get(
 );
 
 testRoute.get(
-    "/getTopicsTest",
+    "/getTopics",
     authentication,
     authorization(rolePrivileges.test.create),
     getDataValidator,
@@ -87,20 +87,19 @@ testRoute.post(
     checkAnswerController
 );
 
-testRoute.get(
-    "/:id",
-    authentication,
-    authorization(rolePrivileges.test.read),
-    getTestController
-);
-
-
 testRoute.patch(
     "/:id",
     authentication,
     authorization(rolePrivileges.test.update),
     updateTestValidator,
     updateTestController
+);
+
+testRoute.get(
+    "/:id",
+    authentication,
+    authorization(rolePrivileges.test.read),
+    getTestController
 );
 
 export default testRoute;
