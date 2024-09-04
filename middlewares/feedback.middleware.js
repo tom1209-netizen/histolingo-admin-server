@@ -64,7 +64,7 @@ export const getFeedbacksValidator = async (req, res, next) => {
                 "any.only": __("validation.invalid", { field: __("field.sortOrder") })
             }),
         status: Joi.number()
-            .valid(feedbackStatus.active, feedbackStatus.inactive)
+            .valid(feedbackStatus.active, feedbackStatus.inactive, '')
             .optional()
             .messages({
                 "any.only": __("validation.invalid", { field: __("field.status") })
