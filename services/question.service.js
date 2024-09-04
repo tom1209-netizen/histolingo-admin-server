@@ -67,9 +67,16 @@ class QuestionService {
     }
 
     async updateQuestion(id, updateData) {
-        const updatedQuestion = await BaseQuestion.findByIdAndUpdate(id, updateData, { new: true })
-            .populate("topicId")
-            .populate("countryId");
+        const updatedQuestion = await BaseQuestion.findOneAndUpdate(
+            { _id: id },
+            {
+                $set: updateData,
+            },
+            { new: true }
+        )
+            .populate('topicId')
+            .populate('countryId');
+
         return updatedQuestion;
     }
 
