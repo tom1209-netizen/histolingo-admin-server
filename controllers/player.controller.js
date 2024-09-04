@@ -14,7 +14,6 @@ export const getPlayersController = async (req, res) => {
             ? {
                 $or: [
                     { userName: { $regex: search, $options: "i" } },
-                    { fullName: { $regex: search, $options: "i" } },
                 ]
             }
             : {};

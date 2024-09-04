@@ -152,18 +152,10 @@ export const getAdmins = async (req, res) => {
 
 
         const filters = search
-            ? {
-                $or: [
-                    { firstName: { $regex: search, $options: "i" } },
-                    { lastName: { $regex: search, $options: "i" } },
-                    { adminName: { $regex: search, $options: "i" } },
-                    { email: { $regex: search, $options: "i" } },
-                ]
-            }
-            : {};
-            if (isValidStatus(status)) {
-                filters.status = Number(status);
-            }
+            ? { adminName: { $regex: search, $options: "i" } } : {};
+        if (isValidStatus(status)) {
+            filters.status = Number(status);
+        }
 
         const { admins, totalAdminsCount } = await adminService.getAdmins(filters, page, limitedPageSize, sortOrder);
 
