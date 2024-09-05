@@ -71,6 +71,7 @@ class DocumentationService {
                                 source: 1,
                                 name: 1,
                                 content: 1,
+                                image: 1,
                                 status: 1,
                                 localeData: 1,
                                 createdAt: 1,
