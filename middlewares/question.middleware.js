@@ -319,6 +319,10 @@ export const updateQuestionValidator = async (req, res, next) => {
             .messages({
                 "any.only": __("validation.invalid", { field: __("model.question.questionType") }),
             }),
+        status: Joi.number()
+            .messages({
+                "number.base": __("validation.invalid", { field: __("model.question.status") }),
+            }),
         ask: Joi.string()
             .messages({
             }),
