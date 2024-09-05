@@ -95,6 +95,7 @@ export const getDocumentationController = async (req, res) => {
                         topicId: documentation.topicId,
                         countryId: documentation.countryId,
                         content: documentation.content,
+                        image: documentation.image,
                         status: documentation.status,
                         localeData: documentation.localeData,
                         createdAt: documentation.createdAt,
