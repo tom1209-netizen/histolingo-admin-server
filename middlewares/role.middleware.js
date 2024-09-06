@@ -24,7 +24,7 @@ export const createRoleValidator = async (req, res, next) => {
                 Joi
                     .number()
                     .min(1)
-                    .max(32)
+                    .max(34)
                     .messages({
                         "number.base": __("validation.number", { field: __("model.role.permission") }),
                         "number.min": __("validation.min", { field: __("model.role.permission"), min: 1 }),
