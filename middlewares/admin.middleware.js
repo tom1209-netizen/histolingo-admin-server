@@ -82,7 +82,7 @@ export const createAdminValidator = async (req, res, next) => {
             return res.status(404).json({
                 success: false,
                 message: __("validation.unique", { field: __("model.admin.name") }),
-                status: 404,
+                status: 400,
                 data: null
             });
         }

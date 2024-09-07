@@ -91,20 +91,20 @@ export const createTestValidator = async (req, res, next) => {
 
         const topic = await Topic.findById({ _id: topicId });
         if (!topic) {
-            return res.status(400).json({
+            return res.status(404).json({
                 success: false,
                 message: __("validation.notFound", { field: __("model.topic.name") }),
-                status: 400,
+                status: 404,
                 data: null
             })
         };
 
         const country = await Country.findById({ _id: countryId });
         if (!country) {
-            return res.status(400).json({
+            return res.status(404).json({
                 success: false,
                 message: __("validation.notFound", { field: __("model.country.name") }),
-                status: 400,
+                status: 404,
                 data: null
             })
         };

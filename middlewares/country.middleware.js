@@ -61,7 +61,7 @@ export const createCountryValidator = async (req, res, next) => {
             return res.status(400).json({
                 success: false,
                 message: __("validation.unique", { field: __("model.country.name") }),
-                status: 404,
+                status: 400,
                 data: null
             });
         };
