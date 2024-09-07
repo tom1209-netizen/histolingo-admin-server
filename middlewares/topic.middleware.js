@@ -29,8 +29,8 @@ export const createTopicValidator = async (req, res, next) => {
             .required()
             .messages({
                 "string.base": __("validation.string", { field: __("field.image") }),
-                "string.uri": __("validation.image.uri", { field: __("field.image") }),
-                "any.required": __("validation.image.required", { field: __("field.image") })
+                "string.uri": __("validation.uri", { field: __("field.image") }),
+                "any.required": __("validation.required", { field: __("field.image") })
             }),
         countryId: Joi.string()
             .hex()
@@ -116,7 +116,7 @@ export const updateTopicValidator = async (req, res, next) => {
             .uri()
             .messages({
                 "string.base": __("validation.string", { field: __("field.image") }),
-                "string.uri": __("validation.image.uri", { field: __("field.image") }),
+                "string.uri": __("validation.uri", { field: __("field.image") }),
             }),
         status: Joi.number()
             .valid(topicStatus.active, topicStatus.inactive)
