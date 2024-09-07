@@ -51,7 +51,6 @@ adminRoute.post(
 adminRoute.get(
     "/me",
     authentication,
-    authorization(rolePrivileges.admin.read),
     getCurrentAdminController
 );
 
