@@ -92,7 +92,7 @@ export const createDocumentationValidator = async (req, res, next) => {
             return res.status(400).json({
                 success: false,
                 message: __("validation.notFound", { field: __("model.topic.name") }),
-                status: 404,
+                status: 400,
                 data: null
             });
         }

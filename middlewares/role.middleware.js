@@ -45,8 +45,8 @@ export const createRoleValidator = async (req, res, next) => {
         if (existedRole) {
             return res.status(404).json({
                 success: false,
-                message: __("role.roleExists", { field: __("model.role.name") }),
-                status: 404,
+                message: __("validation.unique", { field: __("model.role.name") }),
+                status: 400,
                 data: null
             });
         }
