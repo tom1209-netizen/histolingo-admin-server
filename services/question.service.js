@@ -1,4 +1,10 @@
-import { BaseQuestion } from "../models/question.model.js";
+import {
+    BaseQuestion,
+    MultipleChoiceQuestion,
+    TrueFalseQuestion,
+    MatchingQuestion,
+    FillInTheBlankQuestion
+} from "../models/question.model.js";
 
 class QuestionService {
     async createQuestion(data) {
@@ -67,13 +73,43 @@ class QuestionService {
     }
 
     async updateQuestion(id, updateData) {
-        const updatedQuestion = await BaseQuestion.findOneAndUpdate(
-            { _id: id },
-            {
-                $set: updateData,
-            },
-            { new: true }
-        )
+        let updatedQuestion;
+
+        switch (updateData.questionType) {
+            case 0: // Multiple Choice Question
+                updatedQuestion = await MultipleChoiceQuestion.findByIdAndUpdate(
+                    id,
+                    updateData,
+                    { new: true }
+                );
+                break;
+            case 1: // True/False Question
+                updatedQuestion = await TrueFalseQuestion.findByIdAndUpdate(
+                    id,
+                    updateData,
+                    { new: true }
+                );
+                break;
+            case 2: // Matching Question
+                updatedQuestion = await MatchingQuestion.findByIdAndUpdate(
+                    id,
+                    updateData,
+                    { new: true }
+                );
+                break;
+            case 3: // Fill-in-the-Blank Question
+                updatedQuestion = await FillInTheBlankQuestion.findByIdAndUpdate(
+                    id,
+                    updateData,
+                    { new: true }
+                );
+                break;
+            default:
+                throw new Error('Invalid question type');
+        }
+
+        // Populate common fields for all types
+        updatedQuestion = await BaseQuestion.findById(updatedQuestion._id)
             .populate('topicId')
             .populate('countryId');
 
