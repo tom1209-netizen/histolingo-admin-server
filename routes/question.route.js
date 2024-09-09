@@ -11,14 +11,12 @@ import {
     getQuestionsController,
     getQuestionController,
     updateQuestionController,
-    deleteQuestionController
 } from "../controllers/question.controller.js";
 import {
     createQuestionValidator,
     getQuestionValidator,
     getQuestionsValidator,
     updateQuestionValidator,
-    deleteQuestionValidator
 } from "../middlewares/question.middleware.js";
 
 const questionRoute = Router();
