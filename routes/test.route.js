@@ -45,7 +45,6 @@ testRoute.post(
 testRoute.get(
     "/getCountries",
     authentication,
-    authorization(rolePrivileges.test.create),
     getDataValidator,
     getCountriesController
 );
@@ -53,7 +52,6 @@ testRoute.get(
 testRoute.get(
     "/getTopics",
     authentication,
-    authorization(rolePrivileges.test.create),
     getDataValidator,
     getTopicsController
 );
@@ -61,7 +59,6 @@ testRoute.get(
 testRoute.get(
     "/getDocumentations",
     authentication,
-    authorization(rolePrivileges.test.create),
     getDataValidator,
     getDocumentationsController
 );
@@ -69,7 +66,6 @@ testRoute.get(
 testRoute.get(
     "/getQuestions",
     authentication,
-    authorization(rolePrivileges.test.create),
     getDataValidator,
     getQuestionsController
 );
