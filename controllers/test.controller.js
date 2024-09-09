@@ -40,7 +40,7 @@ export const getTopicsController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
 
     try {
-        const { search = "" } = req.query;
+        const { search = "", countryId } = req.query;
         const filters = search
             ? {
                 name: { $regex: search, $options: "i" },
@@ -48,7 +48,9 @@ export const getTopicsController = async (req, res) => {
             }
             : { status: topicStatus.active };
 
-
+        if (countryId) {
+            filters.countryId = countryId;
+        }
         const topics = await testService.getTopicsTest(filters);
 
         return res.status(200).json({
