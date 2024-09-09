@@ -24,9 +24,11 @@ import {
     getTestController,
     getTopicsController,
     updateTestController,
-    getQuestionsController,
+    getQuestionController,
     startDemoController,
-    checkAnswerController
+    checkAnswerController,
+    getDocumentationsController,
+    getQuestionsController
 
 } from "../controllers/test.controller.js";
 
@@ -57,6 +59,22 @@ testRoute.get(
 );
 
 testRoute.get(
+    "/getDocumentations",
+    authentication,
+    authorization(rolePrivileges.test.create),
+    getDataValidator,
+    getDocumentationsController
+);
+
+testRoute.get(
+    "/getQuestions",
+    authentication,
+    authorization(rolePrivileges.test.create),
+    getDataValidator,
+    getQuestionsController
+);
+
+testRoute.get(
     "/",
     authentication,
     authorization(rolePrivileges.test.read),
@@ -65,10 +83,10 @@ testRoute.get(
 );
 
 testRoute.get(
-    "/getQuestions/:id",
+    "/getQuestion/:id",
     authentication,
     authorization(rolePrivileges.test.create),
-    getQuestionsController
+    getQuestionController
 );
 
 testRoute.post(

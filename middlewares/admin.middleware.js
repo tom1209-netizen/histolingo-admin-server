@@ -79,7 +79,7 @@ export const createAdminValidator = async (req, res, next) => {
         });
 
         if (existedAdmin) {
-            return res.status(404).json({
+            return res.status(400).json({
                 success: false,
                 message: __("validation.unique", { field: __("model.admin.name") }),
                 status: 400,
@@ -145,11 +145,29 @@ export const loginAdminValidator = async (req, res, next) => {
 
         const existedAdmin = await Admin.findOne({ email });
         const passwordMatches = existedAdmin ? encodeService.decrypt(password, existedAdmin.password) : false;
-        if (!existedAdmin || !passwordMatches) {
+        if (!existedAdmin) {
             return res.status(404).json({
                 success: false,
                 message: __("validation.notFound", { field: __("model.admin.name") }),
                 status: 404,
+                data: null
+            });
+        }
+
+        if (existedAdmin.status !== adminStatus.active) {
+            return res.status(403).json({
+                success: false,
+                message: __("validation.unauthorized"),
+                status: 403,
+                data: null
+            });
+        }
+
+        if (!passwordMatches) {
+            return res.status(401).json({
+                success: false,
+                message: __("validation.wrongPassword"),
+                status: 401,
                 data: null
             });
         }
@@ -307,7 +325,7 @@ export const updateAdminValidator = async (req, res, next) => {
         });
 
         if (existedAdmin) {
-            return res.status(404).json({
+            return res.status(400).json({
                 success: false,
                 message: __("validation.unique", { field: __("model.admin.name") }),
                 status: 404,

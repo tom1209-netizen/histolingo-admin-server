@@ -1,5 +1,6 @@
 import { questionType } from "../constants/question.constant.js";
 import Country from "../models/country.model.js";
+import Documentation from "../models/documentation.model.js";
 import { BaseQuestion } from "../models/question.model.js";
 import Test from "../models/test.model.js";
 import TestResult from "../models/testResult.model.js";
@@ -131,7 +132,19 @@ class TestService {
         return countries;
     }
 
+    async getDocumentationsTest(filters) {
+        const documentations = await Documentation.find(filters, "name _id")
+
+        return documentations;
+    }
+
     async getQuestionsTest(filters) {
+        const questions = await BaseQuestion.find(filters, "ask _id")
+
+        return questions;
+    }
+
+    async getQuestionTest(id) {
         const questions = await BaseQuestion.findById({ _id: id });
         return questions;
     }

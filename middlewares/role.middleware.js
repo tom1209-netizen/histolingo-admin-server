@@ -43,7 +43,7 @@ export const createRoleValidator = async (req, res, next) => {
 
         const existedRole = await Role.findOne({ name });
         if (existedRole) {
-            return res.status(404).json({
+            return res.status(400).json({
                 success: false,
                 message: __("validation.unique", { field: __("model.role.name") }),
                 status: 400,
