@@ -130,29 +130,3 @@ export const updateQuestionController = async (req, res) => {
         });
     }
 }
-
-export const deleteQuestionController = async (req, res) => {
-    const __ = applyRequestContentLanguage(req);
-
-    const { id } = req.params;
-
-    try {
-        const deletedQuestion = await questionService.deleteQuestion(id);
-
-        return res.status(200).json({
-            success: true,
-            message: __("question.deletedSuccess", { field: __("model.question.name") }),
-            status: 200,
-            data: {
-                deletedQuestion
-            },
-        });
-    } catch (error) {
-        return res.status(error.status || 500).json({
-            success: false,
-            message: error.message || __("error.internalServerError"),
-            status: error.status || 500,
-            data: error.data || null
-        });
-    }
-}

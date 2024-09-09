@@ -6,7 +6,7 @@ import roleRoute from "./routes/role.route.js";
 import adminRoute from "./routes/admin.route.js";
 import topicRoute from "./routes/topic.route.js";
 import feedbackRoute from "./routes/feedback.route.js";
-import passwordRoutes from "./routes/passwordController.route.js";
+import passwordRoutes from "./routes/password.route.js";
 import questionRoute from "./routes/question.route.js";
 import countryRoute from "./routes/country.route.js";
 import uploadRoute from "./routes/upload.route.js";

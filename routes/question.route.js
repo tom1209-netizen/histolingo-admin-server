@@ -11,14 +11,12 @@ import {
     getQuestionsController,
     getQuestionController,
     updateQuestionController,
-    deleteQuestionController
 } from "../controllers/question.controller.js";
 import {
     createQuestionValidator,
     getQuestionValidator,
     getQuestionsValidator,
     updateQuestionValidator,
-    deleteQuestionValidator
 } from "../middlewares/question.middleware.js";
 
 const questionRoute = Router();
@@ -53,14 +51,6 @@ questionRoute.patch(
     authorization(rolePrivileges.question.update),
     updateQuestionValidator,
     updateQuestionController
-);
-
-questionRoute.delete(
-    "/:id",
-    authentication,
-    authorization(rolePrivileges.question.delete),
-    deleteQuestionValidator,
-    deleteQuestionController
 );
 
 export default questionRoute;

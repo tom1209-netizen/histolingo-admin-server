@@ -7,6 +7,34 @@ class FeedbackService {
         const skip = (page - 1) * pageSize;
 
         const results = await Feedback.aggregate([
+            {
+                $lookup: {
+                    from: "players",
+                    localField: "createdBy",
+                    foreignField: "_id",
+                    as: "player",
+                    pipeline: [
+                        { $project: { fullName: 1 } }
+                    ]
+                }
+            },
+            {
+                $lookup: {
+                    from: "tests",
+                    localField: "testId",
+                    foreignField: "_id",
+                    as: "test",
+                    pipeline: [
+                        { $project: { name: 1 } }
+                    ]
+                }
+            },
+            {
+                $addFields: {
+                    player: { $arrayElemAt: ["$player", 0] },
+                    test: { $arrayElemAt: ["$test", 0] }
+                }
+            },
             { $match: filters },
             {
                 $facet: {

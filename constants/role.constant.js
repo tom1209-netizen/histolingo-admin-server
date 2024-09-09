@@ -7,54 +7,47 @@ export const rolePrivileges = {
     admin: {
         read: 1,
         create: 2,
-        update: 3,
-        delete: 4
+        update: 3
     },
     topic: {
-        read: 5,
-        create: 6,
-        update: 7,
-        delete: 8
+        read: 4,
+        create: 5,
+        update: 6
     },
     country: {
-        read: 9,
-        create: 10,
-        update: 11,
-        delete: 12
+        read: 7,
+        create: 8,
+        update: 9
     },
     role: {
-        read: 13,
-        create: 14,
-        update: 15,
-        delete: 16
+        read: 10,
+        create: 11,
+        update: 12
     },
     documentation: {
-        read: 17,
-        create: 18,
-        update: 19,
-        delete: 20
+        read: 13,
+        create: 14,
+        update: 15
     },
     test: {
-        read: 21,
-        create: 22,
-        update: 23,
-        delete: 24,
-        play: 34
+        read: 16,
+        create: 17,
+        update: 18,
+        play: 19
     },
     question: {
-        read: 25,
-        create: 26,
-        update: 27,
-        delete: 28
+        read: 20,
+        create: 21,
+        update: 22
     },
     feedback: {
-        read: 29,
-        update: 30,
-        reply: 31
+        read: 23,
+        update: 24,
+        reply: 25
     },
     player: {
-        read: 32,
-        delete: 33
+        read: 26,
+        delete: 27
     }
 };
 
