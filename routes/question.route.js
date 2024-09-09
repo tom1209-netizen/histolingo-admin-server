@@ -55,12 +55,4 @@ questionRoute.patch(
     updateQuestionController
 );
 
-questionRoute.delete(
-    "/:id",
-    authentication,
-    authorization(rolePrivileges.question.delete),
-    deleteQuestionValidator,
-    deleteQuestionController
-);
-
 export default questionRoute;

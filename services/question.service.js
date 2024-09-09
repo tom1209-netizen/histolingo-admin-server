@@ -115,13 +115,6 @@ class QuestionService {
 
         return updatedQuestion;
     }
-
-    async deleteQuestion(id) {
-        const deletedQuestion = await BaseQuestion.findByIdAndUpdate(id, { status: 0 })
-            .populate("topicId")
-            .populate("countryId");
-        return deletedQuestion;
-    }
 }
 
 export const questionService = new QuestionService();
