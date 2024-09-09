@@ -66,7 +66,77 @@ export const getTopicsController = async (req, res) => {
     }
 };
 
+export const getDocumentationsController = async (req, res) => {
+    const __ = applyRequestContentLanguage(req);
+
+    try {
+        const { search = "", topicId, countryId } = req.query;
+        const filters = search
+            ? {
+                name: { $regex: search, $options: "i" },
+                status: countryStatus.active
+            }
+            : { status: countryStatus.active };
+
+        if (topicId) {
+            filters.topicId = topicId;
+        }
+        if (countryId) {
+            filters.countryId = countryId;
+        }
+        const documentations = await testService.getDocumentationsTest(filters);
+
+        return res.status(200).json({
+            success: true,
+            message: __("message.getSuccess", { field: __("model.documentation.displayListName") }),
+            data: documentations
+        });
+    } catch (error) {
+        return res.status(error.status || 500).json({
+            success: false,
+            message: error.message || __("error.internalServerError"),
+            status: error.status || 500,
+            data: error.data || null
+        });
+    }
+};
+
 export const getQuestionsController = async (req, res) => {
+    const __ = applyRequestContentLanguage(req);
+
+    try {
+        const { search = "", topicId, countryId } = req.query;
+        const filters = search
+            ? {
+                ask: { $regex: search, $options: "i" },
+                status: countryStatus.active
+            }
+            : { status: countryStatus.active };
+
+        if (topicId) {
+            filters.topicId = topicId;
+        }
+        if (countryId) {
+            filters.countryId = countryId;
+        }
+        const questions = await testService.getQuestionsTest(filters);
+
+        return res.status(200).json({
+            success: true,
+            message: __("message.getSuccess", { field: __("model.question.name") }),
+            data: questions
+        });
+    } catch (error) {
+        return res.status(error.status || 500).json({
+            success: false,
+            message: error.message || __("error.internalServerError"),
+            status: error.status || 500,
+            data: error.data || null
+        });
+    }
+};
+
+export const getQuestionController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
 
     try {

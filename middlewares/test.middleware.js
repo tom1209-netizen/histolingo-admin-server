@@ -270,7 +270,27 @@ export const getDataValidator = async (req, res, next) => {
             .allow("")
             .messages({
                 "string.base": __("validation.invalid", { field: __("field.search") })
-            })
+            }),
+        topicId: Joi.string()
+            .hex()
+            .length(24)
+            .required()
+            .messages({
+                "string.base": __("validation.string", { field: __("field.topicId") }),
+                "string.hex": __("validation.hex", { field: __("field.topicId") }),
+                "string.length": __("validation.length", { field: __("field.topicId"), length: 24 }),
+                "any.required": __("validation.required", { field: __("field.topicId") })
+            }),
+        countryId: Joi.string()
+            .hex()
+            .length(24)
+            .required()
+            .messages({
+                "string.base": __("validation.string", { field: __("field.countryId") }),
+                "string.hex": __("validation.hex", { field: __("field.countryId") }),
+                "string.length": __("validation.length", { field: __("field.countryId"), length: 24 }),
+                "any.required": __("validation.required", { field: __("field.countryId") })
+            }),
     });
 
     try {
