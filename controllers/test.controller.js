@@ -107,7 +107,11 @@ export const getQuestionsController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
 
     try {
-        const { search = "", topicId, countryId } = req.query;
+        const { page = 1, pageSize = 10, search = "", sortOrder = -1, topicId, countryId } = req.query;
+
+        const maxPageSize = 100;
+        const limitedPageSize = Math.min(pageSize, maxPageSize);
+
         const filters = search
             ? {
                 ask: { $regex: search, $options: "i" },
@@ -121,12 +125,17 @@ export const getQuestionsController = async (req, res) => {
         if (countryId) {
             filters.countryId = countryId;
         }
-        const questions = await testService.getQuestionsTest(filters);
+        const { questions, totalQuestionsCount } = await testService.getQuestionsTest(filters, page, limitedPageSize, sortOrder);
 
         return res.status(200).json({
             success: true,
             message: __("message.getSuccess", { field: __("model.question.name") }),
-            data: questions
+            data: {
+                questions,
+                totalPages: Math.ceil(totalQuestionsCount / limitedPageSize),
+                totalCount: totalQuestionsCount,
+                currentPage: Number(page)
+            }
         });
     } catch (error) {
         return res.status(error.status || 500).json({

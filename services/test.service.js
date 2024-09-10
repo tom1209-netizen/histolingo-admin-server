@@ -138,10 +138,56 @@ class TestService {
         return documentations;
     }
 
-    async getQuestionsTest(filters) {
-        const questions = await BaseQuestion.find(filters, "ask _id")
+    async getQuestionsTest(filters, page, pageSize, sortOrder) {
+        const skip = (page - 1) * pageSize;
+        const results = await BaseQuestion.aggregate([
+            {
+                $lookup: {
+                    from: "topics",
+                    localField: "topicId",
+                    foreignField: "_id",
+                    as: "topic",
+                    pipeline: [
+                        { $project: { name: 1 } }
+                    ]
+                }
+            },
+            {
+                $lookup: {
+                    from: "countries",
+                    localField: "countryId",
+                    foreignField: "_id",
+                    as: "country",
+                    pipeline: [
+                        { $project: { name: 1 } }
+                    ]
+                }
+            },
+            {
+                $addFields: {
+                    topic: { $arrayElemAt: ["$topic", 0] },
+                    country: { $arrayElemAt: ["$country", 0] }
+                }
+            },
+            { $match: filters },
+            {
+                $facet: {
+                    totalCount: [{ $count: "count" }],
+                    documents: [
+                        { $sort: { createdAt: Number(sortOrder) } },
+                        { $skip: skip },
+                        { $limit: pageSize },
+                    ]
+                }
+            },
+        ]);
 
-        return questions;
+        const totalQuestionsCount = results[0].totalCount[0]
+            ? results[0].totalCount[0].count
+            : 0;
+        const questions = results[0].documents;
+
+        return { questions, totalQuestionsCount };
     }
 
     async getQuestionTest(id) {

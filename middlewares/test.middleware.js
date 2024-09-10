@@ -265,11 +265,33 @@ export const updateTestValidator = async (req, res, next) => {
 export const getDataValidator = async (req, res, next) => {
     const __ = applyRequestContentLanguage(req);
     const schema = Joi.object({
+        page: Joi.number()
+            .integer()
+            .min(1)
+            .optional()
+            .messages({
+                "number.base": __("validation.invalid", { field: __("field.page") }),
+                "number.min": __("validation.min", { field: __("field.page"), min: 1 })
+            }),
+        pageSize: Joi.number()
+            .integer()
+            .min(1)
+            .optional()
+            .messages({
+                "number.base": __("validation.invalid", { field: __("field.pageSize") }),
+                "number.min": __("validation.min", { field: __("field.pageSize"), min: 1 })
+            }),
         search: Joi.string()
             .optional()
             .allow("")
             .messages({
                 "string.base": __("validation.invalid", { field: __("field.search") })
+            }),
+        sortOrder: Joi.number()
+            .valid(1, -1)
+            .optional()
+            .messages({
+                "any.only": __("validation.invalid", { field: __("field.sortOrder") })
             }),
         topicId: Joi.string()
             .optional()
