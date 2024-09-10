@@ -21,7 +21,7 @@ export const forgotPassword = async (req, res) => {
         const expiry = Date.now() + TOKEN_EXPIRY_TIME; 
         await PasswordResetToken.create({ userId: admin._id, token, expiry });
 
-        const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}&id=${admin._id}`;
+        const resetLink = `${process.env.FRONTEND_URL}/resetpassword?token=${token}&id=${admin._id}`;
         const subject = "Password Reset";
         const emailContent = `Click on the link to reset your password: ${resetLink}`;
         await sendEmail(subject, emailContent, email);
