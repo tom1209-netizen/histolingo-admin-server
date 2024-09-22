@@ -277,14 +277,6 @@ export const updateAdminValidator = async (req, res, next) => {
                 .messages({
                     "string.email": __("validation.email", { field: __("field.email"), max: 100 }),
                 }),
-            // password: Joi.string()
-            //     .min(8)
-            //     .max(250)
-            //     .messages({
-            //         "string.base": __("validation.string", { field: __("field.password") }),
-            //         "string.min": __("validation.min", { field: __("field.password"), min: 8 }),
-            //         "string.max": __("validation.max", { field: __("field.password"), max: 250 }),
-            //     }),
             roles: Joi.array()
                 .items(
                     Joi.string()
@@ -306,13 +298,12 @@ export const updateAdminValidator = async (req, res, next) => {
                 }),
         });
 
-        const { firstName, lastName, adminName, email, password, roles, status } = req.body;
+        const { firstName, lastName, adminName, email, roles, status } = req.body;
         await updateSchema.validateAsync({
             firstName,
             lastName,
             adminName,
             email,
-            // password,
             roles,
             status
         });
