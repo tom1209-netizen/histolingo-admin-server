@@ -39,6 +39,9 @@ const adminSchema = new Schema(
                 required: true,
             },
         ],
+        refreshToken: {
+            type: String
+        },
         status: {
             type: Number,
             enum: [adminStatus.inactive, adminStatus.active],

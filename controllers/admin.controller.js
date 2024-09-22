@@ -18,7 +18,17 @@ export const createAdminController = async (req, res) => {
         const subject = "Password for your Histolingo admin account";
         const content = `This is the password for your Histolingo admin account: ${password}`;
 
-        const newAdmin = await adminService.createAdmin(firstName, lastName, adminName, email, password, roles, adminId, subject, content);
+        const newAdmin = await adminService.createAdmin(
+            firstName,
+            lastName,
+            adminName,
+            email,
+            password,
+            roles,
+            adminId,
+            subject,
+            content
+        );
 
         return res.status(201).json({
             success: true,
@@ -49,8 +59,11 @@ export const loginAdminController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
     try {
         const { admin } = req.body;
-        const accessToken = tokenService.signAccessToken({ email: admin.email, _id: admin._id });
+        const accessToken = tokenService.signAccessToken({ _id: admin._id });
         const refreshToken = tokenService.signRefreshToken({ _id: admin._id });
+
+        admin.refreshToken = refreshToken;
+        await admin.save();
 
         return res.status(200).json({
             success: true,
@@ -75,7 +88,7 @@ export const loginAdminController = async (req, res) => {
             data: error.data || null
         });
     }
-};
+}
 
 export const getCurrentAdminController = async (req, res) => {
     const __ = applyRequestContentLanguage(req);
@@ -232,32 +245,6 @@ export const getAdminController = async (req, res) => {
                 data: admin
             });
         }
-    } catch (error) {
-        return res.status(error.status || 500).json({
-            success: false,
-            message: error.message || __("error.internalServerError"),
-            status: error.status || 500,
-            data: error.data || null
-        });
-    }
-};
-
-export const generateRefreshTokenController = async (req, res) => {
-    const __ = applyRequestContentLanguage(req);
-    try {
-        const admin = req.admin;
-        const accessToken = tokenService.signAccessToken({ email: admin.email, _id: admin._id });
-        const refreshToken = tokenService.signRefreshToken({ _id: admin._id });
-
-        return res.status(200).json({
-            success: true,
-            message: __("message.generateTokenSuccess"),
-            status: 200,
-            data: {
-                accessToken,
-                refreshToken,
-            },
-        });
     } catch (error) {
         return res.status(error.status || 500).json({
             success: false,

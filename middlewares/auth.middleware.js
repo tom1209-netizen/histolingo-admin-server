@@ -70,3 +70,40 @@ export const authorization = (requiredPermission) => async (req, res, next) => {
         });
     }
 };
+
+export const refreshTokenValidator = async (req, res, next) => {
+    const __ = applyRequestContentLanguage(req);
+
+    try {
+        const { refreshToken } = req.body;
+        if (!refreshToken) {
+            return res.status(403).json({
+                message: __("error.noToken"),
+                status: 403,
+                error: "Unauthorized"
+            });
+        }
+
+        tokenService.verifyToken(refreshToken, 'refresh');
+        const admin = await tokenService.infoToken(refreshToken);
+
+        if (admin.refreshToken !== refreshToken) {
+            return res.status(401).json({
+                success: false,
+                message: __("error.invalidRefreshToken"),
+                status: 401,
+                data: null,
+            });
+        }
+
+        req.body.admin = admin;
+        next();
+    } catch (error) {
+        return res.status(403).json({
+            message: __("error.tokenInvalid"),
+            status: 403,
+            error: "Unauthorized",
+            details: error.message
+        });
+    }
+}

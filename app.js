@@ -15,6 +15,7 @@ import { loadContentLanguage } from "./middlewares/localization.middleware.js";
 import documentationRoute from "./routes/documentation.route.js";
 import playerRoute from "./routes/player.route.js";
 import testRoute from "./routes/test.route.js";
+import authRoute from "./routes/auth.route.js";
 
 const app = express();
 
@@ -46,6 +47,7 @@ app.use("/password", passwordRoutes);
 app.use("/feedbacks", feedbackRoute);
 app.use("/questions", questionRoute);
 app.use("/upload", uploadRoute)
+app.use("/auth", authRoute);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
