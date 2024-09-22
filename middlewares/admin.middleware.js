@@ -4,6 +4,7 @@ import Role from "../models/role.model.js";
 import encodeService from "../utils/encode.utils.js";
 import { adminStatus } from "../constants/admin.constant.js";
 import { applyRequestContentLanguage } from "../utils/localization.util.js";
+import adminService from "../services/admin.service.js";
 
 export const createAdminValidator = async (req, res, next) => {
     const __ = applyRequestContentLanguage(req);
@@ -366,3 +367,53 @@ export const updateAdminValidator = async (req, res, next) => {
         next(error);
     }
 };
+
+export const resetAdminPasswordValidator = async (req, res, next) => {
+    const __ = applyRequestContentLanguage(req);
+
+    try {
+        const adminId = req.admin._id;
+        const resetSchema = Joi.object({
+            newPassword: Joi.string()
+                .min(8)
+                .max(250)
+                .required()
+                .messages({
+                    "string.base": __("validation.string", { field: __("field.password") }),
+                    "string.min": __("validation.min", { field: __("field.password"), min: 8 }),
+                    "string.max": __("validation.max", { field: __("field.password"), max: 250 }),
+                    "any.required": __("validation.required", { field: __("field.password") })
+                }),
+        });
+
+        const { oldPassword, newPassword } = req.body;
+
+        // Check if password is there
+        if (!oldPassword || !newPassword) {
+            return res.status(400).json({
+                success: false,
+                message: __("validation.passwordsRequired"),
+                status: 400,
+                data: null,
+            });
+        }
+
+        // Validate new password schema
+        await resetSchema.validateAsync({ newPassword });
+
+        // Verify old password
+        const isPasswordValid = await adminService.verifyPassword(adminId, oldPassword);
+        if (!isPasswordValid) {
+            return res.status(401).json({
+                success: false,
+                message: __("error.invalidOldPassword"),
+                status: 401,
+                data: null,
+            });
+        }
+
+        next();
+    } catch (error) {
+        next(error);
+    }
+}

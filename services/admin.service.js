@@ -2,6 +2,7 @@ import Admin from "../models/admin.model.js";
 import Role from "../models/role.model.js";
 import { sendEmail } from "../utils/email.utils.js";
 import encodeService from "../utils/encode.utils.js";
+import bcrypt from "bcrypt";
 
 class AdminService {
     async createAdmin(firstName, lastName, adminName, email, password, roles, adminId, subject, content) {
@@ -131,6 +132,29 @@ class AdminService {
     async getRolesToAdmin(filters) {
         const roles = await Role.find(filters, "_id name");
         return roles;
+    }
+
+    async verifyPassword(adminId, oldPassword) {
+        const admin = await Admin.findById(adminId);
+        if (!admin) {
+            throw { status: 404, message: "Admin not found" };
+        }
+
+        const isMatch = await bcrypt.compare(oldPassword, admin.password);
+        return isMatch;
+    }
+
+    async updatePassword(adminId, newPassword) {
+        const hashedPassword = await bcrypt.hash(newPassword, 10); // 10 salt rounds
+        const updatedAdmin = await Admin.findByIdAndUpdate(
+            adminId,
+            { password: hashedPassword },
+            { new: true }
+        );
+        if (!updatedAdmin) {
+            throw { status: 404, message: "Admin not found" };
+        }
+        return updatedAdmin;
     }
 
 }

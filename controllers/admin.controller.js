@@ -254,3 +254,39 @@ export const getAdminController = async (req, res) => {
         });
     }
 };
+
+export const resetAdminPasswordController = async (req, res) => {
+    const __ = applyRequestContentLanguage(req);
+
+    try {
+        const adminId = req.admin._id;
+        const { oldPassword, newPassword } = req.body;
+
+        // Update to New Password
+        const updatedAdmin = await adminService.updatePassword(
+            adminId,
+            newPassword
+        );
+
+        return res.status(200).json({
+            success: true,
+            message: __("message.passwordResetSuccess"),
+            status: 200,
+            data: {
+                admin: {
+                    firstName: updatedAdmin.firstName,
+                    lastName: updatedAdmin.lastName,
+                    email: updatedAdmin.email,
+                    _id: updatedAdmin._id,
+                },
+            },
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: __("error.internalServerError"),
+            status: 500,
+            data: null,
+        });
+    }
+};

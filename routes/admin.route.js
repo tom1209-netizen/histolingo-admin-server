@@ -4,17 +4,18 @@ import {
     loginAdminValidator,
     updateAdminValidator,
     getAdminsValidator,
-    getRolesToAdminValidator
+    getRolesToAdminValidator,
+    resetAdminPasswordValidator
 } from "../middlewares/admin.middleware.js";
 import {
     createAdminController,
-    generateRefreshTokenController,
     getAdminController,
     getCurrentAdminController,
     getAdmins,
     getRolesToAdminController,
     loginAdminController,
-    updateAdminController
+    updateAdminController,
+    resetAdminPasswordController
 } from "../controllers/admin.controller.js";
 import {
     authentication,
@@ -48,6 +49,13 @@ adminRoute.post(
     loginAdminController
 );
 
+adminRoute.post(
+    "/reset-password",
+    authentication,
+    resetAdminPasswordValidator,
+    resetAdminPasswordController
+)
+
 adminRoute.get(
     "/me",
     authentication,
@@ -60,12 +68,6 @@ adminRoute.get(
     authorization(rolePrivileges.admin.read),
     getAdminsValidator,
     getAdmins
-);
-
-adminRoute.post(
-    "/generateRefreshToken",
-    authentication,
-    generateRefreshTokenController
 );
 
 adminRoute.patch(
