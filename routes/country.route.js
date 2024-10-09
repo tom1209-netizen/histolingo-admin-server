@@ -5,7 +5,6 @@ import {
 } from "../middlewares/auth.middleware.js";
 import {
     rolePrivileges
-
 } from "../constants/role.constant.js";
 import {
     createCountryValidator,
@@ -20,6 +19,7 @@ import {
     updateCountryController
 
 } from "../controllers/country.controller.js";
+import { Router } from "express";
 
 const countryRoute = Router();
 
