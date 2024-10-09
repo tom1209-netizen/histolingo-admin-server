@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-import { questionType, answer } from "../constants/question.constant.js";
-import { questionStatus } from "../constants/question.constant.js";
-const { Schema, model } = mongoose;
+import {answer, questionStatus, questionType} from "../constants/question.constant.js";
+
+const {Schema, model} = mongoose;
 
 const baseOptions = {
     discriminatorKey: "questionType",
@@ -34,6 +34,12 @@ const questionSchema = new Schema(
             type: Number,
             enum: [questionStatus.active, questionStatus.inactive],
             default: questionStatus.active,
+        },
+        explanation: {
+            type: {
+                text: {type: String, required: true},
+                imageUrl: {type: String, required: true}
+            }
         },
         localeData: {
             type: Schema.Types.Mixed,

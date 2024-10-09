@@ -1,9 +1,9 @@
 import Joi from "joi";
 import Topic from "../models/topic.model.js";
 import Country from "../models/country.model.js";
-import { BaseQuestion } from "../models/question.model.js";
-import { applyRequestContentLanguage } from "../utils/localization.util.js";
-import { questionType, answer, questionStatus } from "../constants/question.constant.js";
+import {BaseQuestion} from "../models/question.model.js";
+import {applyRequestContentLanguage} from "../utils/localization.util.js";
+import {answer, questionStatus, questionType} from "../constants/question.constant.js";
 
 export const createQuestionValidator = async (req, res, next) => {
     const __ = applyRequestContentLanguage(req);
@@ -14,20 +14,20 @@ export const createQuestionValidator = async (req, res, next) => {
             .length(24)
             .required()
             .messages({
-                "string.base": __("validation.string", { field: __("field.topicId") }),
-                "string.hex": __("validation.hex", { field: __("field.topicId") }),
-                "string.length": __("validation.length", { field: __("field.topicId"), length: 24 }),
-                "any.required": __("validation.required", { field: __("field.topicId") })
+                "string.base": __("validation.string", {field: __("field.topicId")}),
+                "string.hex": __("validation.hex", {field: __("field.topicId")}),
+                "string.length": __("validation.length", {field: __("field.topicId"), length: 24}),
+                "any.required": __("validation.required", {field: __("field.topicId")})
             }),
         countryId: Joi.string()
             .hex()
             .length(24)
             .required()
             .messages({
-                "string.base": __("validation.string", { field: __("field.countryId") }),
-                "string.hex": __("validation.hex", { field: __("field.countryId") }),
-                "string.length": __("validation.length", { field: __("field.countryId"), length: 24 }),
-                "any.required": __("validation.required", { field: __("field.countryId") })
+                "string.base": __("validation.string", {field: __("field.countryId")}),
+                "string.hex": __("validation.hex", {field: __("field.countryId")}),
+                "string.length": __("validation.length", {field: __("field.countryId"), length: 24}),
+                "any.required": __("validation.required", {field: __("field.countryId")})
             }),
         questionType: Joi.number()
             .valid(
@@ -38,16 +38,32 @@ export const createQuestionValidator = async (req, res, next) => {
             )
             .required()
             .messages({
-                "any.only": __("validation.invalid", { field: __("model.question.questionType") }),
-                "any.required": __("validation.required", { field: __("model.question.questionType") })
+                "any.only": __("validation.invalid", {field: __("model.question.questionType")}),
+                "any.required": __("validation.required", {field: __("model.question.questionType")})
             }),
         ask: Joi.string()
             .required()
             .messages({
-                "any.required": __("validation.required", { field: __("model.question.ask") })
+                "any.required": __("validation.required", {field: __("model.question.ask")})
             }),
         localeData: Joi.object().messages({
-            "object.base": __("validation.invalid", { field: __("field.localeData") })
+            "object.base": __("validation.invalid", {field: __("field.localeData")})
+        }),
+        explanation: Joi.object({
+            text: Joi.string()
+                .required()
+                .messages({
+                    "string.base": __("validation.string", {field: __("model.question.explanation.text")}),
+                    "any.required": __("validation.required", {field: __("model.question.explanation.text")}),
+                }),
+            imageUrl: Joi.string()
+                .uri()
+                .required()
+                .messages({
+                    "string.base": __("validation.string", {field: __("model.question.explanation.imageUrl")}),
+                    "string.uri": __("validation.invalidUri", {field: __("model.question.explanation.imageUrl")}),
+                    "any.required": __("validation.required", {field: __("model.question.explanation.imageUrl")}),
+                })
         })
     });
 
@@ -55,8 +71,8 @@ export const createQuestionValidator = async (req, res, next) => {
         answer: Joi.boolean()
             .required()
             .messages({
-                "boolean.base": __("validation.invalid", { field: __("model.question.trueFalseAnswer") }),
-                "any.required": __("validation.required", { field: __("model.question.trueFalseAnswer") })
+                "boolean.base": __("validation.invalid", {field: __("model.question.trueFalseAnswer")}),
+                "any.required": __("validation.required", {field: __("model.question.trueFalseAnswer")})
             })
     });
 
@@ -64,13 +80,13 @@ export const createQuestionValidator = async (req, res, next) => {
         options: Joi.array()
             .items(
                 Joi.string().messages({
-                    "string.base": __("validation.invalid", { field: __("model.question.option") })
+                    "string.base": __("validation.invalid", {field: __("model.question.option")})
                 })
             )
             .required()
             .messages({
-                "array.base": __("validation.invalid", { field: __("model.question.options") }),
-                "any.required": __("validation.required", { field: __("model.question.options") })
+                "array.base": __("validation.invalid", {field: __("model.question.options")}),
+                "any.required": __("validation.required", {field: __("model.question.options")})
             }),
         answer: Joi.number()
             .valid(
@@ -81,8 +97,8 @@ export const createQuestionValidator = async (req, res, next) => {
             )
             .required()
             .messages({
-                "any.only": __("validation.invalid", { field: __("model.question.multipleChoiceAnswer") }),
-                "any.required": __("validation.required", { field: __("model.question.multipleChoiceAnswer") })
+                "any.only": __("validation.invalid", {field: __("model.question.multipleChoiceAnswer")}),
+                "any.required": __("validation.required", {field: __("model.question.multipleChoiceAnswer")})
             })
     });
 
@@ -93,22 +109,22 @@ export const createQuestionValidator = async (req, res, next) => {
                     leftColumn: Joi.string()
                         .required()
                         .messages({
-                            "string.base": __("validation.invalid", { field: __("model.question.leftColumn") }),
-                            "any.required": __("validation.required", { field: __("model.question.leftColumn") })
+                            "string.base": __("validation.invalid", {field: __("model.question.leftColumn")}),
+                            "any.required": __("validation.required", {field: __("model.question.leftColumn")})
                         }),
                     rightColumn: Joi.string()
                         .required()
                         .messages({
-                            "string.base": __("validation.invalid", { field: __("model.question.rightColumn") }),
-                            "any.required": __("validation.required", { field: __("model.question.rightColumn") })
+                            "string.base": __("validation.invalid", {field: __("model.question.rightColumn")}),
+                            "any.required": __("validation.required", {field: __("model.question.rightColumn")})
                         })
                 })
             )
             .required()
             .messages({
-                "array.base": __("validation.invalid", { field: __("model.question.matchingAnswer") }),
-                "array.includes": __("validation.invalid", { field: __("model.question.matchingAnswerItem") }),
-                "any.required": __("validation.required", { field: __("model.question.matchingAnswer") })
+                "array.base": __("validation.invalid", {field: __("model.question.matchingAnswer")}),
+                "array.includes": __("validation.invalid", {field: __("model.question.matchingAnswerItem")}),
+                "any.required": __("validation.required", {field: __("model.question.matchingAnswer")})
             })
     });
 
@@ -117,22 +133,22 @@ export const createQuestionValidator = async (req, res, next) => {
             .items(
                 Joi.string()
                     .messages({
-                        "string.base": __("validation.invalid", { field: __("model.question.fillInTheBlankAnswer") })
+                        "string.base": __("validation.invalid", {field: __("model.question.fillInTheBlankAnswer")})
                     })
             )
             .required()
             .messages({
-                "array.base": __("validation.invalid", { field: __("model.question.fillInTheBlankAnswers") }),
-                "any.required": __("validation.required", { field: __("model.question.fillInTheBlankAnswers") })
+                "array.base": __("validation.invalid", {field: __("model.question.fillInTheBlankAnswers")}),
+                "any.required": __("validation.required", {field: __("model.question.fillInTheBlankAnswers")})
             })
     });
 
     const questionSchema = Joi.alternatives().conditional(".questionType", {
         switch: [
-            { is: questionType.multipleChoice, then: multipleChoiceSchema },
-            { is: questionType.trueFalse, then: trueFalseSchema },
-            { is: questionType.matching, then: matchingSchema },
-            { is: questionType.fillInTheBlank, then: fillInTheBlankSchema }
+            {is: questionType.multipleChoice, then: multipleChoiceSchema},
+            {is: questionType.trueFalse, then: trueFalseSchema},
+            {is: questionType.matching, then: matchingSchema},
+            {is: questionType.fillInTheBlank, then: fillInTheBlankSchema}
         ],
         otherwise: baseQuestionSchema
     });
@@ -141,11 +157,11 @@ export const createQuestionValidator = async (req, res, next) => {
         const data = req.body
         await questionSchema.validateAsync(data);
 
-        const existedQuestion = await BaseQuestion.findOne({ ask: data.ask });
+        const existedQuestion = await BaseQuestion.findOne({ask: data.ask});
         if (existedQuestion) {
             return res.status(404).json({
                 success: false,
-                message: __("validation.exist", { field: __("model.question.name") }),
+                message: __("validation.exist", {field: __("model.question.name")}),
                 status: 404,
                 data: null
             });
@@ -155,7 +171,7 @@ export const createQuestionValidator = async (req, res, next) => {
         if (!existedTopic) {
             return res.status(404).json({
                 success: false,
-                message: __("validation.notFound", { field: __("model.topic.name") }),
+                message: __("validation.notFound", {field: __("model.topic.name")}),
                 status: 404,
                 data: null
             });
@@ -165,7 +181,7 @@ export const createQuestionValidator = async (req, res, next) => {
         if (!existedCountry) {
             return res.status(404).json({
                 success: false,
-                message: __("validation.notFound", { field: __("model.country.name") }),
+                message: __("validation.notFound", {field: __("model.country.name")}),
                 status: 404,
                 data: null
             });
@@ -184,17 +200,17 @@ export const createQuestionValidator = async (req, res, next) => {
 
 export const getQuestionValidator = async (req, res, next) => {
     const __ = applyRequestContentLanguage(req);
-    const { id } = req.params;
+    const {id} = req.params;
 
     const getQuestionSchema = Joi.string()
         .hex()
         .length(24)
         .required()
         .messages({
-            "string.base": __("validation.string", { field: __("field.questionId") }),
-            "string.hex": __("validation.hex", { field: __("field.questionId") }),
-            "string.length": __("validation.length", { field: __("field.questionId"), length: 24 }),
-            "any.required": __("validation.required", { field: __("field.questionId") })
+            "string.base": __("validation.string", {field: __("field.questionId")}),
+            "string.hex": __("validation.hex", {field: __("field.questionId")}),
+            "string.length": __("validation.length", {field: __("field.questionId"), length: 24}),
+            "any.required": __("validation.required", {field: __("field.questionId")})
         });
 
     try {
@@ -204,7 +220,7 @@ export const getQuestionValidator = async (req, res, next) => {
         if (!existedQuestion) {
             return res.status(404).json({
                 success: false,
-                message: __("validation.notFound", { field: __("model.question.name") }),
+                message: __("validation.notFound", {field: __("model.question.name")}),
                 status: 404,
                 data: null
             });
@@ -230,46 +246,46 @@ export const getQuestionsValidator = async (req, res, next) => {
             .min(1)
             .optional()
             .messages({
-                "number.base": __("validation.invalid", { field: __("field.page") }),
-                "number.min": __("validation.min", { field: __("field.page"), min: 1 })
+                "number.base": __("validation.invalid", {field: __("field.page")}),
+                "number.min": __("validation.min", {field: __("field.page"), min: 1})
             }),
         pageSize: Joi.number()
             .integer()
             .min(1)
             .optional()
             .messages({
-                "number.base": __("validation.invalid", { field: __("field.pageSize") }),
-                "number.min": __("validation.min", { field: __("field.pageSize"), min: 1 })
+                "number.base": __("validation.invalid", {field: __("field.pageSize")}),
+                "number.min": __("validation.min", {field: __("field.pageSize"), min: 1})
             }),
         search: Joi.string()
             .optional()
             .allow("")
             .messages({
-                "string.base": __("validation.invalid", { field: __("field.search") })
+                "string.base": __("validation.invalid", {field: __("field.search")})
             }),
         sortOrder: Joi.number()
             .valid(1, -1)
             .optional()
             .messages({
-                "any.only": __("validation.invalid", { field: __("field.sortOrder") })
+                "any.only": __("validation.invalid", {field: __("field.sortOrder")})
             }),
         status: Joi.number()
             .valid(questionStatus.active, questionStatus.inactive, "")
             .optional()
             .messages({
-                "any.only": __("validation.invalid", { field: __("field.status") })
+                "any.only": __("validation.invalid", {field: __("field.status")})
             }),
         countryName: Joi.string()
             .optional()
             .allow("")
             .messages({
-                "string.base": __("validation.invalid", { field: __("model.country.name") })
+                "string.base": __("validation.invalid", {field: __("model.country.name")})
             }),
         topicName: Joi.string()
             .optional()
             .allow("")
             .messages({
-                "string.base": __("validation.invalid", { field: __("model.topic.name") })
+                "string.base": __("validation.invalid", {field: __("model.topic.name")})
             })
     });
 
@@ -290,24 +306,24 @@ export const getQuestionsValidator = async (req, res, next) => {
 
 export const updateQuestionValidator = async (req, res, next) => {
     const __ = applyRequestContentLanguage(req);
-    const { id } = req.params;
+    const {id} = req.params;
 
     const baseQuestionSchema = Joi.object({
         topicId: Joi.string()
             .hex()
             .length(24)
             .messages({
-                "string.base": __("validation.string", { field: __("field.topicId") }),
-                "string.hex": __("validation.hex", { field: __("field.topicId") }),
-                "string.length": __("validation.length", { field: __("field.topicId"), length: 24 }),
+                "string.base": __("validation.string", {field: __("field.topicId")}),
+                "string.hex": __("validation.hex", {field: __("field.topicId")}),
+                "string.length": __("validation.length", {field: __("field.topicId"), length: 24}),
             }),
         countryId: Joi.string()
             .hex()
             .length(24)
             .messages({
-                "string.base": __("validation.string", { field: __("field.countryId") }),
-                "string.hex": __("validation.hex", { field: __("field.countryId") }),
-                "string.length": __("validation.length", { field: __("field.countryId"), length: 24 }),
+                "string.base": __("validation.string", {field: __("field.countryId")}),
+                "string.hex": __("validation.hex", {field: __("field.countryId")}),
+                "string.length": __("validation.length", {field: __("field.countryId"), length: 24}),
             }),
         questionType: Joi.number()
             .valid(
@@ -317,24 +333,23 @@ export const updateQuestionValidator = async (req, res, next) => {
                 questionType.fillInTheBlank
             )
             .messages({
-                "any.only": __("validation.invalid", { field: __("model.question.questionType") }),
+                "any.only": __("validation.invalid", {field: __("model.question.questionType")}),
             }),
         status: Joi.number()
             .messages({
-                "number.base": __("validation.invalid", { field: __("model.question.status") }),
+                "number.base": __("validation.invalid", {field: __("model.question.status")}),
             }),
         ask: Joi.string()
-            .messages({
-            }),
+            .messages({}),
         localeData: Joi.object().messages({
-            "object.base": __("validation.invalid", { field: __("field.localeData") })
+            "object.base": __("validation.invalid", {field: __("field.localeData")})
         })
     });
 
     const trueFalseSchema = baseQuestionSchema.keys({
         answer: Joi.boolean()
             .messages({
-                "boolean.base": __("validation.invalid", { field: __("model.question.trueFalseAnswer") }),
+                "boolean.base": __("validation.invalid", {field: __("model.question.trueFalseAnswer")}),
             })
     });
 
@@ -342,11 +357,11 @@ export const updateQuestionValidator = async (req, res, next) => {
         options: Joi.array()
             .items(
                 Joi.string().messages({
-                    "string.base": __("validation.invalid", { field: __("model.question.option") })
+                    "string.base": __("validation.invalid", {field: __("model.question.option")})
                 })
             )
             .messages({
-                "array.base": __("validation.invalid", { field: __("model.question.options") }),
+                "array.base": __("validation.invalid", {field: __("model.question.options")}),
             }),
         answer: Joi.number()
             .valid(
@@ -356,7 +371,7 @@ export const updateQuestionValidator = async (req, res, next) => {
                 answer.d
             )
             .messages({
-                "any.only": __("validation.invalid", { field: __("model.question.multipleChoiceAnswer") }),
+                "any.only": __("validation.invalid", {field: __("model.question.multipleChoiceAnswer")}),
             })
     });
 
@@ -366,17 +381,17 @@ export const updateQuestionValidator = async (req, res, next) => {
                 Joi.object({
                     leftColumn: Joi.string()
                         .messages({
-                            "string.base": __("validation.invalid", { field: __("model.question.leftColumn") }),
+                            "string.base": __("validation.invalid", {field: __("model.question.leftColumn")}),
                         }),
                     rightColumn: Joi.string()
                         .messages({
-                            "string.base": __("validation.invalid", { field: __("model.question.rightColumn") }),
+                            "string.base": __("validation.invalid", {field: __("model.question.rightColumn")}),
                         })
                 })
             )
             .messages({
-                "array.base": __("validation.invalid", { field: __("model.question.matchingAnswer") }),
-                "array.includes": __("validation.invalid", { field: __("model.question.matchingAnswerItem") }),
+                "array.base": __("validation.invalid", {field: __("model.question.matchingAnswer")}),
+                "array.includes": __("validation.invalid", {field: __("model.question.matchingAnswerItem")}),
             })
     });
 
@@ -385,20 +400,20 @@ export const updateQuestionValidator = async (req, res, next) => {
             .items(
                 Joi.string()
                     .messages({
-                        "string.base": __("validation.invalid", { field: __("model.question.fillInTheBlankAnswer") })
+                        "string.base": __("validation.invalid", {field: __("model.question.fillInTheBlankAnswer")})
                     })
             )
             .messages({
-                "array.base": __("validation.invalid", { field: __("model.question.fillInTheBlankAnswers") }),
+                "array.base": __("validation.invalid", {field: __("model.question.fillInTheBlankAnswers")}),
             })
     });
 
     const questionSchema = Joi.alternatives().conditional(".questionType", {
         switch: [
-            { is: questionType.multipleChoice, then: multipleChoiceSchema },
-            { is: questionType.trueFalse, then: trueFalseSchema },
-            { is: questionType.matching, then: matchingSchema },
-            { is: questionType.fillInTheBlank, then: fillInTheBlankSchema }
+            {is: questionType.multipleChoice, then: multipleChoiceSchema},
+            {is: questionType.trueFalse, then: trueFalseSchema},
+            {is: questionType.matching, then: matchingSchema},
+            {is: questionType.fillInTheBlank, then: fillInTheBlankSchema}
         ],
         otherwise: baseQuestionSchema
     });
@@ -411,7 +426,7 @@ export const updateQuestionValidator = async (req, res, next) => {
         if (!existedQuestion) {
             return res.status(404).json({
                 success: false,
-                message: __("validation.notFound", { field: __("model.question.name") }),
+                message: __("validation.notFound", {field: __("model.question.name")}),
                 status: 404,
                 data: null
             });
